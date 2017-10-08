@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">LostPets</string>
+    <!--String for LoginActivity -->
+    <string name="sign_in_login">Sign in</string>
+    <!-- Also used in SignInActivity-->
+    <string name="get_started_login">Get Started</string>
+
+    <string name="register_signIn_activity">Register</string>
+
+</resources>
