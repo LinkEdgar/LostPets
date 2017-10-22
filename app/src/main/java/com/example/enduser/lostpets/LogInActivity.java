@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class LogInActivity extends AppCompatActivity {
     private Button getStartedButton;
@@ -29,6 +30,14 @@ public class LogInActivity extends AppCompatActivity {
                 Intent intent = new Intent(LogInActivity.this,SignInActivity.class);
                 startActivity(intent);
 
+            }
+        });
+
+        getStartedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(LogInActivity.this, "Get started", Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
     }
