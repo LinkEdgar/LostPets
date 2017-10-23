@@ -3,8 +3,21 @@
     <!--String for LoginActivity -->
     <string name="sign_in_login">Sign in</string>
     <!-- Also used in SignInActivity-->
+    <string name="sign_in_forgot_password">Forgot Password</string>
     <string name="get_started_login">Get Started</string>
 
     <string name="register_signIn_activity">Register</string>
 
+    <!--Strings for register activity  -->
+    <string name="reg_act_username">Username</string>
+    <string name="reg_act_password">Password</string>
+    <string name="reg_act_email">Email Address</string>
+    <string name="reg_act_name">Name</string>
+    <string name="reg_act_confirm"> Confrim Password</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Labels for activity and fragments -->
+    <string name="frag_add_pet">Add Pet</string>
 </resources>

@@ -38,6 +38,10 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO--> validate credentials and if they are valid login
+                //test code to be updated later
+                //switches to the main activity to test fragment
+                Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 

@@ -11,6 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <EditText
+        android:maxLines="1"
+        android:hint="@string/reg_act_name"
+        android:layout_marginTop="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="24dp"
@@ -19,6 +22,8 @@
         android:layout_height="wrap_content" />
 
     <EditText
+        android:maxLines="1"
+        android:hint="@string/reg_act_email"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="24dp"
@@ -27,6 +32,8 @@
         android:layout_height="wrap_content" />
 
     <EditText
+        android:maxLines="1"
+        android:hint="@string/reg_act_username"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="24dp"
@@ -35,13 +42,30 @@
         android:layout_height="wrap_content" />
 
      <EditText
+         android:maxLines="1"
+         android:hint="@string/reg_act_password"
+         android:layout_marginLeft="24dp"
+         android:layout_marginRight="24dp"
+         android:layout_marginBottom="24dp"
+         android:id="@+id/et_reg_password"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content" />
+
+     <EditText
+         android:maxLines="1"
+         android:hint="@string/reg_act_confirm"
          android:layout_marginLeft="24dp"
          android:layout_marginRight="24dp"
          android:layout_marginBottom="24dp"
          android:id="@+id/et_reg_confirm_pass"
          android:layout_width="match_parent"
          android:layout_height="wrap_content" />
+
      <Button
+         android:text="@string/register_signIn_activity"
+         android:layout_marginLeft="24dp"
+         android:layout_marginRight="24dp"
+         android:layout_marginBottom="24dp"
          android:id="@+id/bt_register_activity_register"
          android:layout_width="match_parent"
          android:layout_height="wrap_content" />
