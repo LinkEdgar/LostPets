@@ -14,4 +14,10 @@
     <string name="reg_act_email">Email Address</string>
     <string name="reg_act_name">Name</string>
     <string name="reg_act_confirm"> Confrim Password</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Labels for activity and fragments -->
+    <string name="frag_add_pet">Add Pet</string>
 </resources>

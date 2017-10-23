@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.enduser.lostpets">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -37,6 +38,13 @@
             </meta-data>
 
         </activity>
+        <activity
+        android:label="@string/frag_add_pet"
+            android:name=".MainActivity">
+
+        </activity>
+
+        >
     </application>
 
 </manifest>
