@@ -18,11 +18,14 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         if(position == 0){
             return new EnterLostPetFragment();
         }
+        else if(position == 1){
+            return new PetQueryFragment();
+        }
         return null;
     }
 
     @Override
     public int getCount() {
-        return 1;
+        return 2;
     }
 }
