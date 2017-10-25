@@ -21,6 +21,7 @@ public class EnterLostPetFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        //TODO Add spinner logic for the gender
         return inflater.inflate(R.layout.enter_pet,container,false);
     }
 }
