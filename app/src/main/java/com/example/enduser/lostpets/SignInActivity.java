@@ -50,24 +50,27 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = mUsername.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
-                mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if(user.isEmailVerified()) {
-                                Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                            else{
-                                Toast.makeText(SignInActivity.this, "Please verify your email", Toast.LENGTH_SHORT).show();
+                if(verifyEmail(email) && verifyPassword(password)) {
+                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                if (user.isEmailVerified()) {
+                                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(SignInActivity.this, "Please verify your email", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(SignInActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
                             }
                         }
-                        else{
-                            Toast.makeText(SignInActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                    });
+                }
+                else{
+                    Toast.makeText(SignInActivity.this, "Password or email are invalid", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -87,6 +90,18 @@ public class SignInActivity extends AppCompatActivity {
         outState.putString(USERNAME,mUsername.getText().toString());
         outState.putString(PASSWORD, mPassword.getText().toString());
         super.onSaveInstanceState(outState, outPersistentState);
+    }
+    public boolean verifyEmail(String email){
+        if(email != null || email.length() > 0){
+            return true;
+        }
+        return false;
+    }
+    public boolean verifyPassword(String password){
+        if(password.length() > 6){
+            return true;
+        }
+        return false;
     }
 
 }
