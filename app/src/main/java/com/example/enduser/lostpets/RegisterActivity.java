@@ -81,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     if(task.isSuccessful()){
                                         FirebaseUser user = mAuth.getCurrentUser();
                                         user.sendEmailVerification();
-                                        Toast.makeText(RegisterActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(RegisterActivity.this, "Account created successfully. Please verify email before loging in", Toast.LENGTH_LONG).show();
                                         //mAuth.signOut();
                                         //since a successful creation logs the user in they will be taken to the main activity
                                         Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);
