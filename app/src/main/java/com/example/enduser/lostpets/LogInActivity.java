@@ -23,12 +23,7 @@ public class LogInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Since this is the on start activity this code decides whether or not the user is sign in
         // if they are then the main activity will show, otherwise the app will run from the sign in screen
-        mAuth = FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser() != null){
-            Intent intent = new Intent(LogInActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-
+        //TODO--> find a good way to check if the user has already logged in to take them to the proper part of the app
 
         setContentView(R.layout.activity_log_in);
         introImage = (ImageView) findViewById(R.id.intro_image);

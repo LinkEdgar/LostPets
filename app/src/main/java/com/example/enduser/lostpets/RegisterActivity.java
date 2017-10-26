@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterActivity extends AppCompatActivity {
     //firebase's minimum password requirements
@@ -31,6 +32,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mPasswordConfirm;
 
     private Button mRegisterBt;
+    //TODO fix bug with the back button if the user is logged in
+    //TODO figure out if there is going to be a need for username
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful()){
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        user.sendEmailVerification();
+                                        Toast.makeText(RegisterActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
+                                        //mAuth.signOut();
+                                        //since a successful creation logs the user in they will be taken to the main activity
                                         Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);
                                         startActivity(intent);
                                     }
