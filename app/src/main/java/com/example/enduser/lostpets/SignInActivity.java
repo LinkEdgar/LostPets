@@ -25,7 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
     private EditText mUsername,mPassword;
-    //keys used for data persitence
+    //keys used for data persistence  
     private final static String USERNAME = "username";
     private final static String PASSWORD = "password";
     private Button signIn, register;
@@ -140,10 +140,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         }
     }
     private  void handleSignInResult(GoogleSignInResult result){
-        //TODO -->find way to add users to the database since google sign won't provide this 
+        //TODO -->find way to add users to the database since google sign won't provide this
         if(result.isSuccess()){
             //get the account for use with this
-            GoogleSignInAccount acccount = result.getSignInAccount();
+            GoogleSignInAccount account = result.getSignInAccount();
             signInSuccess();
         }
     }
