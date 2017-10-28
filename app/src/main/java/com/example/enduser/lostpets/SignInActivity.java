@@ -10,7 +10,7 @@ import android.widget.EditText;
 
 public class SignInActivity extends AppCompatActivity {
     private EditText userName,password;
-    //keys used for data persitence
+    //keys used for data persistence
     private final static String USERNAME = "username";
     private final static String PASSWORD = "password";
     private Button signIn, register;

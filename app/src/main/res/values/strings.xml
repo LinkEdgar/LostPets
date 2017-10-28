@@ -20,4 +20,10 @@
 
     <!--Labels for activity and fragments -->
     <string name="frag_add_pet">Add Pet</string>
+    //Added an array for the gender spinner
+    <string-array name="gender_spinner_array">
+        <item>Unknown</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 </resources>

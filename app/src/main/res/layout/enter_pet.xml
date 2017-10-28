@@ -32,12 +32,27 @@
         android:layout_marginRight="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-        <Spinner
-        android:layout_marginLeft="30dp"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <!-- add strings for gender-->
+        <TextView
+            android:textSize="18sp"
+            android:layout_marginLeft="120dp"
+            android:text="Gender:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Spinner
+            android:id="@+id/gender_spinner"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
         </Spinner>
+
+    </LinearLayout>
+
+
 
 
 
