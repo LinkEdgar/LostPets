@@ -5,5 +5,5 @@
         android:id="@+id/add_pet_item"
         android:title="add_pet"
         app:showAsAction="always"
-        android:icon="@mipmap/ic_done_icon"/>
+        android:icon="@drawable/ic_done_black_24dp"/>
 </menu>
