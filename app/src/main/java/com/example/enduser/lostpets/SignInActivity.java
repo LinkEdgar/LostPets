@@ -141,6 +141,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 if (user.isEmailVerified()) {
+                                    //clears the text fields so that the user's information is protected
+                                    ClearTextFields();
                                     signInSuccess();
                                 } else {
                                     Toast.makeText(SignInActivity.this, "Please verify your email", Toast.LENGTH_SHORT).show();
@@ -166,5 +168,9 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 startActivity(intent);
             }
         });
+    }
+    public void ClearTextFields(){
+        mUsername.setText("");
+        mPassword.setText("");
     }
 }
