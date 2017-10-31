@@ -22,15 +22,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignInActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
     private EditText mUsername,mPassword;
     //keys used for data persistence  
     private final static String USERNAME = "username";
     private final static String PASSWORD = "password";
+    //Buttons
     private Button signIn, register;
-    //firebase authorization
+    //firebase authorization and databse reference
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabaseRef;
     //Google sign in variables
     private SignInButton googleSignIn;
     GoogleApiClient mGoogleApiClient;
@@ -41,21 +45,14 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        //google sign in related code
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail().build();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this,this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API,gso).build();
-        googleSignIn = (SignInButton) findViewById(R.id.google_sign_in);
-        googleSignIn.setOnClickListener(this);
+        SetupGoogleSignIn();
         mAuth = FirebaseAuth.getInstance();
         //assigning views
         mUsername = (EditText) findViewById(R.id.et_username);
         mPassword = (EditText) findViewById(R.id.et_password);
         signIn = (Button) findViewById(R.id.bt_login);
         register = (Button) findViewById(R.id.bt_register);
-
+        //Bundle for keyfields
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(USERNAME)){
                 mUsername.setText(savedInstanceState.getString(USERNAME));
@@ -64,43 +61,9 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 mPassword.setText(savedInstanceState.getString(PASSWORD));
             }
         }
-        signIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = mUsername.getText().toString().trim();
-                String password = mPassword.getText().toString().trim();
-                if(verifyEmail(email) && verifyPassword(password)) {
-                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                if (user.isEmailVerified()) {
-                                    signInSuccess();
-                                } else {
-                                    Toast.makeText(SignInActivity.this, "Please verify your email", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(SignInActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
-                else{
-                    Toast.makeText(SignInActivity.this, "Password or email are invalid", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO--> set intent to go to register activity
-                Intent intent = new Intent(SignInActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
+        // Sign in button code
+        SetupSignIn();
+        SetupRegistration();
     }
     //ensure app preserves the data the user input into the fields
     @Override
@@ -155,5 +118,53 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     public void signInSuccess(){
         Intent intent = new Intent(SignInActivity.this, MainActivity.class);
         startActivity(intent);
+    }
+    public void SetupGoogleSignIn(){
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail().build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this,this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API,gso).build();
+        googleSignIn = (SignInButton) findViewById(R.id.google_sign_in);
+        googleSignIn.setOnClickListener(this);
+    }
+    public void SetupSignIn(){
+        signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = mUsername.getText().toString().trim();
+                String password = mPassword.getText().toString().trim();
+                if(verifyEmail(email) && verifyPassword(password)) {
+                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                if (user.isEmailVerified()) {
+                                    signInSuccess();
+                                } else {
+                                    Toast.makeText(SignInActivity.this, "Please verify your email", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(SignInActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(SignInActivity.this, "Password or email are invalid", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
+    public void SetupRegistration(){
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignInActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
