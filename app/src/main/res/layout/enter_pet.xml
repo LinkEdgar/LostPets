@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
+        android:id="@+id/enter_pet_name"
         android:maxLines="1"
         android:textAlignment="center"
         android:hint="Name"
@@ -20,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
+        android:id="@+id/enter_pet_breed"
         android:maxLines="1"
         android:textAlignment="center"
         android:hint="Breed"
@@ -28,6 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
+        android:id="@+id/enter_pet_zip"
         android:maxLines="1"
         android:inputType="number"
         android:textAlignment="center"
@@ -37,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
+        android:id="@+id/enter_pet_weight"
         android:maxLines="1"
         android:inputType="number"
         android:textAlignment="center"
@@ -50,6 +54,7 @@
         android:minHeight="30dp"
         android:layout_height="80dp">
         <EditText
+            android:id="@+id/enter_pet_desc"
             android:textAlignment="center"
             android:hint="Describe any distinguishing features that may help find your pet here. "
             android:layout_marginLeft="30dp"

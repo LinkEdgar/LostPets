@@ -19,6 +19,9 @@ public class PetQueryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_pet_query,container,false);
+        View root_view = inflater.inflate(R.layout.enter_pet,container,false);
+
+
+        return root_view;
     }
 }
