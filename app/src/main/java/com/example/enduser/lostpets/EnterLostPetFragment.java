@@ -134,7 +134,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference("Pets");
         mCurrentUser = mAuth.getCurrentUser();
-        Log.e("Let's hope this works", " " + petID);
 
         mRef.child(petID).child("name").setValue(name);
         mRef.child(petID).child("breed").setValue(breed);
@@ -168,7 +167,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         setPetInfo(petArray);
 
         petId.addListenerForSingleValueEvent(new ValueEventListener() {
-            String petNum = EnterLostPetFragment.this.petID;
+            String petNum;
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 petNum = dataSnapshot.getValue(String.class);
