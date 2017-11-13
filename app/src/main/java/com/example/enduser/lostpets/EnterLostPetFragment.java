@@ -123,47 +123,40 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         return true;
     }
 
-    public void storeData(String petNum){
+    public void storeData(String petNum, String[] petInfo){
+        //stores data for each pet by first retrieving it from a passed in array //order matters
         petID = petNum;
-        //TODO References to name, weight, etc do not work
-        String name = petName.getText().toString().trim();
-        String weight = petWeight.getText().toString().trim();
-        String breed = petBreed.getText().toString().trim();
-        String zip = petZip.getText().toString().trim();
-        String desc = petDesc.getText().toString().trim();
+        String name = petInfo[0];
+        String weight = petInfo[1];;
+        String breed = petInfo[2];;
+        String zip = petInfo[3];;
+        String desc = petInfo[4];;
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference("Pets");
         mCurrentUser = mAuth.getCurrentUser();
         Log.e("Let's hope this works", " " + petID);
 
-        mRef.child(petID).child("name").setValue(petName.getText().toString().trim());
+        mRef.child(petID).child("name").setValue(name);
         mRef.child(petID).child("breed").setValue(breed);
-        mRef.child(petID).child("gender").setValue(petGender);
         mRef.child(petID).child("weight").setValue(weight);
         mRef.child(petID).child("zip").setValue(zip);
         mRef.child(petID).child("description").setValue(desc);
-        //use UID to uniquely identify
-        //String petDbNum = assignPetId();
-        /*
-        mRef.child(petDbNum).child("name").setValue(name);
-        mRef.child(petDbNum).child("breed").setValue(breed);
-        mRef.child(petDbNum).child("gender").setValue(petGender);
-        mRef.child(petDbNum).child("weight").setValue(weight);
-        mRef.child(petDbNum).child("zip").setValue(zip);
-        mRef.child(petDbNum).child("description").setValue(desc);
-
-        */
-
-
-
 
     }
     public void clearTextFields(){
-        petBreed.setText(null);
-        petName.setText(null);
-        petWeight.setText(null);
-        petDesc.setText(null);
-        petZip.setText(null);
+        petBreed.getText().clear();
+        petBreed.clearFocus();
+
+        petName.getText().clear();
+        petName.clearFocus();
+
+        petWeight.getText().clear();
+        petWeight.clearFocus();
+
+        petDesc.getText().clear();
+        petDesc.clearFocus();
+        petZip.getText().clear();
+        petZip.clearFocus();
     }
 
     //TODO make a unique pet id by putting the number 1 in the realtime database. retrieve that number convert it to an long. Then add one to it each time a new pet is added.
@@ -171,20 +164,20 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     public void assignPetId(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference petId = database.getReference("PetId");
+        final String[] petArray = new String[5];
+        setPetInfo(petArray);
 
         petId.addListenerForSingleValueEvent(new ValueEventListener() {
             String petNum = EnterLostPetFragment.this.petID;
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //TODO -->findout why petID is null; still can't figure this out
                 petNum = dataSnapshot.getValue(String.class);
-                Log.e("this is my inner yeet", petNum);
                 //this code will get and unique value for pets
                 int convertInt = Integer.parseInt(petNum);
                 convertInt = convertInt +1;
                 String convertedString = Integer.toString(convertInt);
                 petId.setValue(convertedString);
-                storeData(petNum);
+                storeData(petNum, petArray);
             }
 
             @Override
@@ -192,5 +185,15 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
 
             }
         });
+    }
+    //sets the pet's info for the array so that it can be passed to the storedata method
+    public String[] setPetInfo(String[] petInfo){
+        petInfo[0] = petName.getText().toString().trim();
+        petInfo[1] = petWeight.getText().toString().trim();
+        petInfo[2] = petBreed.getText().toString().trim();
+        petInfo[3] = petZip.getText().toString().trim();
+        petInfo[4] = petDesc.getText().toString().trim();
+
+        return  petInfo;
     }
 }
