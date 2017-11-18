@@ -80,7 +80,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        //TODO--> add logic for selected gender
         switch(position){
             case 0:
                 petGender = PET_GENDER_UNKNOWN;
@@ -158,8 +157,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         petZip.clearFocus();
     }
 
-    //TODO make a unique pet id by putting the number 1 in the realtime database. retrieve that number convert it to an long. Then add one to it each time a new pet is added.
-    // afterwards convert it to string and update it in the realtime database thus we will always have a a unique pet id to identify each pet.
     public void assignPetId(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference petId = database.getReference("PetId");

@@ -60,12 +60,27 @@ public class PetQueryFragment extends Fragment {
 
         return root_view;
     }
-    public void updatePets(ArrayList<Pet> array){
+    public void updatePets(final ArrayList<Pet> array){
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference("PetId");
         final String[] searchLimt = new String[1];
         //TODO figure out how to successfully retrieve data from the database
-        mRef = mDatabase.getReference("Pets");
+        mRef = mDatabase.getReference("Pets").child("2");
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String petName = dataSnapshot.child("name").getValue().toString();
+                Log.e("retrieve pet info test", ""+ petName);
+                //this works to retrieve the info but since it's an anonymous inner class we cannot post the changes to the
+                //arraylist 
+                array.add(new Pet(petName,"50", "Female", "30168","German Sheppard"));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         array.add(new Pet("Linda","50", "Female", "30168","German Sheppard"));
         array.add(new Pet("Linda","50", "Female", "30168","German Sheppard"));
         array.add(new Pet("Linda","50", "Female", "30168","German Sheppard"));
