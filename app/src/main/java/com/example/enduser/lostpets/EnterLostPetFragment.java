@@ -44,6 +44,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private String petID;
     private EditText petName, petWeight, petZip, petBreed,petDesc;
     private String petGender;
+    private static final int ZIP_CODE_CHAR_LIMIT =5;
     private static final String PET_GENDER_MALE = "Male";
     private static final String PET_GENDER_FEMALE ="Female";
     private static final String PET_GENDER_UNKNOWN  ="Unknown";
@@ -203,7 +204,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         if(zip == null){
             return false;
         }
-        else if(zip.length() < 5){
+        else if(zip.length() < ZIP_CODE_CHAR_LIMIT){
             return false;
         }
         return true;
