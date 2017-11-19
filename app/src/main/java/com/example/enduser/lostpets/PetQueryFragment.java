@@ -35,6 +35,7 @@ public class PetQueryFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayouManager;
+    private ArrayList<Pet> petArrayList;
     public PetQueryFragment(){
 
     }
@@ -50,30 +51,40 @@ public class PetQueryFragment extends Fragment {
         mLayouManager = new LinearLayoutManager(root_view.getContext());
         mRecyclerView.setLayoutManager(mLayouManager);
 
-        ArrayList<Pet> myArray = new ArrayList<>();
-        updatePets(myArray);
+        petArrayList = new ArrayList<>();
+        getPetInfo(petArrayList);
 
 
 
-        mAdapter = new PetAdapter(myArray);
-        mRecyclerView.setAdapter(mAdapter);
+        //mAdapter = new PetAdapter(petArrayList);
+        //mRecyclerView.setAdapter(mAdapter);
 
         return root_view;
     }
-    public void updatePets(final ArrayList<Pet> array){
+    public void getPetInfo(final ArrayList<Pet> array){
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference("PetId");
-        final String[] searchLimt = new String[1];
         //TODO figure out how to successfully retrieve data from the database
-        mRef = mDatabase.getReference("Pets").child("2");
+        mRef = mDatabase.getReference("Pets");
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String petName = dataSnapshot.child("name").getValue().toString();
-                Log.e("retrieve pet info test", ""+ petName);
-                //this works to retrieve the info but since it's an anonymous inner class we cannot post the changes to the
-                //arraylist 
-                array.add(new Pet(petName,"50", "Female", "30168","German Sheppard"));
+                //Test code
+               int count = 1;
+               while(count < 3){
+                   String iterate = dataSnapshot.child(""+count).child("name").getValue().toString();
+                   petArrayList.add(new Pet(iterate, "11","male","11111", "Mix Yeet"));
+                   count++;
+               }
+
+
+                petArrayList.add(new Pet("Winda","50", "Female", "30168","German Sheppard"));
+                petArrayList.add(new Pet("Toby","30", "Male", "30168","Mix"));
+                petArrayList.add(new Pet("Sombra","55", "Female", "30168","Lab"));
+                petArrayList.add(new Pet("Binx","14", "Female", "30168","yeet ass dog"));
+                petArrayList.add(new Pet("Sofie","8", "Female", "30168","German Sheppard"));
+
+                mRecyclerView.setAdapter(new PetAdapter(petArrayList));
             }
 
             @Override
@@ -81,10 +92,16 @@ public class PetQueryFragment extends Fragment {
 
             }
         });
-        array.add(new Pet("Linda","50", "Female", "30168","German Sheppard"));
-        array.add(new Pet("Linda","50", "Female", "30168","German Sheppard"));
-        array.add(new Pet("Linda","50", "Female", "30168","German Sheppard"));
-        array.add(new Pet("Linda","50", "Female", "30168","German Sheppard"));
-        array.add(new Pet("Linda","50", "Female", "30168","German Sheppard"));
+        displayPetInfo("yeet");
+
+
+    }
+    private void displayPetInfo(String petName){
+        petArrayList.add(new Pet(petName,"50", "Female", "30168","German Sheppard"));
+        petArrayList.add(new Pet("Winda","50", "Female", "30168","German Sheppard"));
+        petArrayList.add(new Pet("Toby","30", "Male", "30168","Mix"));
+        petArrayList.add(new Pet("Sombra","55", "Female", "30168","Lab"));
+        petArrayList.add(new Pet("Binx","14", "Female", "30168","yeet ass dog"));
+        petArrayList.add(new Pet("Sofie","8", "Female", "30168","German Sheppard"));
     }
 }

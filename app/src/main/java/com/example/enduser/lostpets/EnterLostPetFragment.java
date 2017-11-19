@@ -112,11 +112,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         if(itemId == R.id.add_pet_item){
             //This method calls assigns a unique ID for each pet added to the database
              //within this method store data is called which sets the pet info to the database
-            assignPetId();
-            //storeData();
-            //sets all fields to null
-            clearTextFields();
-            Toast.makeText(getContext(), "Pet has been added to database", Toast.LENGTH_SHORT).show();
+                assignPetId();
+                clearTextFields();
 
         }
         return true;
@@ -130,15 +127,22 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         String breed = petInfo[2];;
         String zip = petInfo[3];;
         String desc = petInfo[4];;
-        mDatabase = FirebaseDatabase.getInstance();
-        mRef = mDatabase.getReference("Pets");
-        mCurrentUser = mAuth.getCurrentUser();
+        if(validateData(name, zip)) {
+            mDatabase = FirebaseDatabase.getInstance();
+            mRef = mDatabase.getReference("Pets");
+            mCurrentUser = mAuth.getCurrentUser();
 
-        mRef.child(petID).child("name").setValue(name);
-        mRef.child(petID).child("breed").setValue(breed);
-        mRef.child(petID).child("weight").setValue(weight);
-        mRef.child(petID).child("zip").setValue(zip);
-        mRef.child(petID).child("description").setValue(desc);
+            mRef.child(petID).child("name").setValue(name);
+            mRef.child(petID).child("breed").setValue(breed);
+            mRef.child(petID).child("weight").setValue(weight);
+            mRef.child(petID).child("zip").setValue(zip);
+            mRef.child(petID).child("description").setValue(desc);
+            Toast.makeText(getContext(), "Pet has been added to database", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            //failure toast
+            Toast.makeText(getContext(), "Invalid or empty text fields", Toast.LENGTH_SHORT).show();
+        }
 
     }
     public void clearTextFields(){
@@ -183,7 +187,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         });
     }
     //sets the pet's info for the array so that it can be passed to the storedata method
-    public String[] setPetInfo(String[] petInfo){
+    private String[] setPetInfo(String[] petInfo){
         petInfo[0] = petName.getText().toString().trim();
         petInfo[1] = petWeight.getText().toString().trim();
         petInfo[2] = petBreed.getText().toString().trim();
@@ -191,5 +195,17 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         petInfo[4] = petDesc.getText().toString().trim();
 
         return  petInfo;
+    }
+    private boolean validateData(String name, String zip){
+        if(name == null){
+            return false;
+        }
+        if(zip == null){
+            return false;
+        }
+        else if(zip.length() < 5){
+            return false;
+        }
+        return true;
     }
 }
