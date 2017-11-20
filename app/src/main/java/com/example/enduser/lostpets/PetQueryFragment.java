@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -63,7 +64,6 @@ public class PetQueryFragment extends Fragment {
     }
     public void getPetInfo(final ArrayList<Pet> array){
         mDatabase = FirebaseDatabase.getInstance();
-        mRef = mDatabase.getReference("PetId");
         //TODO figure out how to successfully retrieve data from the database
         mRef = mDatabase.getReference("Pets");
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {

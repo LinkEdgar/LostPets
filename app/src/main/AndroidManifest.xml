@@ -40,7 +40,6 @@
         </activity>
         <activity
         android:label="@string/frag_add_pet"
-            android:parentActivityName=".SignInActivity"
             android:noHistory="true"
             android:name=".MainActivity">
 
