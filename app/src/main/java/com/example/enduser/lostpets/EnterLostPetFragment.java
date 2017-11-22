@@ -137,6 +137,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             mRef.child(petID).child("breed").setValue(breed);
             mRef.child(petID).child("weight").setValue(weight);
             mRef.child(petID).child("zip").setValue(zip);
+            mRef.child(petID).child("gender").setValue(petGender);
             mRef.child(petID).child("description").setValue(desc);
             Toast.makeText(getContext(), "Pet has been added to database", Toast.LENGTH_SHORT).show();
         }

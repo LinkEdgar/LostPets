@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -53,33 +56,54 @@ public class PetQueryFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayouManager);
 
         petArrayList = new ArrayList<>();
-        getPetInfo(petArrayList);
-
-
-
         //mAdapter = new PetAdapter(petArrayList);
-        //mRecyclerView.setAdapter(mAdapter);
 
+        mRecyclerView.setAdapter(mAdapter);
+        //this method queries all pets and calls getAllPetInfo
+        queryAllPets();
         return root_view;
     }
-    public void getPetInfo(final ArrayList<Pet> array){
+
+    private void queryAllPets(){
+        FirebaseDatabase fullQueryDB = FirebaseDatabase.getInstance();
+        DatabaseReference mFullRef = fullQueryDB.getReference("PetId");
+        mFullRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String limitString = dataSnapshot.getValue(String.class);
+                int limitInt= Integer.parseInt(limitString);
+                getAllPetInfo(limitInt);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void getAllPetInfo(final int maxQueryCount){
         mDatabase = FirebaseDatabase.getInstance();
-        //TODO figure out how to successfully retrieve data from the database
         mRef = mDatabase.getReference("Pets");
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Test code
                int count = 1;
-               while(count < 3){
-                   String iterate = dataSnapshot.child(""+count).child("name").getValue().toString();
-                   petArrayList.add(new Pet(iterate, "11","male","11111", "Mix Yeet"));
+               while(count < maxQueryCount){
+                   String petBreed = dataSnapshot.child(""+count).child("breed").getValue().toString();
+                   String petName = dataSnapshot.child(""+count).child("name").getValue().toString();
+                   String petWeight = dataSnapshot.child(""+count).child(("weight")).getValue().toString();
+                   String petZip = dataSnapshot.child(""+count).child(("zip")).getValue().toString();
+                   String petGender = dataSnapshot.child(""+count).child("gender").getValue().toString();
+                   petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed));
                    count++;
                }
 
-
+                //adds fake pets for funzies
                 petArrayList.add(new Pet("Winda","50", "Female", "30168","German Sheppard"));
-                petArrayList.add(new Pet("Toby","30", "Male", "30168","Mix"));
+                petArrayList.add(new Pet("Doby","30", "Male", "30168","Mix"));
                 petArrayList.add(new Pet("Sombra","55", "Female", "30168","Lab"));
                 petArrayList.add(new Pet("Binx","14", "Female", "30168","yeet ass dog"));
                 petArrayList.add(new Pet("Sofie","8", "Female", "30168","German Sheppard"));
@@ -92,16 +116,6 @@ public class PetQueryFragment extends Fragment {
 
             }
         });
-        displayPetInfo("yeet");
 
-
-    }
-    private void displayPetInfo(String petName){
-        petArrayList.add(new Pet(petName,"50", "Female", "30168","German Sheppard"));
-        petArrayList.add(new Pet("Winda","50", "Female", "30168","German Sheppard"));
-        petArrayList.add(new Pet("Toby","30", "Male", "30168","Mix"));
-        petArrayList.add(new Pet("Sombra","55", "Female", "30168","Lab"));
-        petArrayList.add(new Pet("Binx","14", "Female", "30168","yeet ass dog"));
-        petArrayList.add(new Pet("Sofie","8", "Female", "30168","German Sheppard"));
     }
 }
