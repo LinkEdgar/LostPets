@@ -120,7 +120,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         return true;
     }
 
-    public void storeData(String petNum, String[] petInfo){
+    public boolean storeData(String petNum, String[] petInfo){
         //stores data for each pet by first retrieving it from a passed in array //order matters
         petID = petNum;
         String name = petInfo[0];
@@ -140,10 +140,12 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             mRef.child(petID).child("gender").setValue(petGender);
             mRef.child(petID).child("description").setValue(desc);
             Toast.makeText(getContext(), "Pet has been added to database", Toast.LENGTH_SHORT).show();
+            return true;
         }
         else{
             //failure toast
             Toast.makeText(getContext(), "Invalid or empty text fields", Toast.LENGTH_SHORT).show();
+            return false;
         }
 
     }
@@ -175,11 +177,13 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             public void onDataChange(DataSnapshot dataSnapshot) {
                 petNum = dataSnapshot.getValue(String.class);
                 //this code will get and unique value for pets
-                int convertInt = Integer.parseInt(petNum);
-                convertInt = convertInt +1;
-                String convertedString = Integer.toString(convertInt);
-                petId.setValue(convertedString);
-                storeData(petNum, petArray);
+                if(storeData(petNum,petArray)){
+                    int convertInt = Integer.parseInt(petNum);
+                    convertInt = convertInt +1;
+                    String convertedString = Integer.toString(convertInt);
+                    petId.setValue(convertedString);
+                }
+
             }
 
             @Override

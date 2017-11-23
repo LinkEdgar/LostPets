@@ -90,6 +90,7 @@ public class PetQueryFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Test code
+                petArrayList.clear();
                int count = 1;
                while(count < maxQueryCount){
                    String petBreed = dataSnapshot.child(""+count).child("breed").getValue().toString();
