@@ -5,6 +5,7 @@ import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -172,5 +173,15 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     public void ClearTextFields(){
         mUsername.setText("");
         mPassword.setText("");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(mAuth.getCurrentUser() != null){
+            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 }
