@@ -21,11 +21,13 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         else if(position == 1){
             return new PetQueryFragment();
         }
-        return null;
+        else{
+            return new ShelterInteractionFragment();
+        }
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 }
