@@ -5,6 +5,7 @@ package com.example.enduser.lostpets;
  */
 
 public class Pet {
+    //TODO Add pet description in order to allow on click to work successfully
     private String name;
     private String weight;
     private String gender;

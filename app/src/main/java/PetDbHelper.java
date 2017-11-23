@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by EndUser on 10/22/2017.
  */
 
+/*This class is probably not  necessary but will leave this here for now
+
+ */
 public class PetDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "lost.db";
     private static final int DATABASE_VERSION = 1;
@@ -18,7 +21,6 @@ public class PetDbHelper extends SQLiteOpenHelper {
             + PetDatabaseContract.PetEntry.COLUMN_PET_GENDER + "INTEGER NOT NULL,"
             + PetDatabaseContract.PetEntry.COLUMN_PET_WEIGHT + "INTEGER NOT NULL DEFAULT 0);";
 
-    //TODO check if the constructor needs to be private
     public PetDbHelper(Context context){
         super(context,DATABASE_NAME, null, DATABASE_VERSION);
     }
