@@ -46,7 +46,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        SetupGoogleSignIn();
         mAuth = FirebaseAuth.getInstance();
         //assigning views
         mUsername = (EditText) findViewById(R.id.et_username);
@@ -62,6 +61,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 mPassword.setText(savedInstanceState.getString(PASSWORD));
             }
         }
+        SetupGoogleSignIn();
         // Sign in button code
         SetupSignIn();
         SetupRegistration();
@@ -94,7 +94,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent,RC_SIGN_IN);
     }
-
+    //TODO fix google sign in
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
