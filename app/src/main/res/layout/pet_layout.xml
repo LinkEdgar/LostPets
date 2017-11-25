@@ -30,6 +30,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
+                android:layout_marginRight="4dp"
+                android:text="Breed:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textStyle="italic"
                 tools:text="German Sheppard Mix"
                 android:id="@+id/pet_query_display_breed"
                 android:layout_width="wrap_content"

@@ -101,10 +101,12 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         if(requestCode == RC_SIGN_IN){
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+            //TODO DEVELOPER ERROR in google sign in
+            Log.e("YEET 2",""+result.getStatus().toString());
         }
     }
     private  void handleSignInResult(GoogleSignInResult result){
-        //TODO -->find way to add users to the database since google sign won't provide this
+        //TODO -->find way to add users to the database since google sign won't provide this. --> check firebase
         if(result.isSuccess()){
             //get the account for use with this
             GoogleSignInAccount account = result.getSignInAccount();

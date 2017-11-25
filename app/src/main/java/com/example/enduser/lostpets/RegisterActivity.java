@@ -27,7 +27,6 @@ public class RegisterActivity extends AppCompatActivity {
     private final static String REG_PASSWORD_CONFRIM = "confrim_password";
     //setting up variables form the UI fields we need
     private EditText mEmail;
-    private EditText mUserName;
     private EditText mPassword;
     private EditText mPasswordConfirm;
 
@@ -44,7 +43,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         //finding references for our necessary text fields
         mEmail = (EditText) findViewById(R.id.et_reg_email);
-        mUserName = (EditText) findViewById(R.id.et_reg_user_name);
         mPassword =(EditText) findViewById(R.id.et_reg_password);
         mPasswordConfirm = (EditText) findViewById(R.id.et_reg_confirm_pass);
         mRegisterBt = (Button) findViewById(R.id.bt_register_activity_register);
@@ -53,9 +51,6 @@ public class RegisterActivity extends AppCompatActivity {
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(REG_EMAIL)){
                 mEmail.setText(savedInstanceState.getString(REG_EMAIL));
-            }
-            if(savedInstanceState.containsKey(REG_USER_NAME)){
-                mUserName.setText(savedInstanceState.getString(REG_USER_NAME));
             }
             if(savedInstanceState.containsKey(REG_PASSWORD)){
                 mPassword.setText(savedInstanceState.getString(REG_USER_NAME));
@@ -108,7 +103,6 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(REG_EMAIL, mEmail.getText().toString());
-        outState.putString(REG_USER_NAME,mUserName.getText().toString());
         outState.putString(REG_PASSWORD,mPassword.getText().toString());
         outState.putString(REG_PASSWORD_CONFRIM,mPasswordConfirm.getText().toString());
         super.onSaveInstanceState(outState);

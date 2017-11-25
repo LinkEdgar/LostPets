@@ -22,16 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:maxLines="1"
-        android:hint="@string/reg_act_username"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginBottom="24dp"
-        android:id="@+id/et_reg_user_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
      <EditText
          android:maxLines="1"
          android:hint="@string/reg_act_password"
@@ -53,12 +43,16 @@
          android:layout_height="wrap_content" />
 
      <Button
+         android:backgroundTint="@color/colorPrimary"
+         android:textColor="@color/white"
+         android:maxWidth="120dp"
+         android:layout_gravity="center"
          android:text="@string/register_signIn_activity"
          android:layout_marginLeft="24dp"
          android:layout_marginRight="24dp"
          android:layout_marginBottom="24dp"
          android:id="@+id/bt_register_activity_register"
-         android:layout_width="match_parent"
+         android:layout_width="wrap_content"
          android:layout_height="wrap_content" />
 
 
