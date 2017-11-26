@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- TODO  come up with UI for the pet entry fragment-->
     <!-- add strings to resources for all text fields -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <TextView
         android:textStyle="bold"
         android:textSize="22sp"
@@ -63,26 +67,81 @@
             android:layout_height="match_parent" />
     </ScrollView>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="2"
+                android:textSize="16sp"
+                android:layout_marginLeft="30dp"
+                android:text="Gender:"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:layout_weight="3"
+                android:id="@+id/gender_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+            </Spinner>
 
-    <LinearLayout
-        android:orientation="horizontal"
+            <TextView
+                android:layout_weight="2"
+                android:textSize="16sp"
+                android:text="Microchip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/enter_pet_microchip"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    <Button
+        android:id="@+id/enter_pet_pic_upload_bt"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:text="Upload Pictures"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <!-- add strings for gender-->
-        <TextView
-            android:textSize="18sp"
-            android:layout_marginLeft="120dp"
-            android:text="Gender:"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/enter_pet_upload_pic_one"
+            android:layout_marginRight="12dp"
+            android:maxWidth="350dp"
+            android:maxHeight="250dp"
+            android:src="@mipmap/ic_launcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <Spinner
-            android:id="@+id/gender_spinner"
-            android:layout_marginLeft="30dp"
+        <ImageView
+            android:layout_marginRight="12dp"
+            android:maxWidth="350dp"
+            android:maxHeight="250dp"
+            android:src="@mipmap/ic_launcher_round"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </Spinner>
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:maxWidth="350dp"
+            android:maxHeight="250dp"
+            android:src="@mipmap/ic_launcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
     </LinearLayout>
 
 
-</LinearLayout>
+</ScrollView>

@@ -1,6 +1,11 @@
 package com.example.enduser.lostpets;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.provider.Contacts;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -16,7 +21,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -48,6 +56,12 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private static final String PET_GENDER_MALE = "Male";
     private static final String PET_GENDER_FEMALE ="Female";
     private static final String PET_GENDER_UNKNOWN  ="Unknown";
+    //TODO add functionality to check box --> this includes adding this information to the database
+    private CheckBox mMicroChipCheckBoc;
+    private Button mUploadPictureButton;
+    private ImageView mImageToUploadOne;
+    private int REQUEST_IMAGE_GET = 1001;
+
     //default constructor
     public EnterLostPetFragment(){
 
@@ -58,11 +72,19 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
 
-        View root_view = inflater.inflate(R.layout.enter_pet,container,false);
+        final View root_view = inflater.inflate(R.layout.enter_pet,container,false);
         setHasOptionsMenu(true);
         //
         FirebaseApp.initializeApp(root_view.getContext());
         mAuth = FirebaseAuth.getInstance();
+        mImageToUploadOne =(ImageView) root_view.findViewById(R.id.enter_pet_upload_pic_one);
+        mUploadPictureButton = (Button) root_view.findViewById(R.id.enter_pet_pic_upload_bt);
+        mUploadPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage();
+            }
+        });
         //gender spinner code
         mGenderSpinner = (Spinner) root_view.findViewById(R.id.gender_spinner);
         //Edit text assignement
@@ -213,5 +235,20 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             return false;
         }
         return true;
+    }
+    private void selectImage(){
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_GET);
+        //super.startActivityForResult(intent, REQUEST_IMAGE_GET);
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e("OnRESULTACTIOn", "YEET!");
+        //TODO FIGURE Out why this method isn't firing
+
     }
 }
