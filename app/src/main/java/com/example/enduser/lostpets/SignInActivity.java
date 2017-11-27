@@ -69,8 +69,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     //ensure app preserves the data the user input into the fields
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        outState.putString(USERNAME,mUsername.getText().toString());
-        outState.putString(PASSWORD, mPassword.getText().toString());
+        outState.putString(USERNAME,mUsername.getText().toString().trim());
+        outState.putString(PASSWORD, mPassword.getText().toString().trim());
         super.onSaveInstanceState(outState, outPersistentState);
     }
     public boolean verifyEmail(String email){

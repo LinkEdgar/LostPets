@@ -67,6 +67,15 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private ImageView mImageToUploadOne;
     private int REQUEST_IMAGE_GET = 1001;
 
+    //Bundle textfields
+    private final static String PET_NAME = "pet_name";
+    private final static String PET_BREED = "pet_breed";
+    private final static String PET_ZIP = "pet_zip";
+    private final static String PET_WEIGHT = "pet_weight";
+    private final static String PET_DESCRIPTION = "pet_desc";
+    private final static String PET_MIRCOCHIP = "pet_micro";
+    private final static String PET_GENDER = "pet_gender";
+
     //default constructor
     public EnterLostPetFragment(){
 
@@ -90,6 +99,27 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 selectImage();
             }
         });
+        //bundle
+        if(savedInstanceState != null){
+            if(savedInstanceState.containsKey(PET_NAME)){
+                petName.setText(savedInstanceState.getString(PET_NAME));
+            }
+            if(savedInstanceState.containsKey(PET_BREED)){
+                petBreed.setText(savedInstanceState.getString(PET_BREED));
+            }
+            if(savedInstanceState.containsKey(PET_ZIP)){
+                petZip.setText(savedInstanceState.getString(PET_ZIP));
+            }
+            if(savedInstanceState.containsKey(PET_WEIGHT)){
+                petWeight.setText(savedInstanceState.getString(PET_WEIGHT));
+            }
+            if(savedInstanceState.containsKey(PET_DESCRIPTION)){
+                petDesc.setText(savedInstanceState.getString(PET_DESCRIPTION));
+            }
+            if(savedInstanceState.containsKey(PET_GENDER)){
+                petGender = savedInstanceState.getString(PET_GENDER);
+            }
+        }
         //gender spinner code
         mGenderSpinner = (Spinner) root_view.findViewById(R.id.gender_spinner);
         //Edit text assignement
@@ -276,6 +306,13 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     //bundle fields and images if choosen
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putString(PET_NAME, petName.getText().toString().trim());
+        outState.putString(PET_BREED, petBreed.getText().toString().trim());
+        outState.putString(PET_ZIP,petZip.getText().toString().trim());
+        outState.putString(PET_WEIGHT, petWeight.getText().toString().trim());
+        outState.putString(PET_DESCRIPTION, petDesc.getText().toString().trim());
+        outState.putString(PET_GENDER, petGender);
+
         super.onSaveInstanceState(outState);
     }
 }
