@@ -64,13 +64,14 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private static final String PET_GENDER_MALE = "Male";
     private static final String PET_GENDER_FEMALE ="Female";
     private static final String PET_GENDER_UNKNOWN  ="Unknown";
-    //TODO add functionality to check box --> this includes adding this information to the database
     private CheckBox mMicroChipCheckBoc;
     private Button mUploadPictureButton;
     private ImageView mImageToUploadOne;
     private int REQUEST_IMAGE_GET = 1001;
 
     //Bundle textfields
+    //TODO find out how to bundle image
+    private final static String IMAGE_ONE_BUNDLE = "image_one";
     private final static String PET_NAME = "pet_name";
     private final static String PET_BREED = "pet_breed";
     private final static String PET_ZIP = "pet_zip";
@@ -203,11 +204,12 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         String breed = petInfo[2];;
         String zip = petInfo[3];;
         String desc = petInfo[4];;
+        String microChip = petInfo[5];
         if(validateData(name, zip)) {
             mDatabase = FirebaseDatabase.getInstance();
             mRef = mDatabase.getReference("Pets");
             mCurrentUser = mAuth.getCurrentUser();
-
+            mRef.child(petID).child("microchip").setValue(microChip);
             mRef.child(petID).child("name").setValue(name);
             mRef.child(petID).child("breed").setValue(breed);
             mRef.child(petID).child("weight").setValue(weight + " lbs");
@@ -243,7 +245,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     public void assignPetId(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference petId = database.getReference("PetId");
-        final String[] petArray = new String[5];
+        final String[] petArray = new String[6];
         setPetInfo(petArray);
 
         petId.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -274,6 +276,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         petInfo[2] = petBreed.getText().toString().trim();
         petInfo[3] = petZip.getText().toString().trim();
         petInfo[4] = petDesc.getText().toString().trim();
+        petInfo[5] = Boolean.toString(isPetMicrochipped);
 
         return  petInfo;
     }
@@ -299,7 +302,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("ONACTIVITYRESULT", "YEET");
         Bitmap bmp = null;
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == REQUEST_IMAGE_GET && data != null){
@@ -310,7 +312,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                     mImageToUploadOne.setImageBitmap(bmp);
                 }
                 catch(IOException e){
-                    Log.e("ImageView set", "COuldnt do it fam ");
+                    Log.e("SetImageOneFromGallery", "Failed to load image ");
 
                 }
             }
@@ -331,7 +333,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         outState.putString(PET_DESCRIPTION, petDesc.getText().toString().trim());
         outState.putString(PET_GENDER, petGender);
         outState.putBoolean(PET_MIRCOCHIP,isPetMicrochipped);
-
         super.onSaveInstanceState(outState);
     }
 }

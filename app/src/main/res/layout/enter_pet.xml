@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- TODO  come up with UI for the pet entry fragment-->
     <!-- add strings to resources for all text fields -->
@@ -109,16 +111,42 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <ImageView
+            tools:src="@mipmap/ic_launcher"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="12dp"
             android:id="@+id/enter_pet_upload_pic_one"
             android:layout_marginRight="12dp"
-            android:maxWidth="350dp"
-            android:maxHeight="250dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
+
+            <ImageView
+                android:src="@mipmap/ic_launcher"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="12dp"
+                tools:src="@mipmap/ic_launcher"
+                android:id="@+id/enter_pet_pic_two"
+                android:layout_width="150dp"
+                android:layout_height="150dp" />
+
+            <ImageView
+                android:src="@mipmap/ic_launcher"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="12dp"
+                tools:src="@mipmap/ic_launcher"
+                android:id="@+id/enter_pet_pic_three"
+                android:layout_width="150dp"
+                android:layout_height="150dp" />
+        </LinearLayout>
+        </HorizontalScrollView>
 
     </LinearLayout>
 
