@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -54,9 +55,11 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private DatabaseReference mRef;
     private FirebaseUser mCurrentUser;
     //Edit text fields
+    private CheckBox mMicroCheckBox;
     private String petID;
     private EditText petName, petWeight, petZip, petBreed,petDesc;
     private String petGender;
+    private boolean isPetMicrochipped;
     private static final int ZIP_CODE_CHAR_LIMIT =5;
     private static final String PET_GENDER_MALE = "Male";
     private static final String PET_GENDER_FEMALE ="Female";
@@ -119,6 +122,9 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             if(savedInstanceState.containsKey(PET_GENDER)){
                 petGender = savedInstanceState.getString(PET_GENDER);
             }
+            if(savedInstanceState.containsKey(PET_MIRCOCHIP)){
+                isPetMicrochipped = savedInstanceState.getBoolean(PET_MIRCOCHIP);
+            }
         }
         //gender spinner code
         mGenderSpinner = (Spinner) root_view.findViewById(R.id.gender_spinner);
@@ -128,6 +134,18 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         petWeight = (EditText) root_view.findViewById(R.id.enter_pet_weight);
         petZip =(EditText) root_view.findViewById(R.id.enter_pet_zip);
         petDesc = (EditText) root_view.findViewById(R.id.enter_pet_desc);
+        mMicroCheckBox = (CheckBox) root_view.findViewById(R.id.enter_pet_microchip);
+        mMicroCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if(checked){
+                   isPetMicrochipped = true;
+                }
+                else{
+                    isPetMicrochipped = false;
+                }
+            }
+        });
         String[] genderValues = {"Unknown", "Male", "Female"};
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(getContext(),android.R.layout.simple_spinner_item, genderValues);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
@@ -312,6 +330,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         outState.putString(PET_WEIGHT, petWeight.getText().toString().trim());
         outState.putString(PET_DESCRIPTION, petDesc.getText().toString().trim());
         outState.putString(PET_GENDER, petGender);
+        outState.putBoolean(PET_MIRCOCHIP,isPetMicrochipped);
 
         super.onSaveInstanceState(outState);
     }
