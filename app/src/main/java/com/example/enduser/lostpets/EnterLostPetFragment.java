@@ -1,5 +1,6 @@
 package com.example.enduser.lostpets;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -240,15 +241,13 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         startActivityForResult(intent, REQUEST_IMAGE_GET);
-        //super.startActivityForResult(intent, REQUEST_IMAGE_GET);
 
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("OnRESULTACTIOn", "YEET!");
-        //TODO FIGURE Out why this method isn't firing
+        Log.e("ONACTIVITYRESULT", "YEET");
 
     }
 }
