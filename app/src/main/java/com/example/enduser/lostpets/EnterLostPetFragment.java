@@ -3,6 +3,7 @@ package com.example.enduser.lostpets;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.Contacts;
@@ -37,6 +38,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by EndUser on 10/22/2017.
@@ -248,6 +252,30 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("ONACTIVITYRESULT", "YEET");
+        Bitmap bmp = null;
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == REQUEST_IMAGE_GET && data != null){
+                try {
+                    Uri imageUri = data.getData();
+                    InputStream image = getActivity().getContentResolver().openInputStream(imageUri);
+                    bmp = BitmapFactory.decodeStream(image);
+                    mImageToUploadOne.setImageBitmap(bmp);
+                }
+                catch(IOException e){
+                    Log.e("ImageView set", "COuldnt do it fam ");
 
+                }
+            }
+
+            else{
+                Toast.makeText(getContext(), "THIS IS NOT WORKING!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+    //bundle fields and images if choosen
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }

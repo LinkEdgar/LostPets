@@ -109,37 +109,16 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+
         <ImageView
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="12dp"
             android:id="@+id/enter_pet_upload_pic_one"
             android:layout_marginRight="12dp"
             android:maxWidth="350dp"
             android:maxHeight="250dp"
-            android:src="@mipmap/ic_launcher"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <ImageView
-            android:layout_marginRight="12dp"
-            android:maxWidth="350dp"
-            android:maxHeight="250dp"
-            android:src="@mipmap/ic_launcher_round"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ImageView
-            android:maxWidth="350dp"
-            android:maxHeight="250dp"
-            android:src="@mipmap/ic_launcher"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        </LinearLayout>
-
-    </HorizontalScrollView>
 
     </LinearLayout>
 
