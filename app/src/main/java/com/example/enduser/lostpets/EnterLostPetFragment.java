@@ -240,6 +240,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         petDesc.clearFocus();
         petZip.getText().clear();
         petZip.clearFocus();
+        mMicroCheckBox.setChecked(false);
+        mMicroCheckBox.clearFocus();
     }
 
     public void assignPetId(){
