@@ -11,6 +11,8 @@ public class Pet {
     private String gender;
     private String zipCode;
     private String breed;
+    private String description;
+    private String microchip;
 
     public Pet(String name, String weight, String gender, String zipCode, String breed){
         this.name = name;
@@ -18,6 +20,16 @@ public class Pet {
         this.gender = gender;
         this.zipCode = zipCode;
         this.breed = breed;
+    }
+
+    public Pet(String name, String weight, String gender, String zipCode, String breed, String microchip, String description){
+        this.name = name;
+        this.weight = weight;
+        this.gender = gender;
+        this.zipCode = zipCode;
+        this.breed = breed;
+        this.description = description;
+        this.microchip = microchip;
     }
     public void setName(String name){
         this.name = name;

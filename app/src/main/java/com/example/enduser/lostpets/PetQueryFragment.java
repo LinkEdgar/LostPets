@@ -1,5 +1,6 @@
 package com.example.enduser.lostpets;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,7 @@ public class PetQueryFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayouManager;
     private ArrayList<Pet> petArrayList;
+    private ProgressDialog mloadingPetProgressBar;
     public PetQueryFragment(){
 
     }
@@ -49,6 +51,7 @@ public class PetQueryFragment extends Fragment {
         View root_view = inflater.inflate(R.layout.activity_pet_query,container,false);
         FirebaseApp.initializeApp(root_view.getContext());
         mAuth = FirebaseAuth.getInstance();
+        mloadingPetProgressBar = new ProgressDialog(getContext());
 
         mRecyclerView = (RecyclerView) root_view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -90,6 +93,8 @@ public class PetQueryFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Test code
+                mloadingPetProgressBar.setMessage("Loading Pets");
+                mloadingPetProgressBar.show();
                 petArrayList.clear();
                int count = 1;
                while(count < maxQueryCount){
@@ -98,7 +103,10 @@ public class PetQueryFragment extends Fragment {
                    String petWeight = dataSnapshot.child(""+count).child(("weight")).getValue().toString();
                    String petZip = dataSnapshot.child(""+count).child(("zip")).getValue().toString();
                    String petGender = dataSnapshot.child(""+count).child("gender").getValue().toString();
-                   petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed));
+                   String petMicro = dataSnapshot.child(""+count).child("microchip").getValue().toString();
+                   String petDesciption = dataSnapshot.child(""+count).child("description").getValue().toString();
+
+                   petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDesciption));
                    count++;
                }
 
@@ -108,7 +116,7 @@ public class PetQueryFragment extends Fragment {
                 petArrayList.add(new Pet("Sombra","55", "Female", "30168","Lab"));
                 petArrayList.add(new Pet("Binx","14", "Female", "30168","yeet ass dog"));
                 petArrayList.add(new Pet("Sofie","8", "Female", "30168","German Sheppard"));
-
+                mloadingPetProgressBar.dismiss();
                 mRecyclerView.setAdapter(new PetAdapter(petArrayList));
             }
 

@@ -320,7 +320,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             }
 
             else{
-                Toast.makeText(getContext(), "THIS IS NOT WORKING!", Toast.LENGTH_SHORT).show();
+
             }
         }
 

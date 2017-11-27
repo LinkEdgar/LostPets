@@ -120,8 +120,4 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return false;
     }
-    public boolean validateEmail(String email){
-        //TODO: add code to validate the email
-        return true;
-    }
 }
