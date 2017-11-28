@@ -105,8 +105,9 @@ public class PetQueryFragment extends Fragment {
                    String petGender = dataSnapshot.child(""+count).child("gender").getValue().toString();
                    String petMicro = dataSnapshot.child(""+count).child("microchip").getValue().toString();
                    String petDesciption = dataSnapshot.child(""+count).child("description").getValue().toString();
+                   String petUrl = dataSnapshot.child(""+count).child("picture_url").getValue().toString();
 
-                   petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDesciption));
+                   petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDesciption, petUrl));
                    count++;
                }
 

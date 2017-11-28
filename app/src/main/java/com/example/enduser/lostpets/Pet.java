@@ -13,6 +13,7 @@ public class Pet {
     private String breed;
     private String description;
     private String microchip;
+    private String urlOne;
 
     public Pet(String name, String weight, String gender, String zipCode, String breed){
         this.name = name;
@@ -31,9 +32,24 @@ public class Pet {
         this.description = description;
         this.microchip = microchip;
     }
+
+    public Pet(String name, String weight, String gender, String zipCode, String breed, String microchip, String description, String url){
+        this.name = name;
+        this.weight = weight;
+        this.gender = gender;
+        this.zipCode = zipCode;
+        this.breed = breed;
+        this.description = description;
+        this.microchip = microchip;
+        urlOne = url;
+    }
+
     public void setName(String name){
         this.name = name;
     }
+    public void setUrlOne(String urlOne){this.urlOne = urlOne;}
+    public void setDescription(String description){this.description = description;}
+    public void setMicrochip(String microchip){this.microchip = microchip;}
     public  void setWeight(String weight){
         this.weight = weight;
     }
@@ -51,6 +67,10 @@ public class Pet {
     public String getGender(){return gender;}
     public String getZipCode(){return zipCode;}
     public String getBreed(){return breed;}
+    public String getDescription(){return description;}
+    public String getMicrochip(){return microchip;}
+    public String getUrlOne(){return urlOne;}
+
 
 
 

@@ -356,7 +356,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         super.onSaveInstanceState(outState);
     }
     private void uploadImage(final Uri filePath){
-        //TODO add elegance to this method!
+        //TODO add elegance to this method! If the image is rotated then unrotate it!
         if(filePath != null){
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");

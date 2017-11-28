@@ -9,6 +9,7 @@
     android:layout_marginBottom="8dp"
     android:layout_height="wrap_content">
     <ImageView
+        android:id="@+id/pet_query_display_image"
         android:layout_margin="8dp"
         android:src="@mipmap/ic_launcher_round"
         android:layout_width="52dp"
