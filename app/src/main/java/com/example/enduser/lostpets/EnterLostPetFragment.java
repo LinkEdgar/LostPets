@@ -70,6 +70,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private String petID;
     private EditText petName, petWeight, petZip, petBreed,petDesc;
     private String petGender;
+    private String petPictureUrl;
     private boolean isPetMicrochipped;
     private static final int ZIP_CODE_CHAR_LIMIT =5;
     private static final String PET_GENDER_MALE = "Male";
@@ -229,6 +230,9 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             mRef.child(petID).child("zip").setValue(zip);
             mRef.child(petID).child("gender").setValue(petGender);
             mRef.child(petID).child("description").setValue(desc);
+            if(petPictureUrl != null){
+                mRef.child(petID).child("picture_url").setValue(petPictureUrl);
+            }
             Toast.makeText(getContext(), "Pet has been added to database", Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -352,6 +356,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         super.onSaveInstanceState(outState);
     }
     private void uploadImage(final Uri filePath){
+        //TODO add elegance to this method!
         if(filePath != null){
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");
@@ -362,6 +367,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     progressDialog.dismiss();
+                    setImageUrl(taskSnapshot);
                     Toast.makeText(getContext(), "Upload Success", Toast.LENGTH_SHORT).show();
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -372,5 +378,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 }
             });
         }
+    }
+    private void setImageUrl(UploadTask.TaskSnapshot taskSnapshot){
+        petPictureUrl = taskSnapshot.getDownloadUrl().toString();
     }
 }
