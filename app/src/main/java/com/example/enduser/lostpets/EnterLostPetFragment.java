@@ -1,6 +1,8 @@
 package com.example.enduser.lostpets;
 
+import android.accessibilityservice.GestureDescription;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -9,6 +11,7 @@ import android.net.Uri;
 import android.provider.Contacts;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,6 +50,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 /**
  * Created by EndUser on 10/22/2017.
@@ -58,6 +63,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
     private FirebaseUser mCurrentUser;
+    private FirebaseStorage mStorage;
+    private StorageReference mStorageReference;
     //Edit text fields
     private CheckBox mMicroCheckBox;
     private String petID;
@@ -99,6 +106,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         //
         FirebaseApp.initializeApp(root_view.getContext());
         mAuth = FirebaseAuth.getInstance();
+        mStorage = FirebaseStorage.getInstance();
+        mStorageReference = mStorage.getReference();
         mImageToUploadOne =(ImageView) root_view.findViewById(R.id.enter_pet_upload_pic_one);
         mUploadPictureButton = (Button) root_view.findViewById(R.id.enter_pet_pic_upload_bt);
         mUploadPictureButton.setOnClickListener(new View.OnClickListener() {
@@ -316,6 +325,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                     InputStream image = getActivity().getContentResolver().openInputStream(imageUri);
                     bmp = BitmapFactory.decodeStream(image);
                     mImageToUploadOne.setImageBitmap(bmp);
+                    uploadImage(imageUri);
                 }
                 catch(IOException e){
                     Log.e("SetImageOneFromGallery", "Failed to load image ");
@@ -340,5 +350,27 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         outState.putString(PET_GENDER, petGender);
         outState.putBoolean(PET_MIRCOCHIP,isPetMicrochipped);
         super.onSaveInstanceState(outState);
+    }
+    private void uploadImage(final Uri filePath){
+        if(filePath != null){
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+            StorageReference ref = mStorageReference.child("Photos");
+            StorageReference photoRef = mStorageReference.child(filePath.getLastPathSegment());
+            photoRef.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getContext(), "Upload Success", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getContext(), "Image Upload Failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }
