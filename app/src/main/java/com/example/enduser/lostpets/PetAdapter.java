@@ -1,7 +1,9 @@
 package com.example.enduser.lostpets;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -61,7 +61,20 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
         holder.mPetBreedTV.setText(myArray.get(position).getBreed());
         Context context = holder.mPetImageIV.getContext();
         String imageUrl = myArray.get(position).getUrlOne();
-        Picasso.with(context).load(imageUrl).into(holder.mPetImageIV);
+        //TODO figure out what to do about entrances without pictures
+        if(!imageUrl.equals("invalid")){
+            Picasso.with(context).load(imageUrl).into(holder.mPetImageIV);
+        }
+        else{
+            /*
+            Drawable imageNotAvailable = context.getResources().getDrawable(R.drawable.no_image);
+            holder.mPetImageIV.setImageDrawable(imageNotAvailable);
+            Log.e("Settign image", "DOES this fire?");
+            */
+            Picasso.with(context).load("https://firebasestorage.googleapis.com/v0/b/lostpets-60064.appspot.com/o/Image_Not_Available.jpg?alt=media&token=22d201f6-9a01-4fdc-b55b-2fe228a6726e")
+                    .into(holder.mPetImageIV);
+
+        }
 
     }
 

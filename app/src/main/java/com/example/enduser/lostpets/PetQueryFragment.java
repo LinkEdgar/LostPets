@@ -112,11 +112,13 @@ public class PetQueryFragment extends Fragment {
                }
 
                 //adds fake pets for funzies
+                /*
                 petArrayList.add(new Pet("Winda","50", "Female", "30168","German Sheppard"));
                 petArrayList.add(new Pet("Doby","30", "Male", "30168","Mix"));
                 petArrayList.add(new Pet("Sombra","55", "Female", "30168","Lab"));
                 petArrayList.add(new Pet("Binx","14", "Female", "30168","yeet ass dog"));
                 petArrayList.add(new Pet("Sofie","8", "Female", "30168","German Sheppard"));
+                */
                 mloadingPetProgressBar.dismiss();
                 mRecyclerView.setAdapter(new PetAdapter(petArrayList));
             }

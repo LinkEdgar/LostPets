@@ -34,8 +34,10 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -71,6 +73,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private EditText petName, petWeight, petZip, petBreed,petDesc;
     private String petGender;
     private String petPictureUrl;
+    private Uri petPictureUri;
+    private static final String INVALID_URL = "invalid";
     private boolean isPetMicrochipped;
     private static final int ZIP_CODE_CHAR_LIMIT =5;
     private static final String PET_GENDER_MALE = "Male";
@@ -203,8 +207,13 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         if(itemId == R.id.add_pet_item){
             //This method calls assigns a unique ID for each pet added to the database
              //within this method store data is called which sets the pet info to the database
+            if(petPictureUri != null){
+                uploadImage(petPictureUri);
+            }
+            else {
                 assignPetId();
                 clearTextFields();
+            }
 
         }
         return true;
@@ -233,6 +242,9 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             if(petPictureUrl != null){
                 mRef.child(petID).child("picture_url").setValue(petPictureUrl);
             }
+            else{
+                mRef.child(petID).child("picture_url").setValue(INVALID_URL);
+            }
             Toast.makeText(getContext(), "Pet has been added to database", Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -259,6 +271,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         petZip.clearFocus();
         mMicroCheckBox.setChecked(false);
         mMicroCheckBox.clearFocus();
+
+        petPictureUri = null;
     }
 
     public void assignPetId(){
@@ -329,7 +343,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                     InputStream image = getActivity().getContentResolver().openInputStream(imageUri);
                     bmp = BitmapFactory.decodeStream(image);
                     mImageToUploadOne.setImageBitmap(bmp);
-                    uploadImage(imageUri);
+                    petPictureUri = imageUri;
                 }
                 catch(IOException e){
                     Log.e("SetImageOneFromGallery", "Failed to load image ");
@@ -355,8 +369,10 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         outState.putBoolean(PET_MIRCOCHIP,isPetMicrochipped);
         super.onSaveInstanceState(outState);
     }
+    //this method only runs if the petPictureUri is not null meaning the user has chosen to upload a picture of their pet.
+    //after the picture is successfully finished uploading it will clear the text fields
     private void uploadImage(final Uri filePath){
-        //TODO add elegance to this method! If the image is rotated then unrotate it!
+        //TODO figure out how to determine if a photo is rotated to better display in the search
         if(filePath != null){
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");
@@ -368,13 +384,18 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     progressDialog.dismiss();
                     setImageUrl(taskSnapshot);
-                    Toast.makeText(getContext(), "Upload Success", Toast.LENGTH_SHORT).show();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     progressDialog.dismiss();
                     Toast.makeText(getContext(), "Image Upload Failed", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    assignPetId();
+                    clearTextFields();
                 }
             });
         }
