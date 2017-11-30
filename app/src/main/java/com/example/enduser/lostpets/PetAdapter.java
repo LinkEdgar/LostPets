@@ -2,6 +2,7 @@ package com.example.enduser.lostpets;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
+        private CardView mCardView;
         private TextView mPetNameTV;
         private TextView mPetBreedTV;
         private TextView mPetWeightTV;
@@ -40,6 +42,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
         public ViewHolder(View v){
             super(v);
             layout = v;
+            mCardView = (CardView) v.findViewById(R.id.pet_card_view);
             mPetImageIV = (ImageView) v.findViewById(R.id.pet_query_display_image);
             mPetNameTV = (TextView) v.findViewById(R.id.pet_query_display_name);
             mPetBreedTV = (TextView) v.findViewById(R.id.pet_query_display_breed);
@@ -104,4 +107,8 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
         this.onClick = onClick;
     }
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
 }

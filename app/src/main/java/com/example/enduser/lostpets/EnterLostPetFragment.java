@@ -123,6 +123,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         });
         //bundle
         if(savedInstanceState != null){
+            //Something weird is happening Here
+            /*
             if(savedInstanceState.containsKey(PET_NAME)){
                 petName.setText(savedInstanceState.getString(PET_NAME));
             }
@@ -144,6 +146,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             if(savedInstanceState.containsKey(PET_MIRCOCHIP)){
                 isPetMicrochipped = savedInstanceState.getBoolean(PET_MIRCOCHIP);
             }
+            */
         }
         //gender spinner code
         mGenderSpinner = (Spinner) root_view.findViewById(R.id.gender_spinner);
@@ -360,14 +363,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     //bundle fields and images if choosen
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(PET_NAME, petName.getText().toString().trim());
-        outState.putString(PET_BREED, petBreed.getText().toString().trim());
-        outState.putString(PET_ZIP,petZip.getText().toString().trim());
-        outState.putString(PET_WEIGHT, petWeight.getText().toString().trim());
-        outState.putString(PET_DESCRIPTION, petDesc.getText().toString().trim());
-        outState.putString(PET_GENDER, petGender);
-        outState.putBoolean(PET_MIRCOCHIP,isPetMicrochipped);
-        super.onSaveInstanceState(outState);
+        //TODO find  a way to persist image data
     }
     //this method only runs if the petPictureUri is not null meaning the user has chosen to upload a picture of their pet.
     //after the picture is successfully finished uploading it will clear the text fields

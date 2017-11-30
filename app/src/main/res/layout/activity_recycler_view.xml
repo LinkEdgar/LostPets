@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <ProgressBar
-        android:id="@+id/recycler_loading_bar"
-        android:visibility="invisible"
-        android:indeterminate="true"
-        android:layout_width="wrap_content"
+    <!--TODO issue with displaying cardview in landscape mode  -->
+    <TextView
+        android:text="Hello World"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
 
     <android.support.v7.widget.RecyclerView
         android:scrollbars="vertical"
@@ -16,4 +15,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
-</FrameLayout>
+</LinearLayout>

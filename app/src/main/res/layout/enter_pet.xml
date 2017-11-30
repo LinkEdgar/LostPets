@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
+        android:inputType="text"
         android:id="@+id/enter_pet_name"
         android:maxLines="1"
         android:textAlignment="center"
@@ -27,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
+        android:inputType="text"
         android:id="@+id/enter_pet_breed"
         android:maxLines="1"
         android:textAlignment="center"
@@ -60,6 +62,7 @@
         android:minHeight="30dp"
         android:layout_height="80dp">
         <EditText
+            android:inputType="text"
             android:id="@+id/enter_pet_desc"
             android:textAlignment="center"
             android:hint="Describe any distinguishing features that may help find your pet here. "
