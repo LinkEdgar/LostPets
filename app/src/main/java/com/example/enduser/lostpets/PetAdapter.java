@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,14 +21,21 @@ import java.util.ArrayList;
 
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
     private ArrayList<Pet> myArray;
+    private final String DEFAULT_PICTURE_URL = "https://firebasestorage.googleapis.com/v0/b/lostpets-60064.appspot.com/o/Image_Not_Available.jpg?alt=media&token=22d201f6-9a01-4fdc-b55b-2fe228a6726e";
+    //onclick variables
+    private OnItemClicked onClick;
+
+    public interface OnItemClicked{
+        void onItemClick(int position);
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView mPetNameTV;
-        public TextView mPetBreedTV;
-        public TextView mPetWeightTV;
-        public TextView mPetGenderTV;
-        public ImageView mPetImageIV;
-        public View layout;
+        private TextView mPetNameTV;
+        private TextView mPetBreedTV;
+        private TextView mPetWeightTV;
+        private TextView mPetGenderTV;
+        private ImageView mPetImageIV;
+        private View layout;
 
         public ViewHolder(View v){
             super(v);
@@ -40,9 +48,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
 
         }
     }
-    public PetAdapter(ArrayList<Pet> array){
-        myArray = array;
-    }
+    public PetAdapter(ArrayList<Pet> array){myArray = array;}
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,7 +60,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         holder.mPetNameTV.setText(myArray.get(position).getName());
         holder.mPetGenderTV.setText(myArray.get(position).getGender());
         holder.mPetWeightTV.setText(myArray.get(position).getWeight());
@@ -71,10 +77,15 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
             holder.mPetImageIV.setImageDrawable(imageNotAvailable);
             Log.e("Settign image", "DOES this fire?");
             */
-            Picasso.with(context).load("https://firebasestorage.googleapis.com/v0/b/lostpets-60064.appspot.com/o/Image_Not_Available.jpg?alt=media&token=22d201f6-9a01-4fdc-b55b-2fe228a6726e")
-                    .into(holder.mPetImageIV);
+            Picasso.with(context).load(DEFAULT_PICTURE_URL).into(holder.mPetImageIV);
 
         }
+        holder.layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClick.onItemClick(position);
+            }
+        });
 
     }
 
@@ -84,6 +95,8 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
     }
 
 
-
+    public void setOnClick(OnItemClicked onClick){
+        this.onClick = onClick;
+    }
 
 }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,14 +32,14 @@ import java.util.ArrayList;
  * Created by ZenithPC on 10/23/2017.
  */
 
-public class PetQueryFragment extends Fragment {
+public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClicked{
     //firebase related variables
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
     //Recyclerview related elements
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private PetAdapter mAdapter;
     private RecyclerView.LayoutManager mLayouManager;
     private ArrayList<Pet> petArrayList;
     private ProgressDialog mloadingPetProgressBar;
@@ -59,9 +60,11 @@ public class PetQueryFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayouManager);
 
         petArrayList = new ArrayList<>();
-        //mAdapter = new PetAdapter(petArrayList);
+        mAdapter = new PetAdapter(petArrayList);
 
         mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setOnClick(this);
+
         //this method queries all pets and calls getAllPetInfo
         queryAllPets();
         return root_view;
@@ -120,7 +123,6 @@ public class PetQueryFragment extends Fragment {
                 petArrayList.add(new Pet("Sofie","8", "Female", "30168","German Sheppard"));
                 */
                 mloadingPetProgressBar.dismiss();
-                mRecyclerView.setAdapter(new PetAdapter(petArrayList));
             }
 
             @Override
@@ -129,5 +131,10 @@ public class PetQueryFragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Toast.makeText(getContext(), position+" was clicked", Toast.LENGTH_SHORT).show();
     }
 }
