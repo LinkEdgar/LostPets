@@ -4,15 +4,12 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
@@ -21,10 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -42,20 +36,20 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private PetAdapter mAdapter;
     private RecyclerView.LayoutManager mLayouManager;
     private ArrayList<Pet> petArrayList;
-    private ProgressDialog mloadingPetProgressBar;
+    //TODO progress bar not working properly
+    private ProgressBar mloadingBar;
     public PetQueryFragment(){
 
     }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root_view = inflater.inflate(R.layout.activity_pet_query,container,false);
+        View root_view = inflater.inflate(R.layout.activity_recycler_view,container,false);
         FirebaseApp.initializeApp(root_view.getContext());
         mAuth = FirebaseAuth.getInstance();
-        mloadingPetProgressBar = new ProgressDialog(getContext());
 
         mRecyclerView = (RecyclerView) root_view.findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(false);
         mLayouManager = new LinearLayoutManager(root_view.getContext());
         mRecyclerView.setLayoutManager(mLayouManager);
 
@@ -96,8 +90,6 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Test code
-                mloadingPetProgressBar.setMessage("Loading Pets");
-                mloadingPetProgressBar.show();
                 petArrayList.clear();
                int count = 1;
                while(count < maxQueryCount){
@@ -114,15 +106,6 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
                    count++;
                }
 
-                //adds fake pets for funzies
-                /*
-                petArrayList.add(new Pet("Winda","50", "Female", "30168","German Sheppard"));
-                petArrayList.add(new Pet("Doby","30", "Male", "30168","Mix"));
-                petArrayList.add(new Pet("Sombra","55", "Female", "30168","Lab"));
-                petArrayList.add(new Pet("Binx","14", "Female", "30168","yeet ass dog"));
-                petArrayList.add(new Pet("Sofie","8", "Female", "30168","German Sheppard"));
-                */
-                mloadingPetProgressBar.dismiss();
             }
 
             @Override
@@ -130,11 +113,12 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
 
             }
         });
-
     }
-
+    //used for recycler view onclick handling
     @Override
     public void onItemClick(int position) {
-        Toast.makeText(getContext(), position+" was clicked", Toast.LENGTH_SHORT).show();
+        //use this method to pass the pet to a new activity or a popup menu with detailed information
+        Pet pet = mAdapter.getPet(position);
+        Toast.makeText(getContext(), position+" was clicked "+ pet.getName(), Toast.LENGTH_SHORT).show();
     }
 }

@@ -94,6 +94,11 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
         return myArray.size();
     }
 
+    public Pet getPet(int position){
+
+        return myArray.get(position);
+    }
+
 
     public void setOnClick(OnItemClicked onClick){
         this.onClick = onClick;
