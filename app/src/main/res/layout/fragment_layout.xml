@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!-- TODO add color and customization to tabs --
+    <!-- TODO add color and customization to tabs -->
     <android.support.design.widget.TabLayout
         app:tabMode="fixed"
         android:elevation="6dp"
