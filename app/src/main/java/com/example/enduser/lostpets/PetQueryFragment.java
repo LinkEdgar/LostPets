@@ -1,11 +1,13 @@
 package com.example.enduser.lostpets;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +65,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         queryAllPets();
         return root_view;
     }
-
+    //performs a general query for all pets refreshing every pet in the database
     private void queryAllPets(){
         FirebaseDatabase fullQueryDB = FirebaseDatabase.getInstance();
         DatabaseReference mFullRef = fullQueryDB.getReference("PetId");
@@ -115,10 +117,32 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         });
     }
     //used for recycler view onclick handling
+    //investigate if it's worth it to pass the entire object or just the data
     @Override
     public void onItemClick(int position) {
         //use this method to pass the pet to a new activity or a popup menu with detailed information
         Pet pet = mAdapter.getPet(position);
+        Intent intent = new Intent(getActivity(),PetDetailedInformation.class);
+        String pName = pet.getName();
+        String pWeight = pet.getWeight();
+        String pGender = pet.getGender();
+        String pZIp = pet.getZipCode();
+        String pBreed = pet.getBreed();
+        String pDesc = pet.getDescription();
+        String pMicro = pet.getMicrochip();
+        String pUrl = pet.getUrlOne();
+        //Pass all the info from the Pet via string in the intent extra
+        intent.putExtra("PetName",pName);
+        intent.putExtra("PetWeight",pWeight);
+        intent.putExtra("PetGender",pGender);
+        intent.putExtra("PetZip", pZIp);
+        intent.putExtra("PetBreed",pBreed);
+        intent.putExtra("PetDescription",pDesc);
+        intent.putExtra("PetMicrochip",pMicro);
+        intent.putExtra("PetUrlOne", pUrl);
+
+
+        startActivity(intent);
         Toast.makeText(getContext(), position+" was clicked "+ pet.getName(), Toast.LENGTH_SHORT).show();
     }
 }
