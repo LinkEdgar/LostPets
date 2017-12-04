@@ -34,6 +34,8 @@ public class PetDetailedInformation extends AppCompatActivity {
         mPetMicrochipStatusFromIntent = intent.getStringExtra("PetMicrochip");
         mPetUrlOneFromIntent = intent.getStringExtra("PetUrlOne");
 
+        mPetInfoDisplay.setText(mPetNameFromIntent + "'s breed is identified by its owner as \" "+ mPetBreedFromIntent +"\", weighs "+ mPetWeightFromIntent+ ", is a " + mPetGenderFromIntent + " ,and is {microchip status goes here} "+ mPetMicrochipStatusFromIntent + " . " + mPetNameFromIntent + " is described by its owners as \"" + mPetDescriptionFromIntent + "\" ." );
+        /*
         mPetInfoDisplay.append(mPetNameFromIntent + "\n");
         mPetInfoDisplay.append(mPetWeightFromIntent + "\n");
         mPetInfoDisplay.append(mPetGenderFromIntent + "\n");
@@ -42,7 +44,7 @@ public class PetDetailedInformation extends AppCompatActivity {
         mPetInfoDisplay.append(mPetDescriptionFromIntent + "\n");
         mPetInfoDisplay.append(mPetMicrochipStatusFromIntent + "\n");
         mPetInfoDisplay.append(mPetUrlOneFromIntent + "\n");
-
+        */
 
     }
 }

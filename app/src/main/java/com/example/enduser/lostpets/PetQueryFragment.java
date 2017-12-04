@@ -143,6 +143,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
 
 
         startActivity(intent);
+        //TODO remove this after testing 
         Toast.makeText(getContext(), position+" was clicked "+ pet.getName(), Toast.LENGTH_SHORT).show();
     }
 }
