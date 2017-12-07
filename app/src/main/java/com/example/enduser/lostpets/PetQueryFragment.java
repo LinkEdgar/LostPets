@@ -55,6 +55,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         mLayouManager = new LinearLayoutManager(root_view.getContext());
         mRecyclerView.setLayoutManager(mLayouManager);
 
+        mloadingBar = (ProgressBar) root_view.findViewById(R.id.pet_query_progressbar);
+
         petArrayList = new ArrayList<>();
         mAdapter = new PetAdapter(petArrayList);
 
@@ -65,7 +67,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         queryAllPets();
         return root_view;
     }
-    //performs a general query for all pets refreshing every pet in the database
+    //performs a general query for all pets refreshing every pet in the database and is performed once on start and again anytime a pet is added to the db
     private void queryAllPets(){
         FirebaseDatabase fullQueryDB = FirebaseDatabase.getInstance();
         DatabaseReference mFullRef = fullQueryDB.getReference("PetId");
@@ -88,26 +90,12 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private void getAllPetInfo(final int maxQueryCount){
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference("Pets");
+        mloadingBar.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //Test code
-                petArrayList.clear();
-               int count = 1;
-               while(count < maxQueryCount){
-                   String petBreed = dataSnapshot.child(""+count).child("breed").getValue().toString();
-                   String petName = dataSnapshot.child(""+count).child("name").getValue().toString();
-                   String petWeight = dataSnapshot.child(""+count).child(("weight")).getValue().toString();
-                   String petZip = dataSnapshot.child(""+count).child(("zip")).getValue().toString();
-                   String petGender = dataSnapshot.child(""+count).child("gender").getValue().toString();
-                   String petMicro = dataSnapshot.child(""+count).child("microchip").getValue().toString();
-                   String petDesciption = dataSnapshot.child(""+count).child("description").getValue().toString();
-                   String petUrl = dataSnapshot.child(""+count).child("picture_url").getValue().toString();
-
-                   petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDesciption, petUrl));
-                   count++;
-               }
-
+                addPetsToArrayList(dataSnapshot,maxQueryCount);
             }
 
             @Override
@@ -116,6 +104,28 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             }
         });
     }
+
+    private void addPetsToArrayList(DataSnapshot dataSnapshot, int maxQueryCount){
+        //Test code
+        petArrayList.clear();
+        int count = 1;
+        while(count < maxQueryCount){
+            String petBreed = dataSnapshot.child(""+count).child("breed").getValue().toString();
+            String petName = dataSnapshot.child(""+count).child("name").getValue().toString();
+            String petWeight = dataSnapshot.child(""+count).child(("weight")).getValue().toString();
+            String petZip = dataSnapshot.child(""+count).child(("zip")).getValue().toString();
+            String petGender = dataSnapshot.child(""+count).child("gender").getValue().toString();
+            String petMicro = dataSnapshot.child(""+count).child("microchip").getValue().toString();
+            String petDesciption = dataSnapshot.child(""+count).child("description").getValue().toString();
+            String petUrl = dataSnapshot.child(""+count).child("picture_url").getValue().toString();
+
+            petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDesciption, petUrl));
+            count++;
+        }
+        mloadingBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
     //used for recycler view onclick handling
     //investigate if it's worth it to pass the entire object or just the data
     @Override
@@ -140,7 +150,6 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         intent.putExtra("PetDescription",pDesc);
         intent.putExtra("PetMicrochip",pMicro);
         intent.putExtra("PetUrlOne", pUrl);
-
 
         startActivity(intent);
         //TODO remove this after testing
