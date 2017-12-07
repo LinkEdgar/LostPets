@@ -32,7 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Button mRegisterBt;
     //TODO fix bug with the back button if the user is logged in
-    //TODO figure out if there is going to be a need for username
+    //TODO NEW --> Add username for chat functions
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

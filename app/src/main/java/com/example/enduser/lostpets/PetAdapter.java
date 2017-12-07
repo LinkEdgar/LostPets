@@ -70,7 +70,6 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
         holder.mPetBreedTV.setText(myArray.get(position).getBreed());
         Context context = holder.mPetImageIV.getContext();
         String imageUrl = myArray.get(position).getUrlOne();
-        //TODO figure out what to do about entrances without pictures
         if(!imageUrl.equals("invalid")){
             Picasso.with(context).load(imageUrl).into(holder.mPetImageIV);
         }

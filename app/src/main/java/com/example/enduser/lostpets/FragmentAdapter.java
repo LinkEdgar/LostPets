@@ -33,7 +33,6 @@ public class FragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        //TODO add string to strings resource file
        switch(position){
            case 0:
                return "Add Pets";
