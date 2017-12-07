@@ -80,26 +80,17 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private static final String PET_GENDER_MALE = "Male";
     private static final String PET_GENDER_FEMALE ="Female";
     private static final String PET_GENDER_UNKNOWN  ="Unknown";
-    private CheckBox mMicroChipCheckBoc;
+    private CheckBox mMicroChipCheckBox;
     private Button mUploadPictureButton;
     private ImageView mImageToUploadOne;
     private int REQUEST_IMAGE_GET = 1001;
-
-    //Bundle textfields
-    //TODO find out how to bundle image
-    private final static String IMAGE_ONE_BUNDLE = "image_one";
-    private final static String PET_NAME = "pet_name";
-    private final static String PET_BREED = "pet_breed";
-    private final static String PET_ZIP = "pet_zip";
-    private final static String PET_WEIGHT = "pet_weight";
-    private final static String PET_DESCRIPTION = "pet_desc";
-    private final static String PET_MIRCOCHIP = "pet_micro";
-    private final static String PET_GENDER = "pet_gender";
 
     //default constructor
     public EnterLostPetFragment(){
 
     }
+    //TODO NEW --> Update UI to allow users to upload more pcitures and firgure out how to remove the pictures as well if the user no
+    //longer wishes to use them
 
     @Nullable
     @Override
@@ -121,33 +112,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 selectImage();
             }
         });
-        //bundle
-        if(savedInstanceState != null){
-            //Something weird is happening Here
-            /*
-            if(savedInstanceState.containsKey(PET_NAME)){
-                petName.setText(savedInstanceState.getString(PET_NAME));
-            }
-            if(savedInstanceState.containsKey(PET_BREED)){
-                petBreed.setText(savedInstanceState.getString(PET_BREED));
-            }
-            if(savedInstanceState.containsKey(PET_ZIP)){
-                petZip.setText(savedInstanceState.getString(PET_ZIP));
-            }
-            if(savedInstanceState.containsKey(PET_WEIGHT)){
-                petWeight.setText(savedInstanceState.getString(PET_WEIGHT));
-            }
-            if(savedInstanceState.containsKey(PET_DESCRIPTION)){
-                petDesc.setText(savedInstanceState.getString(PET_DESCRIPTION));
-            }
-            if(savedInstanceState.containsKey(PET_GENDER)){
-                petGender = savedInstanceState.getString(PET_GENDER);
-            }
-            if(savedInstanceState.containsKey(PET_MIRCOCHIP)){
-                isPetMicrochipped = savedInstanceState.getBoolean(PET_MIRCOCHIP);
-            }
-            */
-        }
         //gender spinner code
         mGenderSpinner = (Spinner) root_view.findViewById(R.id.gender_spinner);
         //Edit text assignement
@@ -359,11 +323,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             }
         }
 
-    }
-    //bundle fields and images if choosen
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        //TODO find  a way to persist image data
     }
     //this method only runs if the petPictureUri is not null meaning the user has chosen to upload a picture of their pet.
     //after the picture is successfully finished uploading it will clear the text fields

@@ -38,7 +38,6 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private PetAdapter mAdapter;
     private RecyclerView.LayoutManager mLayouManager;
     private ArrayList<Pet> petArrayList;
-    //TODO progress bar not working properly
     private ProgressBar mloadingBar;
     public PetQueryFragment(){
 
