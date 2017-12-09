@@ -100,7 +100,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-    //TODO fix google sign in
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
