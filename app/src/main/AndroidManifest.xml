@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.enduser.lostpets">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -19,33 +20,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:label="Sign In"
             android:name=".SignInActivity"
+            android:label="Sign In"
             android:parentActivityName=".LogInActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.enduser.lostpets.LogInActivity"></meta-data>
+                android:value="com.example.enduser.lostpets.LogInActivity" />
         </activity>
-
         <activity
-            android:label="Register"
             android:name=".RegisterActivity"
-            android:parentActivityName=".SignInActivity"
-            >
+            android:label="Register"
+            android:parentActivityName=".SignInActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.enduser.lostpets.SignInActivity">
-
-            </meta-data>
-
+                android:value="com.example.enduser.lostpets.SignInActivity"></meta-data>
         </activity>
         <activity
-        android:label="@string/frag_add_pet"
-            android:name=".MainActivity">
-
-        </activity>
-
+            android:configChanges="screenSize|orientation|screenLayout"
+            android:name=".MainActivity"
+            android:label="@string/frag_add_pet"></activity>
         >
+        <activity android:name=".PetDetailedInformation"></activity>
     </application>
 
 </manifest>

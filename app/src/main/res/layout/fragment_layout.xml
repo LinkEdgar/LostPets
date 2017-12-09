@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <!-- TODO add color and customization to tabs -->
+    <android.support.design.widget.TabLayout
+        app:tabMode="fixed"
+        android:elevation="6dp"
+        android:layout_below="@+id/fragment_toolbar"
+        android:id="@+id/fragment_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></android.support.design.widget.TabLayout>
 
     <!--Allows fragments to be flipped from left to right -->
     <android.support.v4.view.ViewPager

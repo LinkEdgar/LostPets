@@ -30,4 +30,21 @@ public class FragmentAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return 3;
     }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        //TODO add string to strings resource file
+       switch(position){
+           case 0:
+               return "Add Pets";
+           case 1:
+               return "Find a Pet";
+           case 2:
+               return "Community";
+           default:
+               return null;
+
+       }
+
+    }
 }
