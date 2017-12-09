@@ -145,7 +145,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                         if( task.isSuccessful()){
                             Log.d("AuthWithGoogle", "Signin Success");
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                            //switches classes via an intent 
+                            //switches classes via an intent
                             signInSuccess();
                         }
                         else{
