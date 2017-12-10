@@ -74,6 +74,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private EditText petName, petWeight, petZip, petBreed,petDesc;
     private String petGender;
     private String petPictureUrl;
+    private String petPictureUrl2;
+    private String petPictureUrl3;
     private Uri petPictureUriOne;
     private Uri petPictureUriTwo;
     private Uri petPictureUriThree;
@@ -179,7 +181,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             //This method calls assigns a unique ID for each pet added to the database
              //within this method store data is called which sets the pet info to the database
             if(petPictureUriOne != null){
-                uploadImage(petPictureUriOne);
+                uploadImage(petPictureUriOne, petPictureUriTwo, petPictureUriThree);
             }
             else {
                 assignPetId();
@@ -216,6 +218,22 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             else{
                 mRef.child(petID).child("picture_url").setValue(INVALID_URL);
             }
+
+            if(petPictureUrl2 != null){
+                mRef.child(petID).child("picture_url2").setValue(petPictureUrl2);
+            }
+            else{
+                mRef.child(petID).child("picture_url2").setValue(INVALID_URL);
+            }
+
+            if(petPictureUrl3 != null){
+                mRef.child(petID).child("picture_url3").setValue(petPictureUrl3);
+            }
+            else{
+                mRef.child(petID).child("picture_url3").setValue(INVALID_URL);
+            }
+
+
             Toast.makeText(getContext(), "Pet has been added to database", Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -226,6 +244,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         }
 
     }
+    //called after succesfully adding a pet to the db. The textfields and imageviews are all cleared
     public void clearTextFields(){
         petBreed.getText().clear();
         petBreed.clearFocus();
@@ -244,6 +263,15 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         mMicroCheckBox.clearFocus();
 
         petPictureUriOne = null;
+        mImageOneCancel.setVisibility(View.INVISIBLE);
+        mImageToUploadOne.setImageDrawable(null);
+        petPictureUriTwo = null;
+        mImageTwoCancel.setVisibility(View.INVISIBLE);
+        mImageToUploadTwo.setImageDrawable(null);
+        mImageThreeCancel.setVisibility(View.INVISIBLE);
+        petPictureUriThree = null;
+        mImageToUploadThree.setImageDrawable(null);
+        mUploadPictureButton.setText("Upload Pictures");
     }
 
     public void assignPetId(){
@@ -288,10 +316,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         if(name == null){
             return false;
         }
-        if(zip == null){
-            return false;
-        }
-        else if(zip.length() < ZIP_CODE_CHAR_LIMIT){
+        if(zip == null || zip.length() < ZIP_CODE_CHAR_LIMIT){
             return false;
         }
         return true;
@@ -323,9 +348,126 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     }
     //this method only runs if the petPictureUri is not null meaning the user has chosen to upload a picture of their pet.
     //after the picture is successfully finished uploading it will clear the text fields
-    private void uploadImage(final Uri filePath){
+    private void uploadImage(final Uri filePath, final Uri filePath2, final Uri filePath3){
         //TODO figure out how to determine if a photo is rotated to better display in the search
-        if(filePath != null){
+        if(filePath != null && filePath2 != null && filePath3 != null){
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
+            progressDialog.setTitle("Uploading First Image...");
+            progressDialog.show();
+            StorageReference ref = mStorageReference.child("Photos");
+            StorageReference photoRef = mStorageReference.child(filePath.getLastPathSegment());
+            photoRef.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    setImageUrl(taskSnapshot);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getContext(), "Image One Upload Failed", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    progressDialog.setTitle("Image One Done...");
+
+                }
+            });
+
+
+            photoRef = mStorageReference.child(filePath2.getLastPathSegment());
+            photoRef.putFile(filePath2).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    setImageUrl(taskSnapshot);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getContext(), "Image Two Upload Failed", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    progressDialog.setTitle("Image Two Done...");
+
+                }
+            });
+
+
+            photoRef = mStorageReference.child(filePath3.getLastPathSegment());
+            photoRef.putFile(filePath3).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.dismiss();
+                    setImageUrl(taskSnapshot);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getContext(), "Image Two Upload Failed", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    assignPetId();
+                    clearTextFields();
+                }
+            });
+
+        }
+        else if(filePath != null && filePath2 != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
+            progressDialog.setTitle("Uploading First Image...");
+            progressDialog.show();
+            StorageReference ref = mStorageReference.child("Photos");
+            StorageReference photoRef = mStorageReference.child(filePath.getLastPathSegment());
+            photoRef.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    setImageUrl(taskSnapshot);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getContext(), "Image One Upload Failed", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    progressDialog.setTitle("Image One Done... ");
+
+                }
+            });
+
+
+            photoRef = mStorageReference.child(filePath2.getLastPathSegment());
+            photoRef.putFile(filePath2).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    setImageUrl(taskSnapshot);
+                    progressDialog.dismiss();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getContext(), "Image Two Upload Failed", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    assignPetId();
+                    clearTextFields();
+
+                }
+            });
+        }
+        else if(filePath != null){
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
@@ -352,8 +494,17 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             });
         }
     }
+    //sets the url to our petPictureUrl variables based on whether or not they're null so that the right url is matched with the right picture
     private void setImageUrl(UploadTask.TaskSnapshot taskSnapshot){
-        petPictureUrl = taskSnapshot.getDownloadUrl().toString();
+        if(petPictureUrl == null) {
+            petPictureUrl = taskSnapshot.getDownloadUrl().toString();
+        }
+        else if(petPictureUrl2 == null ){
+            petPictureUrl2 = taskSnapshot.getDownloadUrl().toString();
+        }
+        else if(petPictureUriThree == null){
+            petPictureUrl3 = taskSnapshot.getDownloadUrl().toString();
+        }
     }
     //this method handles all requests to add a new pet image by checking if the associated uris are null
     private void imageSelection(Intent data){
@@ -388,7 +539,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
 
             }
         }
-        else{
+        else if(petPictureUriThree == null){
             try {
                 Uri imageUri = data.getData();
                 InputStream image = getActivity().getContentResolver().openInputStream(imageUri);
@@ -410,7 +561,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         mImageToUploadOne =(ImageView) root_view.findViewById(R.id.enter_pet_upload_pic_one);
         mImageToUploadTwo = (ImageView) root_view.findViewById(R.id.enter_pet_pic_two);
         mImageToUploadThree = (ImageView) root_view.findViewById(R.id.enter_pet_pic_three);
-        
+
         mUploadPictureButton = (Button) root_view.findViewById(R.id.enter_pet_pic_upload_bt);
         mUploadPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -426,6 +577,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             public void onClick(View view) {
                 mImageToUploadOne.setImageDrawable(null);
                 petPictureUriOne = null;
+                mUploadPictureButton.setText("Select more pictures");
             }
         });
         mImageTwoCancel = (ImageButton) root_view.findViewById(R.id.enter_pet_delete_pic_two);
@@ -434,6 +586,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             public void onClick(View view) {
                 mImageToUploadTwo.setImageDrawable(null);
                 petPictureUriTwo = null;
+                mUploadPictureButton.setText("Select more pictures");
             }
         });
         mImageThreeCancel = (ImageButton) root_view.findViewById(R.id.enter_pet_delete_pic_three);
@@ -442,6 +595,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             public void onClick(View view) {
                 mImageToUploadThree.setImageDrawable(null);
                 petPictureUriThree = null;
+                mUploadPictureButton.setText("Select more pictures");
             }
         });
     }
