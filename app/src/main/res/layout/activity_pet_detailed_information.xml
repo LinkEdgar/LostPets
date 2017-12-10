@@ -26,6 +26,7 @@
                     android:layout_margin="8dp">
 
                     <ImageView
+                        android:id="@+id/detail_picture_one"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginRight="8dp"
@@ -37,6 +38,7 @@
                     android:layout_width="360dp"
                     android:layout_height="match_parent">
             <ImageView
+                android:id="@+id/detail_picture_two"
                 android:layout_marginRight="8dp"
                 android:src="@drawable/no_image"
                 android:layout_width="match_parent"
@@ -49,6 +51,7 @@
                     android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/detail_picture_three"
                 android:layout_marginRight="8dp"
                 android:src="@drawable/no_image"
                 android:layout_width="match_parent"
@@ -86,7 +89,7 @@
                 android:textColor="@color/white"
                 android:backgroundTint="@color/colorPrimary"
                 android:layout_weight="1"
-                android:text="Found this pet"
+                android:text="Lost this pet"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
