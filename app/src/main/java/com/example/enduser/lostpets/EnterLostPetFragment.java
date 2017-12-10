@@ -57,6 +57,9 @@ import java.util.UUID;
 
 /**
  * Created by EndUser on 10/22/2017.
+ * The user can add pets into the database. A name and a zip code are the minimum requirements to add a pet to the database.
+ * The user can choose up to three picture to upload and the pictures to be uploaded are determined by one of three Uri variables.
+ * If user choose a picture to upload then the uri is not empty and thus the picture will be uploaded.
  */
 
 public class EnterLostPetFragment extends Fragment implements AdapterView.OnItemSelectedListener{
@@ -101,8 +104,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     public EnterLostPetFragment(){
 
     }
-    //TODO NEW --> Update UI to allow users to upload more pcitures and firgure out how to remove the pictures as well if the user no
-    //longer wishes to use them
 
     @Nullable
     @Override
