@@ -118,8 +118,7 @@
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="horizontal"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -133,7 +132,7 @@
             android:layout_height="150dp" />
 
             <ImageView
-                android:src="@mipmap/ic_launcher"
+                android:layout_toRightOf="@+id/enter_pet_delete_pic_one"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="12dp"
                 tools:src="@mipmap/ic_launcher"
@@ -142,14 +141,42 @@
                 android:layout_height="150dp" />
 
             <ImageView
-                android:src="@mipmap/ic_launcher"
+                android:layout_toRightOf="@+id/enter_pet_delete_pic_two"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="12dp"
                 tools:src="@mipmap/ic_launcher"
                 android:id="@+id/enter_pet_pic_three"
                 android:layout_width="150dp"
                 android:layout_height="150dp" />
-        </LinearLayout>
+            <ImageButton
+                android:visibility="invisible"
+                android:layout_alignParentTop="true"
+                android:src="@mipmap/ic_cancel"
+                tools:src="@mipmap/ic_left_scroll"
+                android:layout_toRightOf="@+id/enter_pet_upload_pic_one"
+                android:id="@+id/enter_pet_delete_pic_one"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                />
+            <ImageButton
+                android:visibility="invisible"
+                android:src="@mipmap/ic_cancel"
+                tools:src="@mipmap/ic_left_scroll"
+                android:layout_toRightOf="@+id/enter_pet_pic_two"
+                android:id="@+id/enter_pet_delete_pic_two"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                />
+            <ImageButton
+                android:visibility="invisible"
+                android:src="@mipmap/ic_cancel"
+                tools:src="@mipmap/ic_left_scroll"
+                android:layout_toRightOf="@+id/enter_pet_pic_three"
+                android:id="@+id/enter_pet_delete_pic_three"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                 />
+        </RelativeLayout>
         </HorizontalScrollView>
 
     </LinearLayout>

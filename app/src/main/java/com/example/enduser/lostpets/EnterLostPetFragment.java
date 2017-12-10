@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -58,7 +59,7 @@ import java.util.UUID;
  * Created by EndUser on 10/22/2017.
  */
 
-public class EnterLostPetFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class EnterLostPetFragment extends Fragment implements AdapterView.OnItemSelectedListener{
     private Spinner mGenderSpinner;
     //firebase varaibles
     private FirebaseDatabase mDatabase;
@@ -73,7 +74,9 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private EditText petName, petWeight, petZip, petBreed,petDesc;
     private String petGender;
     private String petPictureUrl;
-    private Uri petPictureUri;
+    private Uri petPictureUriOne;
+    private Uri petPictureUriTwo;
+    private Uri petPictureUriThree;
     private static final String INVALID_URL = "invalid";
     private boolean isPetMicrochipped;
     private static final int ZIP_CODE_CHAR_LIMIT =5;
@@ -81,8 +84,15 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private static final String PET_GENDER_FEMALE ="Female";
     private static final String PET_GENDER_UNKNOWN  ="Unknown";
     private CheckBox mMicroChipCheckBox;
+
     private Button mUploadPictureButton;
     private ImageView mImageToUploadOne;
+    private ImageView mImageToUploadTwo;
+    private ImageView mImageToUploadThree;
+    private ImageButton mImageOneCancel;
+    private ImageButton mImageTwoCancel;
+    private ImageButton mImageThreeCancel;
+
     private int REQUEST_IMAGE_GET = 1001;
 
     //default constructor
@@ -104,14 +114,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
         mStorageReference = mStorage.getReference();
-        mImageToUploadOne =(ImageView) root_view.findViewById(R.id.enter_pet_upload_pic_one);
-        mUploadPictureButton = (Button) root_view.findViewById(R.id.enter_pet_pic_upload_bt);
-        mUploadPictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectImage();
-            }
-        });
+        setupPictureVariables(root_view);
+
         //gender spinner code
         mGenderSpinner = (Spinner) root_view.findViewById(R.id.gender_spinner);
         //Edit text assignement
@@ -174,8 +178,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         if(itemId == R.id.add_pet_item){
             //This method calls assigns a unique ID for each pet added to the database
              //within this method store data is called which sets the pet info to the database
-            if(petPictureUri != null){
-                uploadImage(petPictureUri);
+            if(petPictureUriOne != null){
+                uploadImage(petPictureUriOne);
             }
             else {
                 assignPetId();
@@ -239,7 +243,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         mMicroCheckBox.setChecked(false);
         mMicroCheckBox.clearFocus();
 
-        petPictureUri = null;
+        petPictureUriOne = null;
     }
 
     public void assignPetId(){
@@ -293,29 +297,22 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         return true;
     }
     private void selectImage(){
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, REQUEST_IMAGE_GET);
-
+        if(petPictureUriThree == null || petPictureUriTwo == null || petPictureUriOne == null) {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            startActivityForResult(intent, REQUEST_IMAGE_GET);
+        }
+        else{
+            Toast.makeText(getContext(), "There's a limit of three pictures per pet", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Bitmap bmp = null;
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == REQUEST_IMAGE_GET && data != null){
-                try {
-                    Uri imageUri = data.getData();
-                    InputStream image = getActivity().getContentResolver().openInputStream(imageUri);
-                    bmp = BitmapFactory.decodeStream(image);
-                    mImageToUploadOne.setImageBitmap(bmp);
-                    petPictureUri = imageUri;
-                }
-                catch(IOException e){
-                    Log.e("SetImageOneFromGallery", "Failed to load image ");
-
-                }
+               imageSelection(data);
             }
 
             else{
@@ -357,5 +354,95 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     }
     private void setImageUrl(UploadTask.TaskSnapshot taskSnapshot){
         petPictureUrl = taskSnapshot.getDownloadUrl().toString();
+    }
+    //this method handles all requests to add a new pet image by checking if the associated uris are null
+    private void imageSelection(Intent data){
+        //logic tp check if the first picture was chosen
+        Bitmap bmp = null;
+
+        if(petPictureUriOne == null) {
+            try {
+                Uri imageUri = data.getData();
+                InputStream image = getActivity().getContentResolver().openInputStream(imageUri);
+                bmp = BitmapFactory.decodeStream(image);
+                mImageToUploadOne.setImageBitmap(bmp);
+                petPictureUriOne = imageUri;
+                mImageOneCancel.setVisibility(View.VISIBLE);
+                //TODO add string for this
+                mUploadPictureButton.setText("Click to add more");
+            } catch (IOException e) {
+                Log.e("SetImageOneFromGallery", "Failed to load image ");
+
+            }
+        }
+        else if(petPictureUriTwo == null){
+            try {
+                Uri imageUri = data.getData();
+                InputStream image = getActivity().getContentResolver().openInputStream(imageUri);
+                bmp = BitmapFactory.decodeStream(image);
+                mImageToUploadTwo.setImageBitmap(bmp);
+                petPictureUriTwo = imageUri;
+                mImageTwoCancel.setVisibility(View.VISIBLE);
+            } catch (IOException e) {
+                Log.e("SetImageOneFromGallery", "Failed to load image ");
+
+            }
+        }
+        else{
+            try {
+                Uri imageUri = data.getData();
+                InputStream image = getActivity().getContentResolver().openInputStream(imageUri);
+                bmp = BitmapFactory.decodeStream(image);
+                mImageToUploadThree.setImageBitmap(bmp);
+                petPictureUriThree = imageUri;
+                mUploadPictureButton.setText("At Picture Capacity");
+                mImageThreeCancel.setVisibility(View.VISIBLE);
+            } catch (IOException e) {
+                Log.e("SetImageOneFromGallery", "Failed to load image ");
+
+            }
+
+        }
+    }
+    //this method instantiates all variables related to uploading a picture including finding the variables by id through the fragmetn view
+    private void setupPictureVariables( View root_view){
+
+        mImageToUploadOne =(ImageView) root_view.findViewById(R.id.enter_pet_upload_pic_one);
+        mImageToUploadTwo = (ImageView) root_view.findViewById(R.id.enter_pet_pic_two);
+        mImageToUploadThree = (ImageView) root_view.findViewById(R.id.enter_pet_pic_three);
+        
+        mUploadPictureButton = (Button) root_view.findViewById(R.id.enter_pet_pic_upload_bt);
+        mUploadPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage();
+            }
+        });
+
+
+        mImageOneCancel = (ImageButton) root_view.findViewById(R.id.enter_pet_delete_pic_one);
+        mImageOneCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mImageToUploadOne.setImageDrawable(null);
+                petPictureUriOne = null;
+            }
+        });
+        mImageTwoCancel = (ImageButton) root_view.findViewById(R.id.enter_pet_delete_pic_two);
+        mImageTwoCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mImageToUploadTwo.setImageDrawable(null);
+                petPictureUriTwo = null;
+            }
+        });
+        mImageThreeCancel = (ImageButton) root_view.findViewById(R.id.enter_pet_delete_pic_three);
+        mImageThreeCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mImageToUploadThree.setImageDrawable(null);
+                petPictureUriThree = null;
+            }
+        });
     }
 }
