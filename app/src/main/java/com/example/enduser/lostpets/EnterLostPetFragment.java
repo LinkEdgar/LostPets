@@ -383,7 +383,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
 
     private void uploadTwoImages(Uri filePath, Uri filePath2){
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setTitle("Uploading First Image...");
+        progressDialog.setTitle("Uploading...");
         progressDialog.show();
         StorageReference ref = mStorageReference.child("Photos");
         StorageReference photoRef = mStorageReference.child(filePath.getLastPathSegment());
@@ -431,7 +431,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     }
     private void uploadThreeImages(Uri filePath, Uri filePath2, Uri filePath3){
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setTitle("Uploading First Image...");
+        progressDialog.setTitle("Uploading...");
         progressDialog.show();
         StorageReference ref = mStorageReference.child("Photos");
         StorageReference photoRef = mStorageReference.child(filePath.getLastPathSegment());
