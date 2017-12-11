@@ -34,9 +34,30 @@ public class PetDetailedInformation extends AppCompatActivity {
         mPetInfoDisplay = (TextView) findViewById(R.id.display_pet_info);
         mPetImageOne = (ImageView) findViewById(R.id.detail_picture_one);
         mPetImageTwo= (ImageView) findViewById(R.id.detail_picture_two);
-        mPetImageTwo= (ImageView) findViewById(R.id.detail_picture_three);
+        mPetImageThree= (ImageView) findViewById(R.id.detail_picture_three);
 
         Intent intent = getIntent();
+        getPetInformationFromIntent(intent);
+
+        mPetInfoDisplay.setText(mPetNameFromIntent + "'s breed is identified by its owner as \" "+ mPetBreedFromIntent +"\", weighs "+ mPetWeightFromIntent+ ", is a " + mPetGenderFromIntent + " ,and is {microchip status goes here} "+ mPetMicrochipStatusFromIntent + " . " + mPetNameFromIntent + " is described by its owners as \"" + mPetDescriptionFromIntent + "\" ." );
+
+        loadPetimages(mPetUrlOneFromIntent, mPetUrlTwoFromIntent,mPetUrlThreeFromIntent);
+
+    }
+    private void loadPetimages(String url1, String url2, String url3){
+        if(url1 != "invalid"){
+            Picasso.with(this).load(url1).into(mPetImageOne);
+        }
+        if(url2 != "invalid"){
+            Picasso.with(this).load(url2).into(mPetImageTwo);
+        }
+        if(url3 != "invalid"){
+            Picasso.with(this).load(url3).into(mPetImageThree);
+        }
+
+    }
+    //gets all the information from the passed intent extra so that we can display the pet's information in detail
+    private void getPetInformationFromIntent(Intent intent){
         //I chose to hard code this because of pickles
         mPetNameFromIntent = intent.getStringExtra("PetName");
         mPetWeightFromIntent = intent.getStringExtra("PetWeight");
@@ -46,24 +67,8 @@ public class PetDetailedInformation extends AppCompatActivity {
         mPetDescriptionFromIntent = intent.getStringExtra("PetDescription");
         mPetMicrochipStatusFromIntent = intent.getStringExtra("PetMicrochip");
         mPetUrlOneFromIntent = intent.getStringExtra("PetUrlOne");
+        mPetUrlTwoFromIntent = intent.getStringExtra("PetUrlTwo");
+        mPetUrlThreeFromIntent = intent.getStringExtra("PetUrlThree");
 
-        mPetInfoDisplay.setText(mPetNameFromIntent + "'s breed is identified by its owner as \" "+ mPetBreedFromIntent +"\", weighs "+ mPetWeightFromIntent+ ", is a " + mPetGenderFromIntent + " ,and is {microchip status goes here} "+ mPetMicrochipStatusFromIntent + " . " + mPetNameFromIntent + " is described by its owners as \"" + mPetDescriptionFromIntent + "\" ." );
-        /*
-        mPetInfoDisplay.append(mPetNameFromIntent + "\n");
-        mPetInfoDisplay.append(mPetWeightFromIntent + "\n");
-        mPetInfoDisplay.append(mPetGenderFromIntent + "\n");
-        mPetInfoDisplay.append(mPetZipFromIntent + "\n");
-        mPetInfoDisplay.append(mPetBreedFromIntent + "\n");
-        mPetInfoDisplay.append(mPetDescriptionFromIntent + "\n");
-        mPetInfoDisplay.append(mPetMicrochipStatusFromIntent + "\n");
-        mPetInfoDisplay.append(mPetUrlOneFromIntent + "\n");
-        */
-        loadPetimages(mPetUrlOneFromIntent);
-
-    }
-    private void loadPetimages(String url1){
-        if(url1 != "invalid"){
-            Picasso.with(this).load(url1).into(mPetImageOne);
-        }
     }
 }

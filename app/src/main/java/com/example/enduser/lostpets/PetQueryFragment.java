@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
@@ -39,6 +40,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private RecyclerView.LayoutManager mLayouManager;
     private ArrayList<Pet> petArrayList;
     private ProgressBar mloadingBar;
+    private TextView mNoPetsFoundTv;
     public PetQueryFragment(){
 
     }
@@ -48,7 +50,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         View root_view = inflater.inflate(R.layout.activity_recycler_view,container,false);
         FirebaseApp.initializeApp(root_view.getContext());
         mAuth = FirebaseAuth.getInstance();
-
+        mNoPetsFoundTv = (TextView) root_view.findViewById(R.id.pet_query_no_pet_found);
         mRecyclerView = (RecyclerView) root_view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(false);
         mLayouManager = new LinearLayoutManager(root_view.getContext());
@@ -84,24 +86,32 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             }
         });
     }
-
-
+    /*
+    if there are pets in the area then they will be queried otherwise a "no pets found" textview will be
+    be set to visible
+    */
     private void getAllPetInfo(final int maxQueryCount){
-        mDatabase = FirebaseDatabase.getInstance();
-        mRef = mDatabase.getReference("Pets");
-        mloadingBar.setVisibility(View.VISIBLE);
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                addPetsToArrayList(dataSnapshot,maxQueryCount);
-            }
+        if(maxQueryCount > 1) {
+            mNoPetsFoundTv.setVisibility(View.GONE);
+            mDatabase = FirebaseDatabase.getInstance();
+            mRef = mDatabase.getReference("Pets");
+            mloadingBar.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.INVISIBLE);
+            mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    addPetsToArrayList(dataSnapshot, maxQueryCount);
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
+        else {
+            mNoPetsFoundTv.setVisibility(View.VISIBLE);
+        }
     }
 
     private void addPetsToArrayList(DataSnapshot dataSnapshot, int maxQueryCount){
@@ -115,10 +125,12 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             String petZip = dataSnapshot.child(""+count).child(("zip")).getValue().toString();
             String petGender = dataSnapshot.child(""+count).child("gender").getValue().toString();
             String petMicro = dataSnapshot.child(""+count).child("microchip").getValue().toString();
-            String petDesciption = dataSnapshot.child(""+count).child("description").getValue().toString();
+            String petDescription = dataSnapshot.child(""+count).child("description").getValue().toString();
             String petUrl = dataSnapshot.child(""+count).child("picture_url").getValue().toString();
+            String petUrl2 = dataSnapshot.child("" + count).child("picture_url2").getValue().toString();;
+            String petUrl3 = dataSnapshot.child("" + count).child("picture_url3").getValue().toString();;
 
-            petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDesciption, petUrl));
+            petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
             count++;
         }
         mloadingBar.setVisibility(View.GONE);
@@ -140,6 +152,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         String pDesc = pet.getDescription();
         String pMicro = pet.getMicrochip();
         String pUrl = pet.getUrlOne();
+        String pUrl2 = pet.getUrlTwo();
+        String pUrl3 = pet.getUrlThree();
         //Pass all the info from the Pet via string in the intent extra
         intent.putExtra("PetName",pName);
         intent.putExtra("PetWeight",pWeight);
@@ -149,6 +163,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         intent.putExtra("PetDescription",pDesc);
         intent.putExtra("PetMicrochip",pMicro);
         intent.putExtra("PetUrlOne", pUrl);
+        intent.putExtra("PetUrlTwo", pUrl2);
+        intent.putExtra("PetUrlThree", pUrl3);
 
         startActivity(intent);
     }
