@@ -1,11 +1,21 @@
 package com.example.enduser.lostpets;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Image;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -43,6 +53,22 @@ public class PetDetailedInformation extends AppCompatActivity {
 
         loadPetimages(mPetUrlOneFromIntent, mPetUrlTwoFromIntent,mPetUrlThreeFromIntent);
 
+        mPetImageOne.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO used shared preference to share urls for the urls which are cashed into memory and load quickly
+                if(mPetUrlOneFromIntent != "invalid") {
+                    SharedPreferences preferences = getSharedPreferences("ImageUrls", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("UrlOne", mPetUrlOneFromIntent);
+                    editor.putString("UrlTwo", mPetUrlTwoFromIntent);
+                    editor.putString("UrlThree", mPetUrlThreeFromIntent);
+                    editor.apply();
+                    DialogFragment dialogFragment = new FullScreenDialog();
+                    dialogFragment.show(getFragmentManager(), "Fragment");
+                }
+            }
+        });
     }
     private void loadPetimages(String url1, String url2, String url3){
         if(url1 != "invalid"){

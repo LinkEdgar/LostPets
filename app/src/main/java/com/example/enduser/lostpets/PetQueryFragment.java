@@ -165,7 +165,6 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         intent.putExtra("PetUrlOne", pUrl);
         intent.putExtra("PetUrlTwo", pUrl2);
         intent.putExtra("PetUrlThree", pUrl3);
-
         startActivity(intent);
     }
 }
