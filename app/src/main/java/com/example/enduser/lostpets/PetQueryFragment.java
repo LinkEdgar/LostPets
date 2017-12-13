@@ -1,10 +1,20 @@
 package com.example.enduser.lostpets;
 
+import android.*;
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +25,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -23,11 +36,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.jar.*;
 
 /**
  * Created by ZenithPC on 10/23/2017.
  */
+
+//TODO find out what's happening with dis code
 
 public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClicked{
     //firebase related variables
@@ -41,6 +60,10 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private ArrayList<Pet> petArrayList;
     private ProgressBar mloadingBar;
     private TextView mNoPetsFoundTv;
+    //location services
+    private final int REQUEST_LOCATION = 27;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private String mUserZipcode;
     public PetQueryFragment(){
 
     }
@@ -50,6 +73,19 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         View root_view = inflater.inflate(R.layout.activity_recycler_view,container,false);
         FirebaseApp.initializeApp(root_view.getContext());
         mAuth = FirebaseAuth.getInstance();
+        //location services
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+        if( ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            getLocation();
+
+        }
+        else
+        {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+            }, REQUEST_LOCATION);
+        }
+
         mNoPetsFoundTv = (TextView) root_view.findViewById(R.id.pet_query_no_pet_found);
         mRecyclerView = (RecyclerView) root_view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(false);
@@ -63,11 +99,25 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
 
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnClick(this);
-
         //this method queries all pets and calls getAllPetInfo
         queryAllPets();
         return root_view;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == REQUEST_LOCATION){
+            if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                getLocation();
+            }
+            else{
+                Log.e("Permission granted", "false");
+
+            }
+
+        }
+    }
+
     //performs a general query for all pets refreshing every pet in the database and is performed once on start and again anytime a pet is added to the db
     private void queryAllPets(){
         FirebaseDatabase fullQueryDB = FirebaseDatabase.getInstance();
@@ -166,5 +216,33 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         intent.putExtra("PetUrlTwo", pUrl2);
         intent.putExtra("PetUrlThree", pUrl3);
         startActivity(intent);
+    }
+    /*
+    this method get the  location of user and assumes that the permision is already invoked therefore it is only called on after checking that
+    the location permission was given
+    */
+    private void getLocation(){
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    List<Address> addresses;
+                    try {
+                        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                        Address fullAddress = addresses.get(0);
+                        mUserZipcode = fullAddress.getPostalCode().toString();
+                        Log.i("User Zipcode", mUserZipcode);
+                    } catch (IOException e) {
+                        Log.e("getLocation", " Could not get location from geocoder");
+                    }
+                }
+                else{
+                    Log.i("location", "location was equal to null");
+                }
+            }
+        });
     }
 }
