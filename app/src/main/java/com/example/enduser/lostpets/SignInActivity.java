@@ -46,6 +46,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private SignInButton googleSignIn;
     private GoogleSignInClient mGoogleSignInClient;
     private final static int RC_SIGN_IN = 9001;
+    //TODO add forgot password functionality
 
 
     @Override

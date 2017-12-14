@@ -20,4 +20,6 @@
 
     <!--Labels for activity and fragments -->
     <string name="frag_add_pet">Add Pet</string>
+
+    <string name="action_search">Action Search</string>
 </resources>

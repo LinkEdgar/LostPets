@@ -3,6 +3,9 @@ package com.example.enduser.lostpets;
 import android.*;
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -15,13 +18,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +73,13 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private final int REQUEST_LOCATION = 27;
     private FusedLocationProviderClient mFusedLocationClient;
     private String mUserZipcode;
+    //search function related variables
+    private SearchView searchView;
+    private int typeOfQuery;
+    private final static int QUERY_TYPE_ZIP = 1;
+    private final static int QUERY_TYPE_NAME =2;
+    private final static int QUERY_TYPE_BREED =3;
+    private boolean extraOptionMenuInflatedStatus = false;
     public PetQueryFragment(){
 
     }
@@ -73,6 +89,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         View root_view = inflater.inflate(R.layout.activity_recycler_view,container,false);
         FirebaseApp.initializeApp(root_view.getContext());
         mAuth = FirebaseAuth.getInstance();
+        setHasOptionsMenu(true);
         //location services
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
         if( ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -222,27 +239,89 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     the location permission was given
     */
     private void getLocation(){
-        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-                    List<Address> addresses;
-                    try {
-                        addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                        Address fullAddress = addresses.get(0);
-                        mUserZipcode = fullAddress.getPostalCode().toString();
-                        Log.i("User Zipcode", mUserZipcode);
-                    } catch (IOException e) {
-                        Log.e("getLocation", " Could not get location from geocoder");
+        if( ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                        List<Address> addresses;
+                        try {
+                            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                            Address fullAddress = addresses.get(0);
+                            mUserZipcode = fullAddress.getPostalCode().toString();
+                            Log.i("User Zipcode", mUserZipcode);
+                        } catch (IOException e) {
+                            Log.e("getLocation", " Could not get location from geocoder");
+                        }
+                    } else {
+                        Log.i("location", "location was equal to null");
                     }
                 }
-                else{
-                    Log.i("location", "location was equal to null");
+            });
+        }
+    }
+    @Override
+    public void onCreateOptionsMenu( final Menu menu, final MenuInflater inflater) {
+        if(extraOptionMenuInflatedStatus == true){
+            extraOptionMenuInflatedStatus = false;
+        }
+
+        inflater.inflate(R.menu.pet_query_menu,menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setQueryHint("search");
+        searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(extraOptionMenuInflatedStatus == false) {
+                    inflater.inflate(R.menu.search_options_menu, menu);
+                    extraOptionMenuInflatedStatus = true;
                 }
             }
         });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(getContext(), "Search Submitted", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case R.id.search_option_breed:
+                Toast.makeText(getContext(), "Breed search", Toast.LENGTH_SHORT).show();
+                typeOfQuery = QUERY_TYPE_BREED;
+                searchView.setQueryHint("search by breed");
+                searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                break;
+            case R.id.search_option_name:
+                Toast.makeText(getContext(), "Pet Search", Toast.LENGTH_SHORT).show();
+                typeOfQuery = QUERY_TYPE_NAME;
+                searchView.setQueryHint("search by name");
+                searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+
+                break;
+            case R.id.search_option_zip:
+                Toast.makeText(getContext(), "Zip Search", Toast.LENGTH_SHORT).show();
+                typeOfQuery = QUERY_TYPE_ZIP;
+                searchView.setQueryHint("search by zip-code");
+                searchView.setInputType(InputType.TYPE_CLASS_NUMBER);
+                break;
+        }
+        return true;
     }
 }

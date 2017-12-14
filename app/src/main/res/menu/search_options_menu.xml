@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/search_options_item" android:title="search_options">
+
+        <item android:title="ZipCode"
+            android:id="@+id/search_option_zip" />
+        <item
+            android:id="@+id/search_option_name"
+            android:title="Name"
+            />
+        <item
+            android:id="@+id/search_option_breed"
+            android:title="Breed"/>
+
+    </item>
+
+</menu>
