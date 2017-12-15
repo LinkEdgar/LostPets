@@ -1,22 +1,14 @@
 package com.example.enduser.lostpets;
 
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
-import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
 
 public class PetDetailedInformation extends AppCompatActivity {
@@ -71,14 +63,23 @@ public class PetDetailedInformation extends AppCompatActivity {
         });
     }
     private void loadPetimages(String url1, String url2, String url3){
-        if(url1 != "invalid"){
+        if(!url1.equals("invalid")){
             Picasso.with(this).load(url1).into(mPetImageOne);
         }
-        if(url2 != "invalid"){
+        else{
+            mPetImageOne.setImageResource(R.drawable.no_image);
+        }
+        if(!url2.equals("invalid")){
             Picasso.with(this).load(url2).into(mPetImageTwo);
         }
-        if(url3 != "invalid"){
+        else{
+            mPetImageTwo.setVisibility(View.GONE);
+        }
+        if(!url3.equals("invalid")){
             Picasso.with(this).load(url3).into(mPetImageThree);
+        }
+        else{
+            mPetImageThree.setVisibility(View.GONE);
         }
 
     }

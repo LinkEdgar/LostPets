@@ -5,7 +5,9 @@
     android:layout_height="match_parent">
     <!-- TODO Change the color of the background and add said color to resources -->
     <TextView android:id="@+id/pet_query_no_pet_found"
-        android:text="No Pets Found"
+        android:layout_margin="8dp"
+        android:textAlignment="center"
+        android:text="No Pets Found, if you'd like to search for pets in your area use the searchbar"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

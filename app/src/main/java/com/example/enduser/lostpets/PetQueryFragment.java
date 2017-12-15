@@ -2,20 +2,15 @@ package com.example.enduser.lostpets;
 
 import android.*;
 import android.Manifest;
-import android.app.ProgressDialog;
-import android.app.SearchManager;
-import android.content.ClipData;
-import android.content.Context;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -36,7 +31,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -50,13 +47,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.jar.*;
 
 /**
  * Created by ZenithPC on 10/23/2017.
+ * This fragment initially attempts to get the user's location to display pets in there postal code
+ * if the location of the user is not available it will not display anything
  */
 
-//TODO find out what's happening with dis code
 
 public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClicked{
     //firebase related variables
@@ -84,6 +81,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private final static int QUERY_TYPE_NAME =2;
     private final static int QUERY_TYPE_BREED =3;
     private boolean extraOptionMenuInflatedStatus = false;
+    private final static  String LOCATION_NOT_AVAILABLE = "Could not get your location to find pets in your area";
+    private final static String LOCATION_HAS_NO_PETS = "No Pets Found in your location. Try using the search function";
     public PetQueryFragment(){
 
     }
@@ -96,16 +95,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         setHasOptionsMenu(true);
         //location services
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
-        if( ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            getLocation();
-
-        }
-        else
-        {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION
-            }, REQUEST_LOCATION);
-        }
+        requestUserLocation();
 
         mNoPetsFoundTv = (TextView) root_view.findViewById(R.id.pet_query_no_pet_found);
         mRecyclerView = (RecyclerView) root_view.findViewById(R.id.recycler_view);
@@ -120,8 +110,6 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
 
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnClick(this);
-        //this method queries all pets and calls getAllPetInfo
-        queryAllPets();
         return root_view;
     }
 
@@ -158,8 +146,9 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         });
     }
     /*
-    if there are pets in the area then they will be queried otherwise a "no pets found" textview will be
-    be set to visible
+    this method queries every pet in the database and adds them to the arraylist
+    this method get the number of stored pets via pet id uses it as the limit of pets to query and
+    loads them into the array list. As it stands I'm not sure how useful this function is anymore
     */
     private void getAllPetInfo(final int maxQueryCount){
         if(maxQueryCount > 1) {
@@ -198,8 +187,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             String petMicro = dataSnapshot.child(""+count).child("microchip").getValue().toString();
             String petDescription = dataSnapshot.child(""+count).child("description").getValue().toString();
             String petUrl = dataSnapshot.child(""+count).child("picture_url").getValue().toString();
-            String petUrl2 = dataSnapshot.child("" + count).child("picture_url2").getValue().toString();;
-            String petUrl3 = dataSnapshot.child("" + count).child("picture_url3").getValue().toString();;
+            String petUrl2 = dataSnapshot.child("" + count).child("picture_url2").getValue().toString();
+            String petUrl3 = dataSnapshot.child("" + count).child("picture_url3").getValue().toString();
 
             petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
             count++;
@@ -239,8 +228,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         startActivity(intent);
     }
     /*
-    this method get the  location of user and assumes that the permision is already invoked therefore it is only called on after checking that
-    the location permission was given
+    this method get the  location of user and assumes that the permission is already invoked therefore it is only called on after checking that
+    the location permission was given. This method calls for the has an onComplete listener to query pets in the user's area
     */
     private void getLocation(){
         if( ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -265,7 +254,16 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
                         Log.i("location", "location was equal to null");
                     }
                 }
+            }).addOnCompleteListener(new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    initialZipQuery();
+                }
             });
+        }
+        else{
+            mUserZipcode = null;
+            Log.i("getLocation", "Could not get user location");
         }
     }
     @Override
@@ -291,7 +289,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(getContext(), "Search Submitted", Toast.LENGTH_SHORT).show();
+                petArrayList.clear();
+                mAdapter.notifyDataSetChanged();
                 String queryText = searchView.getQuery().toString();
                 if(queryText != null){
                     if(queryText.length() > 0) {
@@ -313,20 +312,17 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.search_option_breed:
-                Toast.makeText(getContext(), "Breed search", Toast.LENGTH_SHORT).show();
                 typeOfQuery = QUERY_TYPE_BREED;
                 searchView.setQueryHint("search by breed");
                 searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                 break;
             case R.id.search_option_name:
-                Toast.makeText(getContext(), "Pet Search", Toast.LENGTH_SHORT).show();
                 typeOfQuery = QUERY_TYPE_NAME;
                 searchView.setQueryHint("search by name");
                 searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
                 break;
             case R.id.search_option_zip:
-                Toast.makeText(getContext(), "Zip Search", Toast.LENGTH_SHORT).show();
                 typeOfQuery = QUERY_TYPE_ZIP;
                 searchView.setQueryHint("search by zip-code");
                 searchView.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -346,13 +342,16 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             case QUERY_TYPE_ZIP:
                 performSearchQuery(queryParams,QUERY_BY_ZIP);
                 break;
-            default:performSearchQuery(queryParams,QUERY_BY_ZIP);
+            default:performSearchQuery(queryParams,QUERY_BY_NAME);
         }
     }
-    //calls on queryResults to handle the results
+    //calls on queryResults to handle the results and sets the UI accordingly
     private void performSearchQuery(String stringToQuery, String typeOfQuery){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference breedRef = database.getReference("Pets");
+        mRecyclerView.setVisibility(View.GONE);
+        mNoPetsFoundTv.setVisibility(View.VISIBLE);
+        mNoPetsFoundTv.setText("No Pets Found");
         breedRef.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -376,14 +375,13 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Log.e("check", "WTF" +databaseError);
 
             }
         });
     }
-    //handles results of any query and displays search
+    //handles results of any query and displays search and has a flag to check if the query performed was the first location based search
     private void queryResults(DataSnapshot dataSnapshot){
-        /*
-        petArrayList.clear();
         String petBreed = dataSnapshot.child("breed").getValue().toString();
         String petName = dataSnapshot.child("name").getValue().toString();
         String petWeight = dataSnapshot.child(("weight")).getValue().toString();
@@ -392,13 +390,37 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         String petMicro = dataSnapshot.child("microchip").getValue().toString();
         String petDescription = dataSnapshot.child("description").getValue().toString();
         String petUrl = dataSnapshot.child("picture_url").getValue().toString();
-        String petUrl2 = dataSnapshot.child("picture_url2").getValue().toString();;
-        String petUrl3 = dataSnapshot.child("picture_url3").getValue().toString();;
+        String petUrl2 = dataSnapshot.child("picture_url2").getValue().toString();
+        String petUrl3 = dataSnapshot.child("picture_url3").getValue().toString();
         petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
-        Log.e("Array Size" ," " +testArray.size());
-        */
+        mNoPetsFoundTv.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
 
+    }
+    //this method is called in onCreate to query pets in the users zip-code if they exist
+    private void initialZipQuery(){
+        if(mUserZipcode != null){
+            performSearchQuery(mUserZipcode,QUERY_BY_ZIP);
+            if(petArrayList.size() <1 || petArrayList == null){
+                mNoPetsFoundTv.setText(LOCATION_HAS_NO_PETS);
+            }
+        }
+        else{
+            mNoPetsFoundTv.setText(LOCATION_NOT_AVAILABLE);
+        }
+    }
 
+    //invokes "getLocation" if the permission is granted, otherwise it requests the permission
+    private void requestUserLocation(){
+        if( ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            getLocation();
 
+        }
+        else
+        {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+            }, REQUEST_LOCATION);
+        }
     }
 }

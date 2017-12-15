@@ -1,14 +1,11 @@
 package com.example.enduser.lostpets;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -74,12 +71,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
             Picasso.with(context).load(imageUrl).into(holder.mPetImageIV);
         }
         else{
-            /*
-            Drawable imageNotAvailable = context.getResources().getDrawable(R.drawable.no_image);
-            holder.mPetImageIV.setImageDrawable(imageNotAvailable);
-            Log.e("Settign image", "DOES this fire?");
-            */
-            Picasso.with(context).load(DEFAULT_PICTURE_URL).into(holder.mPetImageIV);
+            holder.mPetImageIV.setImageResource(R.drawable.no_image);
 
         }
         holder.layout.setOnClickListener(new View.OnClickListener() {
