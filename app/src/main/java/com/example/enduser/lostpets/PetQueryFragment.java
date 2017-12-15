@@ -39,6 +39,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -76,6 +77,9 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     //search function related variables
     private SearchView searchView;
     private int typeOfQuery;
+    private final static String QUERY_BY_BREED = "breed";
+    private final static String QUERY_BY_ZIP = "zip";
+    private final static String QUERY_BY_NAME = "name";
     private final static int QUERY_TYPE_ZIP = 1;
     private final static int QUERY_TYPE_NAME =2;
     private final static int QUERY_TYPE_BREED =3;
@@ -288,6 +292,12 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Toast.makeText(getContext(), "Search Submitted", Toast.LENGTH_SHORT).show();
+                String queryText = searchView.getQuery().toString();
+                if(queryText != null){
+                    if(queryText.length() > 0) {
+                        typeOfQueryTOPerform(queryText);
+                    }
+                }
                 return false;
             }
 
@@ -323,5 +333,72 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
                 break;
         }
         return true;
+    }
+    //determines
+    private void typeOfQueryTOPerform(String queryParams){
+        switch(typeOfQuery){
+            case QUERY_TYPE_BREED:
+                performSearchQuery(queryParams, QUERY_BY_BREED);
+                break;
+            case QUERY_TYPE_NAME:
+                performSearchQuery(queryParams,QUERY_BY_NAME);
+                break;
+            case QUERY_TYPE_ZIP:
+                performSearchQuery(queryParams,QUERY_BY_ZIP);
+                break;
+            default:performSearchQuery(queryParams,QUERY_BY_ZIP);
+        }
+    }
+    //calls on queryResults to handle the results
+    private void performSearchQuery(String stringToQuery, String typeOfQuery){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference breedRef = database.getReference("Pets");
+        breedRef.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                queryResults(dataSnapshot);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    //handles results of any query and displays search
+    private void queryResults(DataSnapshot dataSnapshot){
+        /*
+        petArrayList.clear();
+        String petBreed = dataSnapshot.child("breed").getValue().toString();
+        String petName = dataSnapshot.child("name").getValue().toString();
+        String petWeight = dataSnapshot.child(("weight")).getValue().toString();
+        String petZip = dataSnapshot.child(("zip")).getValue().toString();
+        String petGender = dataSnapshot.child("gender").getValue().toString();
+        String petMicro = dataSnapshot.child("microchip").getValue().toString();
+        String petDescription = dataSnapshot.child("description").getValue().toString();
+        String petUrl = dataSnapshot.child("picture_url").getValue().toString();
+        String petUrl2 = dataSnapshot.child("picture_url2").getValue().toString();;
+        String petUrl3 = dataSnapshot.child("picture_url3").getValue().toString();;
+        petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
+        Log.e("Array Size" ," " +testArray.size());
+        */
+
+
+
     }
 }

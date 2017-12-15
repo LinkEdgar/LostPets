@@ -16,6 +16,10 @@ public class Pet {
     private String urlTwo;
     private String urlThree;
 
+    public Pet(){
+
+    }
+
 
 
     public Pet(String name, String weight, String gender, String zipCode, String breed){
@@ -46,7 +50,7 @@ public class Pet {
         this.microchip = microchip;
         urlOne = url;
     }
-    public Pet(String name, String weight, String gender, String zipCode, String breed, String microchip, String description, String url, String url2, String url3){
+    public Pet(String name, String weight, String gender, String zipCode, String breed, String microchip, String description, String urlOne, String url2, String url3){
         this.name = name;
         this.weight = weight;
         this.gender = gender;
@@ -54,7 +58,7 @@ public class Pet {
         this.breed = breed;
         this.description = description;
         this.microchip = microchip;
-        urlOne = url;
+        this.urlOne = urlOne;
         urlTwo = url2;
         urlThree = url3;
     }
