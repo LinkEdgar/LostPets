@@ -3,6 +3,7 @@ package com.example.enduser.lostpets;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
     private ArrayList<Pet> myArray;
-    private final String DEFAULT_PICTURE_URL = "https://firebasestorage.googleapis.com/v0/b/lostpets-60064.appspot.com/o/Image_Not_Available.jpg?alt=media&token=22d201f6-9a01-4fdc-b55b-2fe228a6726e";
+    private final String DEFAULT_PICTURE_URL = "https://firebasestorage.googleapis.com/v0/b/lostpets-60064.appspot.com/o/no_image.jpg?alt=media&token=53250833-a081-4fb6-8e75-662bce07ef80";
     //onclick variables
     private OnItemClicked onClick;
 
@@ -67,19 +68,23 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
         holder.mPetBreedTV.setText(myArray.get(position).getBreed());
         Context context = holder.mPetImageIV.getContext();
         String imageUrl = myArray.get(position).getUrlOne();
-        if(!imageUrl.equals("invalid")){
-            Picasso.with(context).load(imageUrl).into(holder.mPetImageIV);
+        //Since the adding the pet to the database runs asynchronously this null check is a safeguard for null pointer
+        if(imageUrl != null) {
+            if (!imageUrl.equals("invalid")) {
+                Picasso.with(context).load(imageUrl).into(holder.mPetImageIV);
+            } else {
+                Picasso.with(context).load(DEFAULT_PICTURE_URL).into(holder.mPetImageIV);
+            }
+            holder.layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick.onItemClick(position);
+                }
+            });
         }
         else{
-            holder.mPetImageIV.setImageResource(R.drawable.no_image);
-
+            Picasso.with(context).load(DEFAULT_PICTURE_URL).into(holder.mPetImageIV);
         }
-        holder.layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClick.onItemClick(position);
-            }
-        });
 
     }
 

@@ -107,6 +107,10 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
 
         petArrayList = new ArrayList<>();
         mAdapter = new PetAdapter(petArrayList);
+        /*
+        mAdapter.hasStableIds();
+        mRecyclerView.hasFixedSize();
+        */
 
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnClick(this);
@@ -375,23 +379,23 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e("check", "WTF" +databaseError);
+                Log.e("check", "" +databaseError);
 
             }
         });
     }
     //handles results of any query and displays search and has a flag to check if the query performed was the first location based search
     private void queryResults(DataSnapshot dataSnapshot){
-        String petBreed = dataSnapshot.child("breed").getValue().toString();
-        String petName = dataSnapshot.child("name").getValue().toString();
-        String petWeight = dataSnapshot.child(("weight")).getValue().toString();
-        String petZip = dataSnapshot.child(("zip")).getValue().toString();
-        String petGender = dataSnapshot.child("gender").getValue().toString();
-        String petMicro = dataSnapshot.child("microchip").getValue().toString();
-        String petDescription = dataSnapshot.child("description").getValue().toString();
-        String petUrl = dataSnapshot.child("picture_url").getValue().toString();
-        String petUrl2 = dataSnapshot.child("picture_url2").getValue().toString();
-        String petUrl3 = dataSnapshot.child("picture_url3").getValue().toString();
+        String petBreed = dataSnapshot.child("breed").getValue(String.class);
+        String petName = dataSnapshot.child("name").getValue(String.class);
+        String petWeight = dataSnapshot.child(("weight")).getValue(String.class);
+        String petZip = dataSnapshot.child(("zip")).getValue(String.class);
+        String petGender = dataSnapshot.child("gender").getValue(String.class);
+        String petMicro = dataSnapshot.child("microchip").getValue(String.class);
+        String petDescription = dataSnapshot.child("description").getValue(String.class);
+        String petUrl = dataSnapshot.child("picture_url").getValue(String.class);
+        String petUrl2 = dataSnapshot.child("picture_url2").getValue(String.class);
+        String petUrl3 = dataSnapshot.child("picture_url3").getValue(String.class);
         petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
         mNoPetsFoundTv.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
