@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 public class PetDetailedInformation extends AppCompatActivity {
@@ -62,21 +64,22 @@ public class PetDetailedInformation extends AppCompatActivity {
             }
         });
     }
+    /* TODO figure out a more efficient way to layout these pictures*/
     private void loadPetimages(String url1, String url2, String url3){
         if(!url1.equals("invalid")){
-            Picasso.with(this).load(url1).into(mPetImageOne);
+            Picasso.with(this).load(url1).memoryPolicy(MemoryPolicy.NO_STORE).memoryPolicy(MemoryPolicy.NO_CACHE).into(mPetImageOne);
         }
         else{
             mPetImageOne.setImageResource(R.drawable.no_image);
         }
         if(!url2.equals("invalid")){
-            Picasso.with(this).load(url2).into(mPetImageTwo);
+            Picasso.with(this).load(url2).memoryPolicy(MemoryPolicy.NO_STORE).memoryPolicy(MemoryPolicy.NO_CACHE).into(mPetImageTwo);
         }
         else{
             mPetImageTwo.setVisibility(View.GONE);
         }
         if(!url3.equals("invalid")){
-            Picasso.with(this).load(url3).into(mPetImageThree);
+            Picasso.with(this).load(url3).memoryPolicy(MemoryPolicy.NO_STORE).memoryPolicy(MemoryPolicy.NO_CACHE).into(mPetImageThree);
         }
         else{
             mPetImageThree.setVisibility(View.GONE);

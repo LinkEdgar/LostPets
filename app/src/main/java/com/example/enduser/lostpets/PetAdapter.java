@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,14 +36,14 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
         private TextView mPetBreedTV;
         private TextView mPetWeightTV;
         private TextView mPetGenderTV;
-        private ImageView mPetImageIV;
+        private CircularImageView mPetImageIV;
         private View layout;
 
         public ViewHolder(View v){
             super(v);
             layout = v;
             mCardView = (CardView) v.findViewById(R.id.pet_card_view);
-            mPetImageIV = (ImageView) v.findViewById(R.id.pet_query_display_image);
+            mPetImageIV = (CircularImageView) v.findViewById(R.id.pet_query_display_image);
             mPetNameTV = (TextView) v.findViewById(R.id.pet_query_display_name);
             mPetBreedTV = (TextView) v.findViewById(R.id.pet_query_display_breed);
             mPetWeightTV = (TextView) v.findViewById(R.id.pet_query_display_weight);
@@ -71,9 +73,9 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
         //Since the adding the pet to the database runs asynchronously this null check is a safeguard for null pointer
         if(imageUrl != null) {
             if (!imageUrl.equals("invalid")) {
-                Picasso.with(context).load(imageUrl).into(holder.mPetImageIV);
+                Picasso.with(context).load(imageUrl).fit().into(holder.mPetImageIV);
             } else {
-                Picasso.with(context).load(DEFAULT_PICTURE_URL).into(holder.mPetImageIV);
+                Picasso.with(context).load(DEFAULT_PICTURE_URL).resize(100,0).into(holder.mPetImageIV);
             }
             holder.layout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -83,7 +85,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
             });
         }
         else{
-            Picasso.with(context).load(DEFAULT_PICTURE_URL).into(holder.mPetImageIV);
+            Picasso.with(context).load(DEFAULT_PICTURE_URL).resize(100,0).into(holder.mPetImageIV);
         }
 
     }

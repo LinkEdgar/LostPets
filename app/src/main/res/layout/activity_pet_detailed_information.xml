@@ -68,8 +68,14 @@
 
         </HorizontalScrollView>
         <!--TODO add an indication for scroll function -->
+        <ImageView
+            tools:src="@mipmap/ic_launcher_round"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <TextView
+            android:padding="2dp"
             android:layout_marginRight="12dp"
             android:layout_marginLeft="12dp"
             android:textSize="18sp"
