@@ -67,7 +67,7 @@ public class PetDetailedInformation extends AppCompatActivity {
     /* TODO figure out a more efficient way to layout these pictures*/
     private void loadPetimages(String url1, String url2, String url3){
         if(!url1.equals("invalid")){
-            Picasso.with(this).load(url1).memoryPolicy(MemoryPolicy.NO_STORE).memoryPolicy(MemoryPolicy.NO_CACHE).into(mPetImageOne);
+            Picasso.with(this).load(url1).into(mPetImageOne);
         }
         else{
             mPetImageOne.setImageResource(R.drawable.no_image);

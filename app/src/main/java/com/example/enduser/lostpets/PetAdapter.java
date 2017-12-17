@@ -36,14 +36,14 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {
         private TextView mPetBreedTV;
         private TextView mPetWeightTV;
         private TextView mPetGenderTV;
-        private CircularImageView mPetImageIV;
+        private ImageView mPetImageIV;
         private View layout;
 
         public ViewHolder(View v){
             super(v);
             layout = v;
             mCardView = (CardView) v.findViewById(R.id.pet_card_view);
-            mPetImageIV = (CircularImageView) v.findViewById(R.id.pet_query_display_image);
+            mPetImageIV = (ImageView) v.findViewById(R.id.pet_query_display_image);
             mPetNameTV = (TextView) v.findViewById(R.id.pet_query_display_name);
             mPetBreedTV = (TextView) v.findViewById(R.id.pet_query_display_breed);
             mPetWeightTV = (TextView) v.findViewById(R.id.pet_query_display_weight);

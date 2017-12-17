@@ -356,7 +356,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         mRecyclerView.setVisibility(View.GONE);
         mNoPetsFoundTv.setVisibility(View.VISIBLE);
         mNoPetsFoundTv.setText("No Pets Found");
-        breedRef.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).addChildEventListener(new ChildEventListener() {
+        breedRef.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(25).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 queryResults(dataSnapshot);
