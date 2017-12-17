@@ -77,16 +77,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:padding="2dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginLeft="12dp"
-                android:textSize="18sp"
-                tools:text="It was the best of times it was the worst of times, but niggas didn't even care honestly. That's the sad truth. Lwt's write a long sentence that hopefully has no errors. it feels like i just learned how to type even though i do this all the time. Isn't that weird? Let's see if this works> Shall we begin. Fast mide type as fast as you can and hope you didn;y make any mistakes. If you made any mistakes then you are the worst typest ever you baka "
-                android:layout_marginTop="8dp"
-                android:id="@+id/display_pet_info"
+            <android.support.v7.widget.CardView
+                android:layout_margin="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:textSize="20sp"
+                        android:text="Description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:padding="2dp"
+                        android:textSize="18sp"
+                        tools:text="It was the best of times it was the worst of times, but niggas didn't even care honestly. That's the sad truth. Lwt's write a lon "
+                        android:layout_marginTop="2dp"
+                        android:id="@+id/display_pet_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                    <View
+                        android:background="#acadaf"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
         </LinearLayout>
     </ScrollView>
 

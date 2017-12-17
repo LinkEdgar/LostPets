@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/search_options_item" android:title="search_options">
 
-        <item android:title="ZipCode"
+        <item android:title="Zip Code"
             android:id="@+id/search_option_zip" />
         <item
             android:id="@+id/search_option_name"

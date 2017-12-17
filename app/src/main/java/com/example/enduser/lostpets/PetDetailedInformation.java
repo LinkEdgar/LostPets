@@ -45,13 +45,12 @@ public class PetDetailedInformation extends AppCompatActivity {
 
         mPetInfoDisplay.setText(mPetNameFromIntent + "'s breed is identified by its owner as \" "+ mPetBreedFromIntent +"\", weighs "+ mPetWeightFromIntent+ ", is a " + mPetGenderFromIntent + " ,and is {microchip status goes here} "+ mPetMicrochipStatusFromIntent + " . " + mPetNameFromIntent + " is described by its owners as \"" + mPetDescriptionFromIntent + "\" ." );
 
-        loadPetimages(mPetUrlOneFromIntent, mPetUrlTwoFromIntent,mPetUrlThreeFromIntent);
+        loadPetImages(mPetUrlOneFromIntent, mPetUrlTwoFromIntent,mPetUrlThreeFromIntent);
 
         mPetImageOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO used shared preference to share urls for the urls which are cashed into memory and load quickly
-                if(mPetUrlOneFromIntent != "invalid") {
+                if(!mPetUrlOneFromIntent.equals("invalid")) {
                     SharedPreferences preferences = getSharedPreferences("ImageUrls", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("UrlOne", mPetUrlOneFromIntent);
@@ -65,7 +64,7 @@ public class PetDetailedInformation extends AppCompatActivity {
         });
     }
     /* TODO figure out a more efficient way to layout these pictures*/
-    private void loadPetimages(String url1, String url2, String url3){
+    private void loadPetImages(String url1, String url2, String url3){
         if(!url1.equals("invalid")){
             Picasso.with(this).load(url1).into(mPetImageOne);
         }

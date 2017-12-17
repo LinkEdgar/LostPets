@@ -350,6 +350,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         }
     }
     //calls on queryResults to handle the results and sets the UI accordingly
+    //TODO Implement a way for users to retrieve more data after they hit the cap
     private void performSearchQuery(String stringToQuery, String typeOfQuery){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference breedRef = database.getReference("Pets");
