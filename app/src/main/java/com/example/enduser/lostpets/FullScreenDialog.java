@@ -25,6 +25,7 @@ public class FullScreenDialog extends DialogFragment {
     private ImageView mImageOne;
     private int mImageCounter = 0, mImagePosition = 0;
     private ImageButton mRightScroll, mLeftScroll;
+    private int userPickedPicturePosition;
     private String[] urlArray = new String[3];
 
     @Nullable
@@ -34,6 +35,7 @@ public class FullScreenDialog extends DialogFragment {
             mImageOne = (ImageView) view.findViewById(R.id.full_size_image_one);
             setUrls();
             imageCounter();
+            setUserClickedImage();
             mRightScroll = (ImageButton) view.findViewById(R.id.full_screen_right_scroll);
             mRightScroll.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -43,7 +45,8 @@ public class FullScreenDialog extends DialogFragment {
                         Picasso.with(getActivity()).load(urlArray[mImagePosition]).into(mImageOne );
                     }
                     else{
-                        mImagePosition = mImageCounter -1;
+                        mImagePosition = 0;
+                        Picasso.with(getActivity()).load(urlArray[mImagePosition]).into(mImageOne );
                     }
                 }
             });
@@ -56,7 +59,8 @@ public class FullScreenDialog extends DialogFragment {
                         Picasso.with(getActivity()).load(urlArray[mImagePosition]).noFade().into(mImageOne );
                     }
                     else{
-                        mImagePosition = 0;
+                        mImagePosition = 2;
+                        Picasso.with(getActivity()).load(urlArray[mImagePosition]).into(mImageOne );
                     }
                 }
             });
@@ -71,12 +75,12 @@ public class FullScreenDialog extends DialogFragment {
         urlArray[1] = urlToDisplayTwo;
         urlToDisplayThree = preferences.getString("UrlThree","invalid");
         urlArray[2] = urlToDisplayThree;
+        userPickedPicturePosition = preferences.getInt("currentPicture",0);
 
     }
     //counts the number of images and loads the first one
     private void imageCounter(){
         if(urlToDisplayOne != "invalid"){
-            Picasso.with(getActivity()).load(urlToDisplayOne).into(mImageOne );
             mImageCounter++;
         }
         if(urlToDisplayTwo != "invalid"){
@@ -86,5 +90,11 @@ public class FullScreenDialog extends DialogFragment {
         if(urlToDisplayThree != "invalid"){
             mImageCounter++;
         }
+    }
+    //this method set the picture the user chose to display and then sets our imageCounter equal to the user picked position
+    //the default value is zero in case the shared preferences didn't work
+    private void setUserClickedImage(){
+        Picasso.with(getActivity()).load(urlArray[userPickedPicturePosition]).into(mImageOne);
+        mImagePosition = userPickedPicturePosition;
     }
 }
