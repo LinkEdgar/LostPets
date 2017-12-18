@@ -54,7 +54,7 @@ import java.util.Locale;
  * if the location of the user is not available it will not display anything
  */
 
-
+//TODO add check for double search!
 public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClicked{
     //firebase related variables
     private FirebaseDatabase mDatabase;

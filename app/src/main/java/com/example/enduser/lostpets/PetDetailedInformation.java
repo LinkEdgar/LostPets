@@ -7,12 +7,14 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -43,6 +45,9 @@ public class PetDetailedInformation extends AppCompatActivity {
     private MyImageSwitcher mImageSwitcher;
     private ImageButton mRightScroll;
     private ImageView THEIMAGEVIEW;
+    private int totalImages =0;
+    private boolean petHasMoreThanOnePicture =false;
+    private RelativeLayout mShowMorePicuresLayout;
 
 
     @Override
@@ -62,31 +67,17 @@ public class PetDetailedInformation extends AppCompatActivity {
         //loadPetImages(mPetUrlOneFromIntent, mPetUrlTwoFromIntent,mPetUrlThreeFromIntent);
     //TODO --add this to new Imageview
 
-        /*
-        mPetImageOne.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!mPetUrlOneFromIntent.equals("invalid")) {
-                    SharedPreferences preferences = getSharedPreferences("ImageUrls", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("UrlOne", mPetUrlOneFromIntent);
-                    editor.putString("UrlTwo", mPetUrlTwoFromIntent);
-                    editor.putString("UrlThree", mPetUrlThreeFromIntent);
-                    editor.apply();
-                    DialogFragment dialogFragment = new FullScreenDialog();
-                    dialogFragment.show(getFragmentManager(), "Fragment");
-                }
-            }
-        });
-        */
         setUrlArray();
         initializeImageSwitcher();
         setImageScrollListener();
         setInitialImage();
-        THEIMAGEVIEW.setOnClickListener(new View.OnClickListener() {
+        setUpMorePictureLayout();
+        //TODO log this to see why it's not working for all the pictures and globalize shared preferences
+        mImageSwitcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mPetUrlOneFromIntent.equals("invalid")) {
+                Log.e("Imageview", "clicked");
+                if(!mUrlArray[mCurrentImage].equals("invalid")) {
                     SharedPreferences preferences = getSharedPreferences("ImageUrls", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("UrlOne", mPetUrlOneFromIntent);
@@ -145,22 +136,11 @@ public class PetDetailedInformation extends AppCompatActivity {
                  THEIMAGEVIEW = new ImageView(PetDetailedInformation.this);
                  THEIMAGEVIEW.setScaleType(ImageView.ScaleType.CENTER_CROP);
                  THEIMAGEVIEW.setLayoutParams(new ImageSwitcher.LayoutParams(mImageSwitcher.getLayoutParams()));
-                 /*
-                 ImageView imageView = new ImageView(PetDetailedInformation.this);
-                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                 imageView.setLayoutParams(new ImageSwitcher.LayoutParams(mImageSwitcher.getLayoutParams()));
-                 */
                  return THEIMAGEVIEW;
              }
          });
         mImageSwitcher.setInAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left));
         mImageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right));
-        THEIMAGEVIEW.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(PetDetailedInformation.this, "Yeet", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
     private void setImageScrollListener(){
         mRightScroll =(ImageButton) findViewById(R.id.detail_right_scroll);
@@ -193,5 +173,15 @@ public class PetDetailedInformation extends AppCompatActivity {
         mUrlArray[2] = mPetUrlThreeFromIntent;
     }
 
-
+    private void setUpMorePictureLayout(){
+        mShowMorePicuresLayout = (RelativeLayout) findViewById(R.id.more_picture_layout);
+        for(int x =0 ; x< mUrlArray.length; x++){
+            if(!mUrlArray[x].equals("invalid")){
+                totalImages++;
+            }
+        }
+        if(totalImages > 1){
+            mShowMorePicuresLayout.setVisibility(View.VISIBLE);
+        }
+    }
 }
