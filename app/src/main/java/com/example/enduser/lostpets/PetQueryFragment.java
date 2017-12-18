@@ -81,6 +81,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private final static int QUERY_TYPE_NAME =2;
     private final static int QUERY_TYPE_BREED =3;
     private boolean extraOptionMenuInflatedStatus = false;
+    //used as a flag to prevent the user from double submitting
+    private boolean userDoubleSubmit = false;
     private final static  String LOCATION_NOT_AVAILABLE = "Could not get your location to find pets in your area";
     private final static String LOCATION_HAS_NO_PETS = "No Pets Found in your location. Try using the search function";
     public PetQueryFragment(){
@@ -293,12 +295,15 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                petArrayList.clear();
-                mAdapter.notifyDataSetChanged();
-                String queryText = searchView.getQuery().toString();
-                if(queryText != null){
-                    if(queryText.length() > 0) {
-                        typeOfQueryTOPerform(queryText);
+                if(userDoubleSubmit ==false) {
+                    userDoubleSubmit = true;
+                    petArrayList.clear();
+                    mAdapter.notifyDataSetChanged();
+                    String queryText = searchView.getQuery().toString();
+                    if (queryText != null) {
+                        if (queryText.length() > 0) {
+                            typeOfQueryToPerform(queryText);
+                        }
                     }
                 }
                 return false;
@@ -306,6 +311,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                userDoubleSubmit = false;
                 return false;
             }
         });
@@ -335,7 +341,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         return true;
     }
     //determines
-    private void typeOfQueryTOPerform(String queryParams){
+    private void typeOfQueryToPerform(String queryParams){
         switch(typeOfQuery){
             case QUERY_TYPE_BREED:
                 performSearchQuery(queryParams, QUERY_BY_BREED);

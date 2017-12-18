@@ -9,11 +9,16 @@
     android:background="#000000"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <ImageView
         tools:src="@mipmap/ic_launcher_round"
         android:layout_gravity="center"
         android:id="@+id/full_size_image_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ProgressBar
+        android:id="@+id/full_screen_progress"
+        android:layout_gravity="center"
+        android:indeterminate="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <RelativeLayout
