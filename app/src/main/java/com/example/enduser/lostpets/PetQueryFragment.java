@@ -322,17 +322,26 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.search_option_breed:
+                if(typeOfQuery != QUERY_TYPE_BREED){
+                    userDoubleSubmit = false;
+                }
                 typeOfQuery = QUERY_TYPE_BREED;
                 searchView.setQueryHint("search by breed");
                 searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                 break;
             case R.id.search_option_name:
+                if(typeOfQuery != QUERY_TYPE_NAME){
+                    userDoubleSubmit = false;
+                }
                 typeOfQuery = QUERY_TYPE_NAME;
                 searchView.setQueryHint("search by name");
                 searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
                 break;
             case R.id.search_option_zip:
+                if(typeOfQuery != QUERY_TYPE_ZIP){
+                    userDoubleSubmit = false;
+                }
                 typeOfQuery = QUERY_TYPE_ZIP;
                 searchView.setQueryHint("search by zip-code");
                 searchView.setInputType(InputType.TYPE_CLASS_NUMBER);
