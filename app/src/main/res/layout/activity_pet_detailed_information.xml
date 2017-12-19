@@ -40,6 +40,7 @@
                android:layout_width="wrap_content"
                android:layout_height="wrap_content">
                <TextView
+                   android:id="@+id/enter_pet_detail_switch_click_suggestion"
                    android:layout_marginLeft="4dp"
                    android:layout_centerInParent="true"
                    android:textColor="@color/white"
@@ -62,7 +63,7 @@
 
            </RelativeLayout>
 
-            <!--TODO add an indication for scroll function -->
+            <!--TODO add an indication for scroll function  maybe delete this-->
             <ImageView
                 tools:src="@mipmap/ic_launcher_round"
                 android:layout_gravity="center"
@@ -111,23 +112,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:elevation="8dp"
             android:textColor="@color/white"
             android:backgroundTint="@color/colorPrimary"
             android:layout_weight="1"
             android:text="Found this pet"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="50dp" />
         <Button
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:elevation="8dp"
             android:textColor="@color/white"
             android:backgroundTint="@color/colorPrimary"
             android:layout_weight="1"
             android:text="Lost this pet"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="50dp" />
 
     </LinearLayout>
 

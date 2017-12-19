@@ -36,6 +36,8 @@ public class PetDetailedInformation extends AppCompatActivity {
     private String mPetUrlTwoFromIntent;
     private String mPetUrlThreeFromIntent;
     private TextView mPetInfoDisplay;
+    private TextView suggestClickTV;
+
 
     //image scroll
     private String[] mUrlArray = new String[3];
@@ -54,7 +56,7 @@ public class PetDetailedInformation extends AppCompatActivity {
         getPetInformationFromIntent(intent);
         setupPetInformation();
         setUrlArray();
-        setUpMorePictureLayout();
+        setUpMorePicturesLayout();
         initializeImageSwitcher();
         setImageScrollListener();
         setInitialImage();
@@ -106,6 +108,7 @@ public class PetDetailedInformation extends AppCompatActivity {
             }
         });
     }
+    //must be called after setMorePicturesLayout()
     private void setImageScrollListener(){
         mRightScroll =(ImageButton) findViewById(R.id.detail_right_scroll);
         mRightScroll.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +119,12 @@ public class PetDetailedInformation extends AppCompatActivity {
                     mCurrentImage =0;
                 }
                 setCurrentImage();
+                if(mCurrentImage %2 != 0){
+                    suggestClickTV.setText("Click on picture for full screen");
+                }
+                else{
+                    suggestClickTV.setText("See more pictures");
+                }
             }
         });
     }
@@ -137,8 +146,9 @@ public class PetDetailedInformation extends AppCompatActivity {
         mUrlArray[2] = mPetUrlThreeFromIntent;
     }
     //This method sets the view that suggests more images to the user by first going through the array and checking if at least two urls aren't invalid
-    private void setUpMorePictureLayout(){
+    private void setUpMorePicturesLayout(){
         mShowMorePicuresLayout = (RelativeLayout) findViewById(R.id.more_picture_layout);
+        suggestClickTV = (TextView) findViewById(R.id.enter_pet_detail_switch_click_suggestion);
         for(int x =0 ; x< mUrlArray.length; x++){
             if(!mUrlArray[x].equals("invalid")){
                 totalImages++;

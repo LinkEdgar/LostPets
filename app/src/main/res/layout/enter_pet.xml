@@ -22,7 +22,6 @@
         android:inputType="text|textCapSentences"
         android:id="@+id/enter_pet_name"
         android:maxLines="1"
-        android:textAlignment="center"
         android:hint="Name"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
@@ -32,8 +31,7 @@
         android:inputType="text|textCapSentences"
         android:id="@+id/enter_pet_breed"
         android:maxLines="1"
-        android:textAlignment="center"
-        android:hint="Breed"
+        android:hint="Breed (optional)"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_width="match_parent"
@@ -42,7 +40,6 @@
         android:id="@+id/enter_pet_zip"
         android:maxLines="1"
         android:inputType="number"
-        android:textAlignment="center"
         android:hint="Zip Code "
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
@@ -52,26 +49,21 @@
         android:id="@+id/enter_pet_weight"
         android:maxLines="1"
         android:inputType="number"
-        android:textAlignment="center"
-        android:hint="Weight"
+        android:hint="Weight (optional)"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <ScrollView
-        android:layout_width="match_parent"
-        android:minHeight="30dp"
-        android:layout_height="80dp">
+
         <EditText
-            android:inputType="text|textCapSentences"
+            android:inputType="textMultiLine|textCapSentences"
             android:id="@+id/enter_pet_desc"
-            android:textAlignment="center"
-            android:hint="Describe any distinguishing features that may help find your pet here. "
+            android:hint="Description (optional)"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </ScrollView>
+
 
         <LinearLayout
             android:orientation="horizontal"
