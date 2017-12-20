@@ -54,7 +54,6 @@ import java.util.Locale;
  * if the location of the user is not available it will not display anything
  */
 
-//TODO add check for double search!
 public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClicked{
     //firebase related variables
     private FirebaseDatabase mDatabase;
@@ -367,12 +366,12 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     //calls on queryResults to handle the results and sets the UI accordingly
     //TODO Implement a way for users to retrieve more data after they hit the cap
     private void performSearchQuery(String stringToQuery, String typeOfQuery){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference breedRef = database.getReference("Pets");
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference queryRef = database.getReference("Pets");
         mRecyclerView.setVisibility(View.GONE);
         mNoPetsFoundTv.setVisibility(View.VISIBLE);
         mNoPetsFoundTv.setText("No Pets Found");
-        breedRef.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(25).addChildEventListener(new ChildEventListener() {
+        queryRef.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(25).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 queryResults(dataSnapshot);
