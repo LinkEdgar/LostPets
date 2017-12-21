@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,7 +55,7 @@ import java.io.InputStream;
  * If user choose a picture to upload then the uri is not empty and thus the picture will be uploaded.
  */
 
-public class EnterLostPetFragment extends Fragment implements AdapterView.OnItemSelectedListener{
+public class EnterLostPetFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener{
     private Spinner mGenderSpinner;
     //firebase varaibles
     private FirebaseDatabase mDatabase;
@@ -93,6 +94,20 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private int mImageUploadCounter = 0;
 
     private int REQUEST_IMAGE_GET = 1001;
+    private int SECOND_IMAGE_SELECTOR = 1002;
+
+    //new image selection
+    private ImageView mCoverImage,mRightImage,mLeftImage;
+    private ImageButton cancelFirstImage;
+    private ImageButton mLeftImageSelector, mRightImageSelector;
+    private TextView userHint;
+    private Button imageSelectButton;
+    //used to upload the photos via firebase
+    private Uri[] uriArray = new Uri[3];
+    private Bitmap[] bitmapArray = new Bitmap[3];
+    private int imageCounter = 0;
+    private static final int IMAGE_UPLOAD_LIMIT = 3;
+
 
     //default constructor
     public EnterLostPetFragment(){
@@ -138,6 +153,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         mGenderSpinner.setAdapter(adapter);
         mGenderSpinner.setOnItemSelectedListener(this);
+        setUpImageSelect(root_view);
         return root_view;
     }
 
@@ -326,16 +342,17 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == Activity.RESULT_OK) {
-            Log.e("display counter","after intent call "+mImageUploadCounter);
             if(requestCode == REQUEST_IMAGE_GET && data != null){
                 imageSelection(data);
+            }
+            if(requestCode == SECOND_IMAGE_SELECTOR && data != null){
+                handleFirstImageSelection(data);
             }
 
         }
         else
         {
             mImageUploadCounter= mImageUploadCounter -1;
-            Log.e("display counter","if intent is null "+mImageUploadCounter);
         }
 
 
@@ -599,7 +616,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 }
                 if(mImageUploadCounter <= 3) {
                     mImageUploadCounter = mImageUploadCounter +1;
-                    Log.e("display counter"," after onclick"+mImageUploadCounter);
 
                     selectImage();
                 }
@@ -681,5 +697,121 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             assignPetId();
             clearTextFields();
         }
+    }
+
+    private void setUpImageSelect(View root){
+
+        imageSelectButton = (Button) root.findViewById(R.id.enter_pet_select_image_bt);
+        mRightImage = (ImageView) root.findViewById(R.id.enter_pet_second_image_view);
+        mCoverImage = (ImageView) root.findViewById(R.id.enter_pet_selected_image_iv);
+        mLeftImage =(ImageView) root.findViewById(R.id.enter_pet_left_image);
+        mRightImageSelector =(ImageButton) root.findViewById(R.id.enter_pet_second_image);
+        mRightImageSelector.setOnClickListener(this);
+        mLeftImageSelector =(ImageButton) root.findViewById(R.id.enter_pet_third_image);
+        mLeftImageSelector.setOnClickListener(this);
+        cancelFirstImage = (ImageButton) root.findViewById(R.id.enter_pet_cancel_selected_button);
+        cancelFirstImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageCounter--;
+                if(imageCounter == 0){
+                    mCoverImage.setVisibility(View.GONE);
+                    mCoverImage.setImageDrawable(null);
+                    imageSelectButton.setVisibility(View.VISIBLE);
+                    cancelFirstImage.setVisibility(View.GONE);
+                    mRightImageSelector.setVisibility(View.GONE);
+                    bitmapArray[imageCounter] = null;
+                    uriArray[imageCounter] = null;
+                }
+                else if(imageCounter == 1){
+                    //swap pictures with main image
+                    bitmapArray[imageCounter-1] = bitmapArray[imageCounter];
+                    uriArray[imageCounter-1] = uriArray[imageCounter];
+                    mCoverImage.setImageBitmap(bitmapArray[imageCounter-1]);
+                    mRightImage.setImageBitmap(null);
+                    mRightImage.setVisibility(View.GONE);
+                    mLeftImageSelector.setVisibility(View.GONE);
+                    mRightImageSelector.setVisibility(View.VISIBLE);
+                    bitmapArray[imageCounter] = null;
+                    uriArray[imageCounter] = null;
+                }
+                else if(imageCounter == 2){
+                    //swap between right and center
+                    bitmapArray[imageCounter-2] = bitmapArray[imageCounter-1];
+                    uriArray[imageCounter-2] = uriArray[imageCounter-1];
+                    mCoverImage.setImageBitmap(bitmapArray[imageCounter-2]);
+                    //swap pictures between left and right
+                    bitmapArray[imageCounter-1] = bitmapArray[imageCounter];
+                    uriArray[imageCounter-1] = uriArray[imageCounter];
+                    mRightImage.setImageBitmap(bitmapArray[imageCounter-1]);
+                    mLeftImage.setImageBitmap(null);
+                    mLeftImageSelector.setVisibility(View.VISIBLE);
+                    mLeftImage.setVisibility(View.GONE);
+                    bitmapArray[imageCounter] = null;
+                    uriArray[imageCounter] = null;
+
+
+
+
+                }
+                Log.e("uriArray", " "+uriArray[0]+" "+ uriArray[1] +" "+uriArray[2]);
+                Log.e("BitmapArray", " "+bitmapArray[0]+" "+ bitmapArray[1]+" "+bitmapArray[2]);
+            }
+        });
+        userHint  = (TextView) root.findViewById(R.id.enter_pet_user_select_hint);
+        imageSelectButton.setOnClickListener(this);
+
+    }
+    private void handleFirstImageSelection(Intent data){
+
+        if(imageCounter == 0) {
+            imageSelectButton.setVisibility(View.GONE);
+            Bitmap bmp = null;
+            Uri imageUri = data.getData();
+            setUriAndBitMap(imageUri,bmp,mCoverImage);
+            mCoverImage.setVisibility(View.VISIBLE);
+            //userHint.setVisibility(View.VISIBLE);
+            cancelFirstImage.setVisibility(View.VISIBLE);
+            mRightImageSelector.setVisibility(View.VISIBLE);
+        }
+        else if(imageCounter == 1){
+            Bitmap bmp = null;
+            Uri imageUri = data.getData();
+            setUriAndBitMap(imageUri,bmp, mRightImage);
+            mRightImageSelector.setVisibility(View.GONE);
+            mLeftImageSelector.setVisibility(View.VISIBLE);
+            mRightImage.setVisibility(View.VISIBLE);
+        }
+        else if(imageCounter == 2){
+            Bitmap bmp = null;
+            Uri imageUri = data.getData();
+            setUriAndBitMap(imageUri,bmp, mLeftImage);
+            mLeftImageSelector.setVisibility(View.GONE);
+            mLeftImage.setVisibility(View.VISIBLE);
+            //maybe set some textview indicating at capacity
+        }
+    }
+    private void setUriAndBitMap(Uri uri, Bitmap bmp, ImageView imageButton){
+        try {
+            InputStream image = getActivity().getContentResolver().openInputStream(uri);
+            bmp = BitmapFactory.decodeStream(image);
+            imageButton.setImageBitmap(bmp);
+            uriArray[imageCounter] = uri;
+            bitmapArray[imageCounter] = bmp;
+            imageCounter++;
+            Log.e("uriArray", " "+uriArray[0]+" "+ uriArray[1] +" "+uriArray[2]);
+            Log.e("BitmapArray", " "+bitmapArray[0]+" "+ bitmapArray[1]+" "+bitmapArray[2]);
+
+        } catch (IOException e) {
+            Log.e("SetImageOneFromGallery", "Failed to load image ");
+
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, SECOND_IMAGE_SELECTOR);
     }
 }
