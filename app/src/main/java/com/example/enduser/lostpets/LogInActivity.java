@@ -8,8 +8,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
 
 public class LogInActivity extends AppCompatActivity {
     private Button getStartedButton;
@@ -53,7 +53,7 @@ public class LogInActivity extends AppCompatActivity {
 
         //Temp code to display pictures at starting screen
         //TEST CODE!
-        Picasso.with(this).load("http://cdn.akc.org/content/hero/Smiling_Shibas_Hero.jpg").into(introImage);
+        Glide.with(this).load("http://cdn.akc.org/content/hero/Smiling_Shibas_Hero.jpg").into(introImage);
     }
 
     @Override

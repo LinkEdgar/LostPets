@@ -19,11 +19,18 @@
                 android:layout_width="match_parent"
                 android:minHeight="150dp"
                 android:layout_height="wrap_content">
+                <ProgressBar
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:id="@+id/pet_detail_progress_bar"
+                    android:indeterminate="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="280dp">
 
-                    <com.example.enduser.lostpets.MyImageSwitcher
+                    <ImageSwitcher
                         android:layout_centerInParent="true"
                         android:id="@+id/detail_image_switcher"
                         android:layout_width="match_parent"

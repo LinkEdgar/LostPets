@@ -5,12 +5,12 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 /**
  * Created by EndUser on 12/17/2017.
  */
-
+//TODO delete this class
 public class MyImageSwitcher extends ViewSwitcher {
     public MyImageSwitcher(Context context) {
         super(context);
@@ -23,7 +23,7 @@ public class MyImageSwitcher extends ViewSwitcher {
     public void setImageUrl(String url){
         ImageView imageView = (ImageView) this.getNextView();
         if(!url.equals("invalid")) {
-            Picasso.with(getContext()).load(url).into(imageView);
+            //Picasso.with(getContext()).load(url).into(imageView);
         }
         else{
             imageView.setImageResource(R.drawable.no_image);

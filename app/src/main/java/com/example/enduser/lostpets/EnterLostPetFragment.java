@@ -700,6 +700,9 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     }
 
     private void setUpImageSelect(View root){
+        //TODO add context menu for imageviews
+        //TODO delete or reimplement user hint
+        //TODO rename the imageviews and imagebuttons
 
         imageSelectButton = (Button) root.findViewById(R.id.enter_pet_select_image_bt);
         mRightImage = (ImageView) root.findViewById(R.id.enter_pet_second_image_view);

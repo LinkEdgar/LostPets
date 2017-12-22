@@ -4,6 +4,8 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -16,13 +18,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 public class PetDetailedInformation extends AppCompatActivity {
     private String mPetNameFromIntent;
@@ -37,12 +41,13 @@ public class PetDetailedInformation extends AppCompatActivity {
     private String mPetUrlThreeFromIntent;
     private TextView mPetInfoDisplay;
     private TextView suggestClickTV;
+    private ProgressBar mProgressBar;
 
 
     //image scroll
     private String[] mUrlArray = new String[3];
     private int mCurrentImage = 0;
-    private MyImageSwitcher mImageSwitcher;
+    private ImageSwitcher mImageSwitcher;
     private ImageButton mRightScroll;
     private int totalImages =0;
     private RelativeLayout mShowMorePicuresLayout;
@@ -53,6 +58,7 @@ public class PetDetailedInformation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_detailed_information);
         Intent intent = getIntent();
+        mProgressBar = (ProgressBar) findViewById(R.id.pet_detail_progress_bar);
         getPetInformationFromIntent(intent);
         setupPetInformation();
         setUrlArray();
@@ -77,15 +83,11 @@ public class PetDetailedInformation extends AppCompatActivity {
 
     }
     private void initializeImageSwitcher(){
-         mImageSwitcher = (MyImageSwitcher) findViewById(R.id.detail_image_switcher);
+         mImageSwitcher = (ImageSwitcher) findViewById(R.id.detail_image_switcher);
          mImageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
              @Override
              public View makeView() {
                  ImageView image = new ImageView(PetDetailedInformation.this);
-                 image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                 image.setLayoutParams(
-                         new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT)
-                 );
                  return image;
              }
          });
@@ -108,7 +110,8 @@ public class PetDetailedInformation extends AppCompatActivity {
             }
         });
     }
-    //must be called after setMorePicturesLayout()
+
+    //must be called after setMore
     private void setImageScrollListener(){
         mRightScroll =(ImageButton) findViewById(R.id.detail_right_scroll);
         mRightScroll.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +123,7 @@ public class PetDetailedInformation extends AppCompatActivity {
                 }
                 setCurrentImage();
                 if(mCurrentImage %2 != 0){
-                    suggestClickTV.setText("Click on picture for full screen");
+                    suggestClickTV.setText("Click on picture to expand");
                 }
                 else{
                     suggestClickTV.setText("See more pictures");
@@ -136,7 +139,26 @@ public class PetDetailedInformation extends AppCompatActivity {
 
         }
         else {
-            mImageSwitcher.setImageUrl(mUrlArray[mCurrentImage]);
+            mProgressBar.setVisibility(View.VISIBLE);
+            Glide.with(PetDetailedInformation.this)
+                    .load(mUrlArray[mCurrentImage])
+                    .asBitmap()
+                    .error(R.drawable.no_image)
+                    .centerCrop()
+                    .listener(new RequestListener<String, Bitmap>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                            mProgressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            mImageSwitcher.setImageDrawable(new BitmapDrawable(getResources(),resource));
+                            return true;
+                        }
+                    }).into((ImageView) mImageSwitcher.getCurrentView());
+
         }
 
     }

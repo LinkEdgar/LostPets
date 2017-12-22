@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="400dp"
+    android:minWidth="400dp"
     android:background="#000000"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -13,9 +14,10 @@
         tools:src="@mipmap/ic_launcher_round"
         android:layout_gravity="center"
         android:id="@+id/full_size_image_one"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="300dp"
+        android:layout_height="600dp" />
     <ProgressBar
+        android:visibility="gone"
         android:id="@+id/full_screen_progress"
         android:layout_gravity="center"
         android:indeterminate="true"

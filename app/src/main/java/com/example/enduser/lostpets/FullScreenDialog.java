@@ -13,13 +13,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 /**
  * Created by EndUser on 12/11/2017.
  */
 
-public class FullScreenDialog extends DialogFragment {
+public class FullScreenDialog extends DialogFragment implements RequestListener{
     //urls
     private String urlToDisplayOne;
     private String urlToDisplayTwo;
@@ -75,21 +78,7 @@ public class FullScreenDialog extends DialogFragment {
     //the default value is zero in case the shared preferences didn't work
     private void setUserClickedImage(){
         mProgressBar.setVisibility(View.VISIBLE);
-        mImageOne.setVisibility(View.GONE);
-        Picasso.with(getActivity()).load(urlArray[userPickedPicturePosition]).into(mImageOne,
-                new com.squareup.picasso.Callback(){
-
-                    @Override
-                    public void onSuccess() {
-                        mProgressBar.setVisibility(View.GONE);
-                        mImageOne.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+        Glide.with(getActivity()).load(urlArray[userPickedPicturePosition]).listener(FullScreenDialog.this).into(mImageOne);
         mImagePosition = userPickedPicturePosition;
     }
 
@@ -103,39 +92,14 @@ public class FullScreenDialog extends DialogFragment {
                     mImagePosition = mImagePosition + 1;
                     if (mImagePosition < mImageCounter) {
                         mProgressBar.setVisibility(View.VISIBLE);
-                        mImageOne.setVisibility(View.GONE);
-                        Picasso.with(getActivity()).load(urlArray[mImagePosition]).into(mImageOne,
-                                new com.squareup.picasso.Callback() {
+                        Glide.with(getActivity()).load(urlArray[mImagePosition]).listener(FullScreenDialog.this).into(mImageOne);
 
-                                    @Override
-                                    public void onSuccess() {
-                                        mProgressBar.setVisibility(View.GONE);
-                                        mImageOne.setVisibility(View.VISIBLE);
-                                    }
-
-                                    @Override
-                                    public void onError() {
-
-                                    }
-                                });
                     } else {
                         mImagePosition = 0;
                         mProgressBar.setVisibility(View.VISIBLE);
-                        mImageOne.setVisibility(View.GONE);
-                        Picasso.with(getActivity()).load(urlArray[mImagePosition]).into(mImageOne,
-                                new com.squareup.picasso.Callback() {
+                        Glide.with(getActivity()).load(urlArray[mImagePosition]).listener(FullScreenDialog.this).into(mImageOne);
 
-                                    @Override
-                                    public void onSuccess() {
-                                        mProgressBar.setVisibility(View.GONE);
-                                        mImageOne.setVisibility(View.VISIBLE);
-                                    }
 
-                                    @Override
-                                    public void onError() {
-
-                                    }
-                                });
                     }
                 }
             });
@@ -145,39 +109,13 @@ public class FullScreenDialog extends DialogFragment {
                     mImagePosition = mImagePosition - 1;
                     if (mImagePosition >= 0) {
                         mProgressBar.setVisibility(View.VISIBLE);
-                        mImageOne.setVisibility(View.GONE);
-                        Picasso.with(getActivity()).load(urlArray[mImagePosition]).noFade().into(mImageOne,
-                                new com.squareup.picasso.Callback() {
-
-                                    @Override
-                                    public void onSuccess() {
-                                        mProgressBar.setVisibility(View.GONE);
-                                        mImageOne.setVisibility(View.VISIBLE);
-                                    }
-
-                                    @Override
-                                    public void onError() {
-
-                                    }
-                                });
-                    } else {
+                        Glide.with(getActivity()).load(urlArray[mImagePosition]).listener(FullScreenDialog.this).into(mImageOne);
+                    }
+                    else {
                         mImagePosition = mImageCounter - 1;
                         mProgressBar.setVisibility(View.VISIBLE);
-                        mImageOne.setVisibility(View.GONE);
-                        Picasso.with(getActivity()).load(urlArray[mImagePosition]).into(mImageOne,
-                                new com.squareup.picasso.Callback() {
+                        Glide.with(getActivity()).load(urlArray[mImagePosition]).listener(FullScreenDialog.this).into(mImageOne);
 
-                                    @Override
-                                    public void onSuccess() {
-                                        mProgressBar.setVisibility(View.GONE);
-                                        mImageOne.setVisibility(View.VISIBLE);
-                                    }
-
-                                    @Override
-                                    public void onError() {
-
-                                    }
-                                });
                     }
                 }
             });
@@ -186,5 +124,15 @@ public class FullScreenDialog extends DialogFragment {
             mRightScroll.setVisibility(View.GONE);
             mLeftScroll.setVisibility(View.GONE);
         }
+    }
+    @Override
+    public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+        return false;
+    }
+
+    @Override
+    public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+        mProgressBar.setVisibility(View.GONE);
+        return false;
     }
 }
