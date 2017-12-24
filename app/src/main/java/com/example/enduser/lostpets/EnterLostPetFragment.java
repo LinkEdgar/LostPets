@@ -29,6 +29,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -104,7 +105,6 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private Button imageSelectButton;
     //used to upload the photos via firebase
     private Uri[] uriArray = new Uri[3];
-    private Bitmap[] bitmapArray = new Bitmap[3];
     private int imageCounter = 0;
     private static final int IMAGE_UPLOAD_LIMIT = 3;
 
@@ -191,8 +191,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         if(itemId == R.id.add_pet_item){
             //This method calls assigns a unique ID for each pet added to the database
              //within this method store data is called which sets the pet info to the database
-            sortThroughUserSelectedPictures();
-
+            //sortThroughUserSelectedPictures();
+            uploadSelectedPictures();
         }
         return true;
     }
@@ -278,6 +278,21 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         mImageToUploadThree.setImageDrawable(null);
         mUploadPictureButton.setText("Upload Pictures");
         mImageUploadCounter = 0;
+        //clear image select text fields and variables
+        uriArray[0] = null;
+        uriArray[1] = null;
+        uriArray[2] = null;
+        imageCounter = 0;
+        mRightImage.setImageBitmap(null);
+        mLeftImage.setImageBitmap(null);
+        mRightImage.setVisibility(View.GONE);
+        mLeftImage.setVisibility(View.GONE);
+        mCoverImage.setImageBitmap(null);
+        mCoverImage.setVisibility(View.GONE);
+        cancelFirstImage.setVisibility(View.GONE);
+        imageSelectButton.setVisibility(View.VISIBLE);
+        Log.e("Uri array", uriArray[0]+ " "+ uriArray[1]+" " + uriArray[2]);
+
     }
 
     public void assignPetId(){
@@ -702,15 +717,14 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     private void setUpImageSelect(View root){
         //TODO add context menu for imageviews
         //TODO delete or reimplement user hint
-        //TODO rename the imageviews and imagebuttons
 
         imageSelectButton = (Button) root.findViewById(R.id.enter_pet_select_image_bt);
-        mRightImage = (ImageView) root.findViewById(R.id.enter_pet_second_image_view);
-        mCoverImage = (ImageView) root.findViewById(R.id.enter_pet_selected_image_iv);
+        mRightImage = (ImageView) root.findViewById(R.id.enter_pet_right_image_view);
+        mCoverImage = (ImageView) root.findViewById(R.id.enter_pet_cover_image_iv);
         mLeftImage =(ImageView) root.findViewById(R.id.enter_pet_left_image);
-        mRightImageSelector =(ImageButton) root.findViewById(R.id.enter_pet_second_image);
+        mRightImageSelector =(ImageButton) root.findViewById(R.id.enter_pet_right_image_select_ib);
         mRightImageSelector.setOnClickListener(this);
-        mLeftImageSelector =(ImageButton) root.findViewById(R.id.enter_pet_third_image);
+        mLeftImageSelector =(ImageButton) root.findViewById(R.id.enter_pet_left_image_select_ib);
         mLeftImageSelector.setOnClickListener(this);
         cancelFirstImage = (ImageButton) root.findViewById(R.id.enter_pet_cancel_selected_button);
         cancelFirstImage.setOnClickListener(new View.OnClickListener() {
@@ -723,42 +737,33 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                     imageSelectButton.setVisibility(View.VISIBLE);
                     cancelFirstImage.setVisibility(View.GONE);
                     mRightImageSelector.setVisibility(View.GONE);
-                    bitmapArray[imageCounter] = null;
                     uriArray[imageCounter] = null;
                 }
                 else if(imageCounter == 1){
                     //swap pictures with main image
-                    bitmapArray[imageCounter-1] = bitmapArray[imageCounter];
                     uriArray[imageCounter-1] = uriArray[imageCounter];
-                    mCoverImage.setImageBitmap(bitmapArray[imageCounter-1]);
+                    Glide.with(getContext()).load(uriArray[imageCounter-1]).into(mCoverImage);
+
                     mRightImage.setImageBitmap(null);
                     mRightImage.setVisibility(View.GONE);
                     mLeftImageSelector.setVisibility(View.GONE);
                     mRightImageSelector.setVisibility(View.VISIBLE);
-                    bitmapArray[imageCounter] = null;
                     uriArray[imageCounter] = null;
                 }
                 else if(imageCounter == 2){
                     //swap between right and center
-                    bitmapArray[imageCounter-2] = bitmapArray[imageCounter-1];
                     uriArray[imageCounter-2] = uriArray[imageCounter-1];
-                    mCoverImage.setImageBitmap(bitmapArray[imageCounter-2]);
+                    Glide.with(getContext()).load(uriArray[imageCounter-2]).into(mCoverImage);
+
                     //swap pictures between left and right
-                    bitmapArray[imageCounter-1] = bitmapArray[imageCounter];
                     uriArray[imageCounter-1] = uriArray[imageCounter];
-                    mRightImage.setImageBitmap(bitmapArray[imageCounter-1]);
+                    Glide.with(getContext()).load(uriArray[imageCounter-1]).into(mRightImage);
+
                     mLeftImage.setImageBitmap(null);
                     mLeftImageSelector.setVisibility(View.VISIBLE);
                     mLeftImage.setVisibility(View.GONE);
-                    bitmapArray[imageCounter] = null;
                     uriArray[imageCounter] = null;
-
-
-
-
                 }
-                Log.e("uriArray", " "+uriArray[0]+" "+ uriArray[1] +" "+uriArray[2]);
-                Log.e("BitmapArray", " "+bitmapArray[0]+" "+ bitmapArray[1]+" "+bitmapArray[2]);
             }
         });
         userHint  = (TextView) root.findViewById(R.id.enter_pet_user_select_hint);
@@ -771,7 +776,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             imageSelectButton.setVisibility(View.GONE);
             Bitmap bmp = null;
             Uri imageUri = data.getData();
-            setUriAndBitMap(imageUri,bmp,mCoverImage);
+            setUriAndBitMap(imageUri,mCoverImage);
             mCoverImage.setVisibility(View.VISIBLE);
             //userHint.setVisibility(View.VISIBLE);
             cancelFirstImage.setVisibility(View.VISIBLE);
@@ -780,41 +785,89 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         else if(imageCounter == 1){
             Bitmap bmp = null;
             Uri imageUri = data.getData();
-            setUriAndBitMap(imageUri,bmp, mRightImage);
+            setUriAndBitMap(imageUri, mRightImage);
             mRightImageSelector.setVisibility(View.GONE);
             mLeftImageSelector.setVisibility(View.VISIBLE);
             mRightImage.setVisibility(View.VISIBLE);
         }
         else if(imageCounter == 2){
-            Bitmap bmp = null;
             Uri imageUri = data.getData();
-            setUriAndBitMap(imageUri,bmp, mLeftImage);
+            setUriAndBitMap(imageUri, mLeftImage);
             mLeftImageSelector.setVisibility(View.GONE);
             mLeftImage.setVisibility(View.VISIBLE);
             //maybe set some textview indicating at capacity
         }
     }
-    private void setUriAndBitMap(Uri uri, Bitmap bmp, ImageView imageButton){
-        try {
-            InputStream image = getActivity().getContentResolver().openInputStream(uri);
-            bmp = BitmapFactory.decodeStream(image);
-            imageButton.setImageBitmap(bmp);
-            uriArray[imageCounter] = uri;
-            bitmapArray[imageCounter] = bmp;
-            imageCounter++;
-            Log.e("uriArray", " "+uriArray[0]+" "+ uriArray[1] +" "+uriArray[2]);
-            Log.e("BitmapArray", " "+bitmapArray[0]+" "+ bitmapArray[1]+" "+bitmapArray[2]);
-
-        } catch (IOException e) {
-            Log.e("SetImageOneFromGallery", "Failed to load image ");
-
-        }
+    private void setUriAndBitMap(Uri uri, ImageView imageButton){
+        Glide.with(getContext()).load(uri).into(imageButton);
+        uriArray[imageCounter] = uri;
+        imageCounter++;
     }
-
+    //if the select images button is clicked previous urls are deleted. The url intent follows
     @Override
     public void onClick(View v) {
+        int id = v.getId();
+        if(id == R.id.enter_pet_select_image_bt){
+            if(imageCounter == 0 && petPictureUrl != null){
+                resetPetUrls();
+
+            }
+        }
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         startActivityForResult(intent, SECOND_IMAGE_SELECTOR);
+    }
+    private void  uploadSelectedPictures(){
+        //TODO figure out how to determine if a photo is rotated to better display in the search
+        Log.e("Uri Array ", " "+uriArray[0]+" "+uriArray[1]+" "+ uriArray[2]);
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setTitle("Uploading...");
+        StorageReference ref = mStorageReference.child("Photos");
+
+        for(int x = 0; x < uriArray.length; x++) {
+            if (uriArray[x] != null) {
+                if (x + 1 == imageCounter) {
+                    progressDialog.show();
+                    StorageReference photoRef = mStorageReference.child(uriArray[x].getLastPathSegment());
+                    photoRef.putFile(uriArray[x]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            setImageUrl(taskSnapshot);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), "Image Upload Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            assignPetId();
+                            clearTextFields();
+                        }
+                    });
+                } else {
+                    progressDialog.show();
+                    StorageReference photoRef = mStorageReference.child(uriArray[x].getLastPathSegment());
+                    photoRef.putFile(uriArray[x]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            setImageUrl(taskSnapshot);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), "Image Upload Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+            else{
+                break;
+            }
+        }
     }
 }

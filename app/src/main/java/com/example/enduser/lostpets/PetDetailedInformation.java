@@ -109,6 +109,8 @@ public class PetDetailedInformation extends AppCompatActivity {
                 }
             }
         });
+        //TODO finish this
+        mImageSwitcher.setOnTouchListener(null);
     }
 
     //must be called after setMore
