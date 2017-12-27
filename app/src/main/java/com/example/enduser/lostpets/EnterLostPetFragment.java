@@ -93,7 +93,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     //used to upload the photos via firebase
     private Uri[] uriArray = new Uri[3];
     private int imageCounter = 0;
-    //bundle for images 
+    //bundle for images
     private final String STRING_URL_ONE = "string_url_one";
     private final String STRING_URL_TWO = "string_url_two";
     private final String STRING_URL_THREE = "string_url_three";

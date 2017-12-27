@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.enduser.lostpets.PetDetailedInformation">
 
     <ScrollView
@@ -15,60 +16,15 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <FrameLayout
+
+            <ss.com.bannerslider.views.BannerSlider
+                android:id="@+id/banner_slider"
                 android:layout_width="match_parent"
-                android:minHeight="150dp"
-                android:layout_height="wrap_content">
-                <ProgressBar
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    android:id="@+id/pet_detail_progress_bar"
-                    android:indeterminate="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="280dp">
+                app:defaultIndicators="circle"
+                app:emptyView="@drawable/no_image"
+                android:layout_height="300dp"
+                />
 
-                    <ImageSwitcher
-                        android:layout_centerInParent="true"
-                        android:id="@+id/detail_image_switcher"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-
-
-                </RelativeLayout>
-            </FrameLayout>
-
-           <RelativeLayout
-               android:visibility="gone"
-               android:id="@+id/more_picture_layout"
-               android:background="@color/colorPrimaryDark"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content">
-               <TextView
-                   android:id="@+id/enter_pet_detail_switch_click_suggestion"
-                   android:layout_marginLeft="4dp"
-                   android:layout_centerInParent="true"
-                   android:textColor="@color/white"
-                   android:textSize="18sp"
-                   android:layout_alignParentLeft="true"
-                   android:text="See more pictures"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content" />
-               <ImageButton
-                   android:padding="6dp"
-                   android:layout_alignParentRight="true"
-                   android:layout_gravity="right"
-                   android:background="#00F0F8FF"
-                   android:layout_centerInParent="true"
-                   android:id="@+id/detail_right_scroll"
-                   android:layout_alignParentBottom="true"
-                   android:src="@drawable/ic_navigate_right"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content" />
-
-           </RelativeLayout>
 
             <!--TODO add an indication for scroll function  maybe delete this-->
             <ImageView

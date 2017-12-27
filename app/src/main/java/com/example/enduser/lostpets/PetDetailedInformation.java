@@ -28,6 +28,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ss.com.bannerslider.banners.Banner;
+import ss.com.bannerslider.banners.DrawableBanner;
+import ss.com.bannerslider.banners.RemoteBanner;
+import ss.com.bannerslider.events.OnBannerClickListener;
+import ss.com.bannerslider.views.BannerSlider;
+
 public class PetDetailedInformation extends AppCompatActivity {
     private String mPetNameFromIntent;
     private String mPetWeightFromIntent;
@@ -51,6 +60,9 @@ public class PetDetailedInformation extends AppCompatActivity {
     private ImageButton mRightScroll;
     private int totalImages =0;
     private RelativeLayout mShowMorePicuresLayout;
+    //imageScroller
+    private BannerSlider bannerSlider;
+
 
 
     @Override
@@ -58,14 +70,13 @@ public class PetDetailedInformation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_detailed_information);
         Intent intent = getIntent();
-        mProgressBar = (ProgressBar) findViewById(R.id.pet_detail_progress_bar);
         getPetInformationFromIntent(intent);
         setupPetInformation();
         setUrlArray();
-        setUpMorePicturesLayout();
-        initializeImageSwitcher();
-        setImageScrollListener();
-        setInitialImage();
+        countImages();
+        //imageslider
+        setupImageSlider();
+
     }
     //gets all the information from the passed intent extra so that we can display the pet's information in detail
     private void getPetInformationFromIntent(Intent intent){
@@ -82,104 +93,19 @@ public class PetDetailedInformation extends AppCompatActivity {
         mPetUrlThreeFromIntent = intent.getStringExtra("PetUrlThree");
 
     }
-    private void initializeImageSwitcher(){
-         mImageSwitcher = (ImageSwitcher) findViewById(R.id.detail_image_switcher);
-         mImageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
-             @Override
-             public View makeView() {
-                 ImageView image = new ImageView(PetDetailedInformation.this);
-                 return image;
-             }
-         });
-        mImageSwitcher.setInAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left));
-        mImageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right));
-        mImageSwitcher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!mUrlArray[mCurrentImage].equals("invalid")) {
-                    SharedPreferences preferences = getSharedPreferences("ImageUrls", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("UrlOne", mPetUrlOneFromIntent);
-                    editor.putString("UrlTwo", mPetUrlTwoFromIntent);
-                    editor.putString("UrlThree", mPetUrlThreeFromIntent);
-                    editor.putInt("currentPicture", mCurrentImage);
-                    editor.apply();
-                    DialogFragment dialogFragment = new FullScreenDialog();
-                    dialogFragment.show(getFragmentManager(), "Fragment");
-                }
-            }
-        });
-        //TODO finish this
-        mImageSwitcher.setOnTouchListener(null);
-    }
-
-    //must be called after setMore
-    private void setImageScrollListener(){
-        mRightScroll =(ImageButton) findViewById(R.id.detail_right_scroll);
-        mRightScroll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentImage++;
-                if(mCurrentImage == totalImages){
-                    mCurrentImage =0;
-                }
-                setCurrentImage();
-                if(mCurrentImage %2 != 0){
-                    suggestClickTV.setText("Click on picture to expand");
-                }
-                else{
-                    suggestClickTV.setText("See more pictures");
-                }
-            }
-        });
-    }
-    private void setInitialImage(){
-        setCurrentImage();
-    }
-    private void setCurrentImage() {
-        if (mCurrentImage > 0 && mUrlArray[mCurrentImage].equals("invalid")) {
-
-        }
-        else {
-            mProgressBar.setVisibility(View.VISIBLE);
-            Glide.with(PetDetailedInformation.this)
-                    .load(mUrlArray[mCurrentImage])
-                    .asBitmap()
-                    .error(R.drawable.no_image)
-                    .centerCrop()
-                    .listener(new RequestListener<String, Bitmap>() {
-                        @Override
-                        public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-                            mProgressBar.setVisibility(View.GONE);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            mImageSwitcher.setImageDrawable(new BitmapDrawable(getResources(),resource));
-                            return true;
-                        }
-                    }).into((ImageView) mImageSwitcher.getCurrentView());
-
-        }
-
-    }
     private void setUrlArray(){
         mUrlArray[0] = mPetUrlOneFromIntent;
         mUrlArray[1] = mPetUrlTwoFromIntent;
         mUrlArray[2] = mPetUrlThreeFromIntent;
     }
-    //This method sets the view that suggests more images to the user by first going through the array and checking if at least two urls aren't invalid
-    private void setUpMorePicturesLayout(){
-        mShowMorePicuresLayout = (RelativeLayout) findViewById(R.id.more_picture_layout);
-        suggestClickTV = (TextView) findViewById(R.id.enter_pet_detail_switch_click_suggestion);
+    //change name to count images
+    private void countImages(){
         for(int x =0 ; x< mUrlArray.length; x++){
-            if(!mUrlArray[x].equals("invalid")){
-                totalImages++;
+            if(mUrlArray[x] != null) {
+                if (!mUrlArray[x].equals("invalid")) {
+                    totalImages++;
+                }
             }
-        }
-        if(totalImages > 1){
-            mShowMorePicuresLayout.setVisibility(View.VISIBLE);
         }
     }
     // sets the pet information in the card view
@@ -191,5 +117,45 @@ public class PetDetailedInformation extends AppCompatActivity {
                 + mPetMicrochipStatusFromIntent + " . " + mPetNameFromIntent
                 + " is described by its owners as \""
                 + mPetDescriptionFromIntent + "\" ." );
+    }
+    private void setupImageSlider(){
+        bannerSlider = (BannerSlider) findViewById(R.id.banner_slider);
+        List<Banner> banners = new ArrayList<>();
+        switch (totalImages){
+            case 0:
+                banners.add(new DrawableBanner(R.drawable.no_image));
+                break;
+            case 1:
+                banners.add(new RemoteBanner(mPetUrlOneFromIntent));
+                break;
+            case 2:
+                banners.add(new RemoteBanner(mPetUrlOneFromIntent));
+                banners.add(new RemoteBanner(mPetUrlTwoFromIntent));
+                break;
+            case 3:
+                banners.add(new RemoteBanner(mPetUrlOneFromIntent));
+                banners.add(new RemoteBanner(mPetUrlTwoFromIntent));
+                banners.add(new RemoteBanner(mPetUrlThreeFromIntent));
+                break;
+            default:
+                break;
+        }
+        bannerSlider.setBanners(banners);
+        bannerSlider.setOnBannerClickListener(new OnBannerClickListener() {
+            @Override
+            public void onClick(int position) {
+                if(!mUrlArray[position].equals("invalid")) {
+                    SharedPreferences preferences = getSharedPreferences("ImageUrls", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("UrlOne", mPetUrlOneFromIntent);
+                    editor.putString("UrlTwo", mPetUrlTwoFromIntent);
+                    editor.putString("UrlThree", mPetUrlThreeFromIntent);
+                    editor.putInt("currentPicture", position);
+                    editor.apply();
+                    DialogFragment dialogFragment = new FullScreenDialog();
+                    dialogFragment.show(getFragmentManager(), "Fragment");
+                }
+            }
+        });
     }
 }
