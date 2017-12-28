@@ -121,7 +121,8 @@
                     android:id="@+id/enter_pet_cover_image_iv"
                     android:layout_centerInParent="true"
                     tools:src="@mipmap/ic_launcher_round"
-                    android:layout_width="150dp"
+                    android:layout_width="wrap_content"
+                    android:maxWidth="150dp"
                     android:layout_height="150dp" />
                 <ImageButton
                     android:visibility="gone"
