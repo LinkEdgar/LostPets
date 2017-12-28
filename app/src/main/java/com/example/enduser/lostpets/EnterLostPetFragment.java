@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -93,6 +94,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
     //used to upload the photos via firebase
     private Uri[] uriArray = new Uri[3];
     private int imageCounter = 0;
+    //used to decide which picture the user wants to take action on
+    private int contextMenuImageToTakeAction;
     //bundle for images
     private final String STRING_URL_ONE = "string_url_one";
     private final String STRING_URL_TWO = "string_url_two";
@@ -369,6 +372,22 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         mRightImage = (ImageView) root.findViewById(R.id.enter_pet_right_image_view);
         mCoverImage = (ImageView) root.findViewById(R.id.enter_pet_cover_image_iv);
         mLeftImage =(ImageView) root.findViewById(R.id.enter_pet_left_image);
+        registerForContextMenu(mLeftImage);
+        mLeftImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                contextMenuImageToTakeAction = 2;
+                mLeftImage.showContextMenu();
+            }
+        });
+        registerForContextMenu(mRightImage);
+        mRightImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                contextMenuImageToTakeAction = 1;
+                mRightImage.showContextMenu();
+            }
+        });
         mRightImageSelector =(ImageButton) root.findViewById(R.id.enter_pet_right_image_select_ib);
         mRightImageSelector.setOnClickListener(this);
         mLeftImageSelector =(ImageButton) root.findViewById(R.id.enter_pet_left_image_select_ib);
@@ -538,6 +557,76 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 String stringUri = uriArray[x].toString();
                 outState.putString(stringUrlArray[x],stringUri);
             }
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("Modify Picture");
+        menu.add(0,v.getId(),0,"delete image");
+        menu.add(0,v.getId(),0,"make cover image");
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+       if(item.getTitle() == "delete image"){
+           deleteCurrentImageFromSelection();
+       }
+       else{
+           swapCurrentImageToCoverImage();
+       }
+        return super.onContextItemSelected(item);
+    }
+    //this method deletes the user picked image and properly arranges the rest
+    private void deleteCurrentImageFromSelection(){
+        switch(contextMenuImageToTakeAction){
+            case 1:
+                if(imageCounter > 2){
+                    uriArray[1] = uriArray[2];
+                    Glide.with(getContext()).load(uriArray[1]).into(mRightImage);
+                    mLeftImage.setImageBitmap(null);
+                    mLeftImageSelector.setVisibility(View.VISIBLE);
+                    uriArray[2] = null;
+                }
+                else{
+                    uriArray[1] = null;
+                    mRightImage.setImageBitmap(null);
+                    mRightImage.setVisibility(View.GONE);
+                    mRightImageSelector.setVisibility(View.VISIBLE);
+                    mLeftImageSelector.setVisibility(View.GONE);
+                }
+                imageCounter--;
+                Log.e("uriArray", " " + uriArray[0]+ " " +uriArray[1] + " " +uriArray[2]);
+                break;
+            case 2:
+                uriArray[2] = null;
+                mLeftImage.setImageBitmap(null);
+                mLeftImage.setVisibility(View.GONE);
+                mLeftImageSelector.setVisibility(View.VISIBLE);
+                imageCounter--;
+                Log.e("ImageCounter", " " + imageCounter);
+                Log.e("uriArray", " " + uriArray[0]+ " " +uriArray[1] + " " +uriArray[2]);
+                break;
+        }
+    }
+    private void swapCurrentImageToCoverImage(){
+        switch (contextMenuImageToTakeAction){
+            case 1:
+                Uri temp = uriArray[0];
+                uriArray[0] = uriArray[1];
+                uriArray[1] = temp;
+                Glide.with(getContext()).load(uriArray[1]).into(mRightImage);
+                Glide.with(getContext()).load(uriArray[0]).into(mCoverImage);
+                break;
+            case 2:
+                temp = uriArray[0];
+                uriArray[0] = uriArray[2];
+                uriArray[2] = temp;
+                Glide.with(getContext()).load(uriArray[2]).into(mLeftImage);
+                Glide.with(getContext()).load(uriArray[0]).into(mCoverImage);
+                break;
         }
     }
 }
