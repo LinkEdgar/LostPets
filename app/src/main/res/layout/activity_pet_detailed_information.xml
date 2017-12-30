@@ -66,6 +66,26 @@
                         android:background="#acadaf"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"/>
+
+                    <TextView
+                        android:id="@+id/pet_detail_city_display"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:text="Area"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <ImageView
+                        android:id="@+id/enter_pet_map"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp" />
+                    <!-- Free space -->
+                    <TextView
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="100dp" />
+
                 </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>

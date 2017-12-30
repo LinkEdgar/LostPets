@@ -1,14 +1,22 @@
 package com.example.enduser.lostpets;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
 import me.relex.circleindicator.CircleIndicator;
 
-public class PetDetailedInformation extends AppCompatActivity {
+public class PetDetailedInformation extends AppCompatActivity{
     private String mPetNameFromIntent;
     private String mPetWeightFromIntent;
     private String mPetGenderFromIntent;
@@ -27,6 +35,15 @@ public class PetDetailedInformation extends AppCompatActivity {
     private ArrayList<String> urlArrayList = new ArrayList<>();
     ImageSwitcherAdapter adapter;
     ViewPager viewPager;
+    //static map
+    private double Latitude;
+    private double Longitude;
+    private TextView staticMapCity;
+    private final static String GOOGLE_STATIC_MAP_BASE_URL = "https://maps.googleapis.com/maps/api/staticmap?";
+    private final static String GOOGLE_API_KEY ="AIzaSyD5fotiQ4E6IDK56KG5LGwtrkew8v_VIvI";
+    private final static String GOOGLE_STATIC_MAP_ZOOM = "&zoom=12";
+
+    private ImageView mStaticMap;
 
 
 
@@ -41,6 +58,8 @@ public class PetDetailedInformation extends AppCompatActivity {
         countImages();
         //imageslider
         setupImageSlider();
+        getStaticMapParamaters();
+        setupMapPicture();
 
     }
     //gets all the information from the passed intent extra so that we can display the pet's information in detail
@@ -91,5 +110,30 @@ public class PetDetailedInformation extends AppCompatActivity {
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.enter_pet_indicator);
         indicator.setViewPager(viewPager);
 
+    }
+    //sets the static map into the imageview must be called after getStaticMapParamaters
+    private void setupMapPicture(){
+        mStaticMap = (ImageView) findViewById(R.id.enter_pet_map);
+        String staticMapUrl = GOOGLE_STATIC_MAP_BASE_URL+"center="+Latitude+","+Longitude+GOOGLE_STATIC_MAP_ZOOM+"&size=600x300&maptype=rpadmap&key="+GOOGLE_API_KEY;
+        Glide.with(PetDetailedInformation.this).load(staticMapUrl).error(R.drawable.no_image).into(mStaticMap);
+    }
+    // this method gets city, lat,long and other location based info from the zip code using geocode. Used zip code from variable mPetZipFromIntent
+    //this method also sets the city textview
+    private void getStaticMapParamaters(){
+        staticMapCity = (TextView) findViewById(R.id.pet_detail_city_display);
+        final Geocoder geocoder = new Geocoder(this);
+        try{
+            List<Address> addresses = geocoder.getFromLocationName(mPetZipFromIntent,1);
+            if(addresses != null && !addresses.isEmpty()){
+                Address address = addresses.get(0);
+                Latitude = address.getLatitude();
+                Longitude = address.getLongitude();
+                String city = address.getLocality();
+                staticMapCity.setText(city);
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }
