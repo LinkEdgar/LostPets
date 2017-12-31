@@ -1,6 +1,5 @@
 package com.example.enduser.lostpets;
 
-import android.*;
 import android.Manifest;
 
 import android.content.Intent;
@@ -45,13 +44,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
 /**
  * Created by ZenithPC on 10/23/2017.
  * This fragment initially attempts to get the user's location to display pets in there postal code
- * if the location of the user is not available it will not display anything
+ * if the location of the user is not available it will not display anything. For the queries a hashset is implemented
+ * to capture the original keys for each pet in order to prevent duplicate pets. New pet are then added to an arraylist if the key isn't
+ * in the hashset. If the user queries again both the hashset and arralist are cleared
  */
 
 public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClicked{
@@ -64,8 +66,11 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private PetAdapter mAdapter;
     private RecyclerView.LayoutManager mLayouManager;
     private ArrayList<Pet> petArrayList;
+    private HashSet<String> petsAddedHashSet = new HashSet<>();
     private ProgressBar mloadingBar;
     private TextView mNoPetsFoundTv;
+    //query for the search bar in order to re-query once the user reaches the bottom of the recycler view
+    private String searchQueryText;
     //location services
     private final int REQUEST_LOCATION = 27;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -80,6 +85,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private final static int QUERY_TYPE_NAME =2;
     private final static int QUERY_TYPE_BREED =3;
     private boolean extraOptionMenuInflatedStatus = false;
+    private int querySearchLimit = 25;
     //used as a flag to prevent the user from double submitting
     private boolean userDoubleSubmit = false;
     private final static  String LOCATION_NOT_AVAILABLE = "Could not get your location to find pets in your area";
@@ -114,7 +120,9 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         */
 
         mRecyclerView.setAdapter(mAdapter);
+        recyclerViewSetScrollListener(mRecyclerView);
         mAdapter.setOnClick(this);
+
         return root_view;
     }
 
@@ -291,17 +299,21 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
                 }
             }
         });
+        //Checks if the user double submitted their search and if they didn't then the new result will be displayed
+        //the pet arraylist is cleared as well as the hashset used to keep track of the values. The querySearchLimit variable
+        //is reset
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if(userDoubleSubmit ==false) {
                     userDoubleSubmit = true;
                     petArrayList.clear();
-                    mAdapter.notifyDataSetChanged();
-                    String queryText = searchView.getQuery().toString();
-                    if (queryText != null) {
-                        if (queryText.length() > 0) {
-                            typeOfQueryToPerform(queryText);
+                    petsAddedHashSet.clear();
+                    querySearchLimit =25;
+                    searchQueryText = searchView.getQuery().toString();
+                    if (searchQueryText != null) {
+                        if (searchQueryText.length() > 0) {
+                            typeOfQueryToPerform(searchQueryText);
                         }
                     }
                 }
@@ -364,14 +376,13 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         }
     }
     //calls on queryResults to handle the results and sets the UI accordingly
-    //TODO Implement a way for users to retrieve more data after they hit the cap
     private void performSearchQuery(String stringToQuery, String typeOfQuery){
+        //TODO: add a way loading bar somehow
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference queryRef = database.getReference("Pets");
-        mRecyclerView.setVisibility(View.GONE);
         mNoPetsFoundTv.setVisibility(View.VISIBLE);
         mNoPetsFoundTv.setText("No Pets Found");
-        queryRef.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(25).addChildEventListener(new ChildEventListener() {
+        queryRef.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(querySearchLimit).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 queryResults(dataSnapshot);
@@ -401,19 +412,24 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     }
     //handles results of any query and displays search and has a flag to check if the query performed was the first location based search
     private void queryResults(DataSnapshot dataSnapshot){
-        String petBreed = dataSnapshot.child("breed").getValue(String.class);
-        String petName = dataSnapshot.child("name").getValue(String.class);
-        String petWeight = dataSnapshot.child(("weight")).getValue(String.class);
-        String petZip = dataSnapshot.child(("zip")).getValue(String.class);
-        String petGender = dataSnapshot.child("gender").getValue(String.class);
-        String petMicro = dataSnapshot.child("microchip").getValue(String.class);
-        String petDescription = dataSnapshot.child("description").getValue(String.class);
-        String petUrl = dataSnapshot.child("picture_url").getValue(String.class);
-        String petUrl2 = dataSnapshot.child("picture_url2").getValue(String.class);
-        String petUrl3 = dataSnapshot.child("picture_url3").getValue(String.class);
-        petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
-        mNoPetsFoundTv.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
+        Log.e("Key", " "+dataSnapshot.getKey());
+        if(!petsAddedHashSet.contains(dataSnapshot.getKey())) {
+            petsAddedHashSet.add(dataSnapshot.getKey());
+            String petBreed = dataSnapshot.child("breed").getValue(String.class);
+            String petName = dataSnapshot.child("name").getValue(String.class);
+            String petWeight = dataSnapshot.child(("weight")).getValue(String.class);
+            String petZip = dataSnapshot.child(("zip")).getValue(String.class);
+            String petGender = dataSnapshot.child("gender").getValue(String.class);
+            String petMicro = dataSnapshot.child("microchip").getValue(String.class);
+            String petDescription = dataSnapshot.child("description").getValue(String.class);
+            String petUrl = dataSnapshot.child("picture_url").getValue(String.class);
+            String petUrl2 = dataSnapshot.child("picture_url2").getValue(String.class);
+            String petUrl3 = dataSnapshot.child("picture_url3").getValue(String.class);
+            petArrayList.add(new Pet(petName, petWeight, petGender, petZip, petBreed, petMicro, petDescription, petUrl, petUrl2, petUrl3));
+            mNoPetsFoundTv.setVisibility(View.GONE);
+            mAdapter.notifyDataSetChanged();
+            //mAdapter.notifyItemInserted();
+        }
 
     }
     //this method is called in onCreate to query pets in the users zip-code if they exist
@@ -441,5 +457,24 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION
             }, REQUEST_LOCATION);
         }
+    }
+    /*
+    This method will load more pets if the user hit the pet limit which is arbitrarily set to 25.
+    Then the limit is increased by 25 and more pets will be loaded if the amount of pets is greater than or equal
+    to the limit
+    */
+    private void recyclerViewSetScrollListener(RecyclerView mRecyclerView){
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(!recyclerView.canScrollVertically(1)){
+                    if(petArrayList.size() >= querySearchLimit){
+                        querySearchLimit = querySearchLimit +25;
+                        typeOfQueryToPerform(searchQueryText);
+                    }
+                }
+            }
+        });
     }
 }
