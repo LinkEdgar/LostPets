@@ -38,6 +38,7 @@
                 android:value="com.example.enduser.lostpets.SignInActivity"></meta-data>
         </activity>
         <activity
+            android:noHistory="true"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="screenSize|orientation|screenLayout"
             android:name=".MainActivity"></activity>
