@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -105,6 +107,9 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
 
     private static final int IMAGE_UPLOAD_LIMIT = 3;
 
+    //toolbar variables
+    private ImageButton mSubmitButton;
+
 
     //default constructor
     public EnterLostPetFragment(){
@@ -149,6 +154,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         mGenderSpinner.setAdapter(adapter);
         mGenderSpinner.setOnItemSelectedListener(this);
         setUpImageSelect(root_view);
+        setupToolBarVariables();
         return root_view;
     }
 
@@ -176,20 +182,13 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu, menu);
         super.onCreateOptionsMenu(menu,inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        //If the done icon is clicked the picture will and pet information will be uploaded
         //TODO add a confirmation context menu before submission
-        if(itemId == R.id.add_pet_item){
-            //This method calls assigns a unique ID for each pet added to the database
-             //within this method store data is called which sets the pet info to the database
-            initiatePictureUpload();
-        }
         return true;
     }
 
@@ -628,5 +627,15 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 Glide.with(getContext()).load(uriArray[0]).into(mCoverImage);
                 break;
         }
+    }
+    private void setupToolBarVariables(){
+        mSubmitButton = (ImageButton) getActivity().findViewById(R.id.main_activity_submit_pet);
+        //If the done icon is clicked the picture will and pet information will be uploaded
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initiatePictureUpload();
+            }
+        });
     }
 }

@@ -12,7 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -23,10 +23,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -90,6 +91,10 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private boolean userDoubleSubmit = false;
     private final static  String LOCATION_NOT_AVAILABLE = "Could not get your location to find pets in your area";
     private final static String LOCATION_HAS_NO_PETS = "No Pets Found in your location. Try using the search function";
+    //toolbar
+    private android.support.v7.widget.Toolbar mToolBar;
+    private android.support.v7.widget.SearchView mSearchView;
+    private ImageButton mFilterButton;
     public PetQueryFragment(){
 
     }
@@ -103,6 +108,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         //location services
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
         requestUserLocation();
+        setupToolbarVariables();
 
         mNoPetsFoundTv = (TextView) root_view.findViewById(R.id.pet_query_no_pet_found);
         mRecyclerView = (RecyclerView) root_view.findViewById(R.id.recycler_view);
@@ -281,83 +287,11 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     }
     @Override
     public void onCreateOptionsMenu( final Menu menu, final MenuInflater inflater) {
-        if(extraOptionMenuInflatedStatus == true){
-            extraOptionMenuInflatedStatus = false;
-        }
 
-        inflater.inflate(R.menu.pet_query_menu,menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setQueryHint("search");
-        searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(extraOptionMenuInflatedStatus == false) {
-                    inflater.inflate(R.menu.search_options_menu, menu);
-                    extraOptionMenuInflatedStatus = true;
-                }
-            }
-        });
-        //Checks if the user double submitted their search and if they didn't then the new result will be displayed
-        //the pet arraylist is cleared as well as the hashset used to keep track of the values. The querySearchLimit variable
-        //is reset
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                if(userDoubleSubmit ==false) {
-                    userDoubleSubmit = true;
-                    petArrayList.clear();
-                    petsAddedHashSet.clear();
-                    querySearchLimit =25;
-                    searchQueryText = searchView.getQuery().toString();
-                    if (searchQueryText != null) {
-                        if (searchQueryText.length() > 0) {
-                            typeOfQueryToPerform(searchQueryText);
-                        }
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                userDoubleSubmit = false;
-                return false;
-            }
-        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        switch (itemId) {
-            case R.id.search_option_breed:
-                if(typeOfQuery != QUERY_TYPE_BREED){
-                    userDoubleSubmit = false;
-                }
-                typeOfQuery = QUERY_TYPE_BREED;
-                searchView.setQueryHint("search by breed");
-                searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-                break;
-            case R.id.search_option_name:
-                if(typeOfQuery != QUERY_TYPE_NAME){
-                    userDoubleSubmit = false;
-                }
-                typeOfQuery = QUERY_TYPE_NAME;
-                searchView.setQueryHint("search by name");
-                searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-
-                break;
-            case R.id.search_option_zip:
-                if(typeOfQuery != QUERY_TYPE_ZIP){
-                    userDoubleSubmit = false;
-                }
-                typeOfQuery = QUERY_TYPE_ZIP;
-                searchView.setQueryHint("search by zip-code");
-                searchView.setInputType(InputType.TYPE_CLASS_NUMBER);
-                break;
-        }
         return true;
     }
     //determines
@@ -412,7 +346,6 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     }
     //handles results of any query and displays search and has a flag to check if the query performed was the first location based search
     private void queryResults(DataSnapshot dataSnapshot){
-        Log.e("Key", " "+dataSnapshot.getKey());
         if(!petsAddedHashSet.contains(dataSnapshot.getKey())) {
             petsAddedHashSet.add(dataSnapshot.getKey());
             String petBreed = dataSnapshot.child("breed").getValue(String.class);
@@ -474,6 +407,81 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
                         typeOfQueryToPerform(searchQueryText);
                     }
                 }
+            }
+        });
+    }
+    //this method handles all of the mainactivity toolbar relate code such as the seachview and filter search option
+    private void setupToolbarVariables(){
+        final AppCompatActivity act = (AppCompatActivity) getActivity();
+        mToolBar = (android.support.v7.widget.Toolbar) act.getSupportActionBar().getCustomView();
+        mSearchView =(android.support.v7.widget.SearchView) getActivity().findViewById(R.id.searchViewMainActivity);
+        mFilterButton = (ImageButton) getActivity().findViewById(R.id.main_activity_filter_button);
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu filterMenu = new PopupMenu(getContext(),mFilterButton);
+                filterMenu.getMenuInflater()
+                        .inflate(R.menu.search_options_menu,filterMenu.getMenu());
+                filterMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        int itemId = item.getItemId();
+                        switch (itemId) {
+                            case R.id.search_option_breed:
+                                if(typeOfQuery != QUERY_TYPE_BREED){
+                                    userDoubleSubmit = false;
+                                }
+                                typeOfQuery = QUERY_TYPE_BREED;
+                                mSearchView.setQueryHint("search by breed");
+                                mSearchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                                break;
+                            case R.id.search_option_name:
+                                if(typeOfQuery != QUERY_TYPE_NAME){
+                                    userDoubleSubmit = false;
+                                }
+                                typeOfQuery = QUERY_TYPE_NAME;
+                                mSearchView.setQueryHint("search by name");
+                                mSearchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+
+                                break;
+                            case R.id.search_option_zip:
+                                if(typeOfQuery != QUERY_TYPE_ZIP){
+                                    userDoubleSubmit = false;
+                                }
+                                typeOfQuery = QUERY_TYPE_ZIP;
+                                mSearchView.setQueryHint("search by zip-code");
+                                mSearchView.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                filterMenu.show();
+            }
+        });
+
+        mSearchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(userDoubleSubmit ==false) {
+                    userDoubleSubmit = true;
+                    petArrayList.clear();
+                    petsAddedHashSet.clear();
+                    querySearchLimit =25;
+                    searchQueryText = mSearchView.getQuery().toString();
+                    if (searchQueryText != null) {
+                        if (searchQueryText.length() > 0) {
+                            typeOfQueryToPerform(searchQueryText);
+                        }
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                userDoubleSubmit = false;
+                return false;
             }
         });
     }
