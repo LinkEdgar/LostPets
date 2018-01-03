@@ -1,5 +1,6 @@
 package com.example.enduser.lostpets;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.fragment_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setCurrentItem(1);
 
         //Navigation stuff
         //TODO--> find out what's wrong with the navigation bar since it doesn't close when swiped
@@ -71,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
         //Toolbar stuff
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        Log.e("Bar", "Yeet");
         searchView = (SearchView) findViewById(R.id.searchViewMainActivity);
         mSearchFilter = (ImageButton) findViewById(R.id.main_activity_filter_button);
         mAppName = (TextView) findViewById(R.id.main_activity_app_name);
