@@ -9,6 +9,12 @@
 
     <!-- TODO Figure out theme for UI -->
     <!-- TODO get images and logos for the start screen -->
+    <include
+        layout="@layout/universal_toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true" />
+
     <ImageView
         tools:src="@mipmap/ic_launcher"
         android:id="@+id/iv_image_view"

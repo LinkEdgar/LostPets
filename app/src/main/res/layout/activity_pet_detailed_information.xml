@@ -16,6 +16,14 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <include
+                layout="@layout/universal_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="300dp">
