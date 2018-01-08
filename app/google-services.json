@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "925535296861-vcoholvh9aekjhb76uu3ig0jgqhqol5e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.enduser.lostpets",
+            "certificate_hash": "f17ce6771986b3837c27c4d039caff09fef6f4eb"
+          }
+        },
+        {
+          "client_id": "925535296861-96g24m992ldkf0apnp5fsstva4e6pl9n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.enduser.lostpets",
+            "certificate_hash": "122424c14590809f1161b013dcfc8153752fa94d"
+          }
+        },
+        {
           "client_id": "925535296861-bqps52e5v768akflbo6l1m6v44jm04fa.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -35,7 +35,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private final static String PASSWORD = "password";
     //Buttons
     private Button signIn, register;
-    //firebase authorization and databse reference
+    //firebase authorization and database reference
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabaseRef;
     //Google sign in variables
@@ -143,6 +143,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             //switches classes via an intent
                             signInSuccess();
+                            finish();
                         }
                         else{
                             Log.d("AuthWithGoogle", "Signin failure");
@@ -167,6 +168,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                                     //clears the text fields so that the user's information is protected
                                     ClearTextFields();
                                     signInSuccess();
+                                    finish();
                                 } else {
                                     Toast.makeText(SignInActivity.this, "Please verify your email", Toast.LENGTH_SHORT).show();
                                 }
