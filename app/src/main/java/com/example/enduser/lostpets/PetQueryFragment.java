@@ -62,13 +62,16 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
+    private DatabaseReference mRef2;
+    private ChildEventListener mListener;
     //Recyclerview related elements
+    private boolean onScrollQuery = false;
     private RecyclerView mRecyclerView;
     private PetAdapter mAdapter;
     private RecyclerView.LayoutManager mLayouManager;
     private ArrayList<Pet> petArrayList;
     private HashSet<String> petsAddedHashSet = new HashSet<>();
-    private ProgressBar mloadingBar;
+    private ProgressBar mProgressBar;
     private TextView mNoPetsFoundTv;
     //query for the search bar in order to re-query once the user reaches the bottom of the recycler view
     private String searchQueryText;
@@ -116,7 +119,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         mLayouManager = new LinearLayoutManager(root_view.getContext());
         mRecyclerView.setLayoutManager(mLayouManager);
 
-        mloadingBar = (ProgressBar) root_view.findViewById(R.id.pet_query_progressbar);
+        mProgressBar = (ProgressBar) root_view.findViewById(R.id.pet_query_progressbar);
 
         petArrayList = new ArrayList<>();
         mAdapter = new PetAdapter(petArrayList);
@@ -174,7 +177,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             mNoPetsFoundTv.setVisibility(View.GONE);
             mDatabase = FirebaseDatabase.getInstance();
             mRef = mDatabase.getReference("Pets");
-            mloadingBar.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.INVISIBLE);
             mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -212,7 +215,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
             count++;
         }
-        mloadingBar.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
@@ -312,14 +315,17 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     //calls on queryResults to handle the results and sets the UI accordingly
     private void performSearchQuery(String stringToQuery, String typeOfQuery){
         //TODO: add a way loading bar somehow
+        mNoPetsFoundTv.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
+        //mRecyclerView.setVisibility(View.GONE);
+
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference queryRef = database.getReference("Pets");
-        mNoPetsFoundTv.setVisibility(View.VISIBLE);
-        mNoPetsFoundTv.setText("No Pets Found");
-        queryRef.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(querySearchLimit).addChildEventListener(new ChildEventListener() {
+        mRef2 = database.getReference("Pets");
+        mRef2.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(querySearchLimit).addChildEventListener(mListener =new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 queryResults(dataSnapshot);
+                mProgressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -361,7 +367,6 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             petArrayList.add(new Pet(petName, petWeight, petGender, petZip, petBreed, petMicro, petDescription, petUrl, petUrl2, petUrl3));
             mNoPetsFoundTv.setVisibility(View.GONE);
             mAdapter.notifyDataSetChanged();
-            //mAdapter.notifyItemInserted();
         }
 
     }
@@ -403,6 +408,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
                 super.onScrollStateChanged(recyclerView, newState);
                 if(!recyclerView.canScrollVertically(1)){
                     if(petArrayList.size() >= querySearchLimit){
+                        onScrollQuery =true;
                         querySearchLimit = querySearchLimit +25;
                         typeOfQueryToPerform(searchQueryText);
                     }
@@ -485,4 +491,13 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             }
         });
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mListener != null) {
+            mRef2.removeEventListener(mListener);
+        }
+    }
+
 }

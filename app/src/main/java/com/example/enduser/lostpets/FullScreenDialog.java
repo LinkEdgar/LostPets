@@ -127,6 +127,7 @@ public class FullScreenDialog extends DialogFragment implements RequestListener{
     }
     @Override
     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+        mProgressBar.setVisibility(View.GONE);
         return false;
     }
 
