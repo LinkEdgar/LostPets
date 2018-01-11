@@ -201,6 +201,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         String zip = petInfo[3];;
         String desc = petInfo[4];;
         String microChip = petInfo[5];
+        FirebaseUser user = mAuth.getCurrentUser();
         if(validateData(name, zip)) {
             mDatabase = FirebaseDatabase.getInstance();
             mRef = mDatabase.getReference("Pets");
@@ -212,6 +213,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             mRef.child(petID).child("zip").setValue(zip);
             mRef.child(petID).child("gender").setValue(petGender);
             mRef.child(petID).child("description").setValue(desc);
+            mRef.child(petID).child("addeduserid").setValue(user.getUid());
             if(petPictureUrl != null){
                 mRef.child(petID).child("picture_url").setValue(petPictureUrl);
             }
