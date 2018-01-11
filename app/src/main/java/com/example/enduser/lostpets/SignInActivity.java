@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignInActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
     private EditText mUsername,mPassword;
@@ -203,7 +204,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     protected void onStart() {
         super.onStart();
 
-        if(mAuth.getCurrentUser() != null){
+        if(mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isEmailVerified()){
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);
         }

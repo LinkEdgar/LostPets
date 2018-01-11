@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
     //firebase's minimum password requirements
@@ -25,13 +31,17 @@ public class RegisterActivity extends AppCompatActivity {
     private final static String REG_USER_NAME = "username";
     private final static String REG_PASSWORD = "password";
     private final static String REG_PASSWORD_CONFRIM = "confrim_password";
-    //setting up variables form the UI fields we need
+    //setting up variables fromm the UI fields we need
     private EditText mEmail;
     private EditText mPassword;
     private EditText mPasswordConfirm;
+    private EditText mFirstName, mLastName;
+    //username validation
+    private boolean isUserNameTaken = false;
+    private String FIREBASE_USERNAME_ROOT = "usernames";
+    private String FIREBASE_USER_CHILD = "username";
 
     private Button mRegisterBt;
-    //TODO fix bug with the back button if the user is logged in
     //TODO NEW --> Add username for chat functions
 
     @Override
@@ -46,19 +56,8 @@ public class RegisterActivity extends AppCompatActivity {
         mPassword =(EditText) findViewById(R.id.et_reg_password);
         mPasswordConfirm = (EditText) findViewById(R.id.et_reg_confirm_pass);
         mRegisterBt = (Button) findViewById(R.id.bt_register_activity_register);
-
-        //Data persistence code
-        if(savedInstanceState != null){
-            if(savedInstanceState.containsKey(REG_EMAIL)){
-                mEmail.setText(savedInstanceState.getString(REG_EMAIL));
-            }
-            if(savedInstanceState.containsKey(REG_PASSWORD)){
-                mPassword.setText(savedInstanceState.getString(REG_USER_NAME));
-            }
-            if(savedInstanceState.containsKey(REG_PASSWORD_CONFRIM)){
-                mPasswordConfirm.setText(savedInstanceState.getString(REG_PASSWORD_CONFRIM));
-            }
-        }
+        mFirstName = (EditText) findViewById(R.id.register_username_first_name);
+        mLastName = (EditText) findViewById(R.id.register_user_last_name);
         //on click for register button
         mRegisterBt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,46 +66,51 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = mEmail.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
                 String confirmPassword = mPasswordConfirm.getText().toString().trim();
-                    if(validatePassword(password)){
-                        if(validatePasswordMatch(password,confirmPassword)){
+                final String firstName = mFirstName.getText().toString().trim();
+                final String lastName = mLastName.getText().toString().trim();
+                if(firstName.length() > 0 && lastName.length()>0) {
+                    if (validatePassword(password)) {
+                        if (validatePasswordMatch(password, confirmPassword)) {
+                            if (email.isEmpty() == false) {
+                                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
 
-                            mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if(task.isSuccessful()){
-                                        FirebaseUser user = mAuth.getCurrentUser();
-                                        user.sendEmailVerification();
-                                        Toast.makeText(RegisterActivity.this, "Account created successfully. Check your email", Toast.LENGTH_SHORT).show();
-                                        //mAuth.signOut();
-                                        //since a successful creation logs the user in they will be taken to the main activity
-                                        Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);
-                                        startActivity(intent);
+                                            FirebaseUser user = mAuth.getCurrentUser();
+                                            setUserNameAndBasicInfo(user, firstName,lastName);
+                                            user.sendEmailVerification();
+                                            Toast.makeText(RegisterActivity.this, "Account created successfully. Check your email", Toast.LENGTH_SHORT).show();
+                                            //mAuth.signOut();
+                                            //since a successful creation logs the user in they will be taken to the main activity
+                                            Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);
+                                            startActivity(intent);
+
+                                        } else {
+                                            Toast.makeText(RegisterActivity.this, "Email is invalid or already registered", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                    else{
-                                        Toast.makeText(RegisterActivity.this, "Email is invalid or already registered", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }
-                        else{
+                                });
+                            } else {
+                                Toast.makeText(RegisterActivity.this, "Email cannot be empty", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
                             Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                         }
 
-                    }
-                    else{
+                    } else {
                         Toast.makeText(RegisterActivity.this, "Password is not long enough", Toast.LENGTH_SHORT).show();
                     }
+                }
+                else{
+                    Toast.makeText(RegisterActivity.this, "First and last names must be valid", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
+
      }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(REG_EMAIL, mEmail.getText().toString());
-        outState.putString(REG_PASSWORD,mPassword.getText().toString());
-        outState.putString(REG_PASSWORD_CONFRIM,mPasswordConfirm.getText().toString());
-        super.onSaveInstanceState(outState);
-    }
     public boolean validatePasswordMatch(String p1, String p2){
         if(p1.equals(p2)){
             return true;
@@ -119,5 +123,14 @@ public class RegisterActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+    //sets display name and other user basic info
+    private void setUserNameAndBasicInfo(FirebaseUser user, String firstName, String lastName){
+            String userId = user.getUid().toString();
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference("Users");
+            ref.child(userId).child("email").setValue(user.getEmail());
+            ref.child(userId).child("firstname").setValue(firstName);
+            ref.child(userId).child("lastname").setValue(lastName);
     }
 }

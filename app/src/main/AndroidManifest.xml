@@ -4,8 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -35,14 +35,15 @@
             android:parentActivityName=".SignInActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.enduser.lostpets.SignInActivity"></meta-data>
+                android:value="com.example.enduser.lostpets.SignInActivity" />
         </activity>
         <activity
-            android:windowSoftInputMode="stateHidden"
+            android:name=".MainActivity"
             android:configChanges="screenSize|orientation|screenLayout"
-            android:name=".MainActivity"></activity>
+            android:windowSoftInputMode="stateHidden" />
         >
-        <activity android:name=".PetDetailedInformation"></activity>
+        <activity android:name=".PetDetailedInformation" />
+        <activity android:name=".MessengerActivity"></activity>
     </application>
 
 </manifest>
