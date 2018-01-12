@@ -26,23 +26,12 @@ public class RegisterActivity extends AppCompatActivity {
     private final static int FIREBASE_MIN_PASSWORD = 6;
 
     private FirebaseAuth mAuth;
-    //keys for bundle
-    private final static String REG_EMAIL = "email";
-    private final static String REG_USER_NAME = "username";
-    private final static String REG_PASSWORD = "password";
-    private final static String REG_PASSWORD_CONFRIM = "confrim_password";
     //setting up variables fromm the UI fields we need
     private EditText mEmail;
     private EditText mPassword;
     private EditText mPasswordConfirm;
     private EditText mFirstName, mLastName;
-    //username validation
-    private boolean isUserNameTaken = false;
-    private String FIREBASE_USERNAME_ROOT = "usernames";
-    private String FIREBASE_USER_CHILD = "username";
-
     private Button mRegisterBt;
-    //TODO NEW --> Add username for chat functions
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return false;
     }
-    //sets display name and other user basic info
+    //sets display name and other user basic info into the database
     private void setUserNameAndBasicInfo(FirebaseUser user, String firstName, String lastName){
             String userId = user.getUid().toString();
             FirebaseDatabase database = FirebaseDatabase.getInstance();

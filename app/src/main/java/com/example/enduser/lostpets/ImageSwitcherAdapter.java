@@ -83,7 +83,7 @@ public class ImageSwitcherAdapter extends PagerAdapter implements RequestListene
 
         Glide.with(context).load(imageUrls.get(position)).
         listener(this).error(R.drawable.no_image).into(mImageView);
-        //TODO fi
+        //TODO fix the loading toolbar
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

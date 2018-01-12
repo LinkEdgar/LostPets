@@ -314,11 +314,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     }
     //calls on queryResults to handle the results and sets the UI accordingly
     private void performSearchQuery(String stringToQuery, String typeOfQuery){
-        //TODO: add a way loading bar somehow
         mNoPetsFoundTv.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
-        //mRecyclerView.setVisibility(View.GONE);
-
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         mRef2 = database.getReference("Pets");
         mRef2.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(querySearchLimit).addChildEventListener(mListener =new ChildEventListener() {

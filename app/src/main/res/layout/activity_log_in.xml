@@ -44,7 +44,7 @@
            android:paddingRight="8dp"
            android:backgroundTint="#ffffff"
            android:textSize="22sp"
-           tools:text="Sign In"
+           tools:text="Login"
            android:id="@+id/bt_sign_up"
            android:layout_weight="1"
            android:elevation="8dp"

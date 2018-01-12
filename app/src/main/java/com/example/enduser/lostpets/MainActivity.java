@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(1);
 
         //Navigation stuff
-        //TODO--> find out what's wrong with the navigation bar since it doesn't close when swiped
         ListView optionsList = (ListView)findViewById(R.id.navigation_list_view);
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         mAdapter.add("My Pets");
