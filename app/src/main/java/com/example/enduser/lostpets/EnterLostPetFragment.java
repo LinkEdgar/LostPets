@@ -247,6 +247,58 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         }
 
     }
+    //This method takes the text fields and takes pushes them to the database. If the user does not select pictures
+    //the urls stored in the database are set to 'invalid.'
+    private void storePetInDb(){
+        String name = petName.getText().toString().trim();
+        String weight = petWeight.getText().toString().trim();
+        String breed = petBreed.getText().toString().trim();
+        String zip = petZip.getText().toString().trim();
+        String desc = petDesc.getText().toString().trim();
+        String microChip = Boolean.toString(isPetMicrochipped);
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(validateData(name, zip)) {
+            mDatabase = FirebaseDatabase.getInstance();
+            mRef = mDatabase.getReference("Pets");
+            DatabaseReference newPetReference = mRef.push();
+            mCurrentUser = mAuth.getCurrentUser();
+            newPetReference.child("microchip").setValue(microChip);
+            newPetReference.child("name").setValue(name);
+            newPetReference.child("breed").setValue(breed);
+            newPetReference.child("weight").setValue(weight + " lbs");
+            newPetReference.child("zip").setValue(zip);
+            newPetReference.child("gender").setValue(petGender);
+            newPetReference.child("description").setValue(desc);
+            newPetReference.child("addeduserid").setValue(user.getUid());
+            if(petPictureUrl != null){
+                newPetReference.child("picture_url").setValue(petPictureUrl);
+            }
+            else{
+                newPetReference.child("picture_url").setValue(INVALID_URL);
+            }
+
+            if(petPictureUrl2 != null){
+                newPetReference.child("picture_url2").setValue(petPictureUrl2);
+            }
+            else{
+                newPetReference.child("picture_url2").setValue(INVALID_URL);
+            }
+
+            if(petPictureUrl3 != null){
+                newPetReference.child("picture_url3").setValue(petPictureUrl3);
+            }
+            else{
+                newPetReference.child("picture_url3").setValue(INVALID_URL);
+            }
+
+
+            Toast.makeText(getContext(), "Pet has been added to database", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            //failure toast
+            Toast.makeText(getContext(), "Invalid or empty text fields", Toast.LENGTH_SHORT).show();
+        }
+    }
     //called after succesfully adding a pet to the db. The textfields and imageviews are all cleared
     public void clearTextFields(){
         petBreed.getText().clear();
@@ -281,45 +333,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         Log.e("Uri array", uriArray[0]+ " "+ uriArray[1]+" " + uriArray[2]);
 
     }
-
-    public void assignPetId(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference petId = database.getReference("PetId");
-        final String[] petArray = new String[6];
-        setPetInfo(petArray);
-
-        petId.addListenerForSingleValueEvent(new ValueEventListener() {
-            String petNum;
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                petNum = dataSnapshot.getValue(String.class);
-                //this code will get and unique value for pets
-                if(storeData(petNum,petArray)){
-                    int convertInt = Integer.parseInt(petNum);
-                    convertInt = convertInt +1;
-                    String convertedString = Integer.toString(convertInt);
-                    petId.setValue(convertedString);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-    //sets the pet's info for the array so that it can be passed to the storedata method
-    private String[] setPetInfo(String[] petInfo){
-        petInfo[0] = petName.getText().toString().trim();
-        petInfo[1] = petWeight.getText().toString().trim();
-        petInfo[2] = petBreed.getText().toString().trim();
-        petInfo[3] = petZip.getText().toString().trim();
-        petInfo[4] = petDesc.getText().toString().trim();
-        petInfo[5] = Boolean.toString(isPetMicrochipped);
-
-        return  petInfo;
-    }
+    //validates whether or not the pet information has the required fields which is a zip code and name
     private boolean validateData(String name, String zip){
         if(name == null){
             return false;
@@ -514,7 +528,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                     }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            assignPetId();
+                            storePetInDb();
                             clearTextFields();
                         }
                     });
@@ -546,7 +560,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             uploadSelectedPictures();
         }
         else{
-            assignPetId();
+            storePetInDb();
             clearTextFields();
         }
     }
