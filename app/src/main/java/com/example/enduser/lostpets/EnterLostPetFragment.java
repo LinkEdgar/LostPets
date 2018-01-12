@@ -205,34 +205,35 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         if(validateData(name, zip)) {
             mDatabase = FirebaseDatabase.getInstance();
             mRef = mDatabase.getReference("Pets");
+            DatabaseReference newPetReference = mRef.push();
             mCurrentUser = mAuth.getCurrentUser();
-            mRef.child(petID).child("microchip").setValue(microChip);
-            mRef.child(petID).child("name").setValue(name);
-            mRef.child(petID).child("breed").setValue(breed);
-            mRef.child(petID).child("weight").setValue(weight + " lbs");
-            mRef.child(petID).child("zip").setValue(zip);
-            mRef.child(petID).child("gender").setValue(petGender);
-            mRef.child(petID).child("description").setValue(desc);
-            mRef.child(petID).child("addeduserid").setValue(user.getUid());
+            newPetReference.child("microchip").setValue(microChip);
+            newPetReference.child("name").setValue(name);
+            newPetReference.child("breed").setValue(breed);
+            newPetReference.child("weight").setValue(weight + " lbs");
+            newPetReference.child("zip").setValue(zip);
+            newPetReference.child("gender").setValue(petGender);
+            newPetReference.child("description").setValue(desc);
+            newPetReference.child("addeduserid").setValue(user.getUid());
             if(petPictureUrl != null){
-                mRef.child(petID).child("picture_url").setValue(petPictureUrl);
+                newPetReference.child("picture_url").setValue(petPictureUrl);
             }
             else{
-                mRef.child(petID).child("picture_url").setValue(INVALID_URL);
+                newPetReference.child("picture_url").setValue(INVALID_URL);
             }
 
             if(petPictureUrl2 != null){
-                mRef.child(petID).child("picture_url2").setValue(petPictureUrl2);
+                newPetReference.child("picture_url2").setValue(petPictureUrl2);
             }
             else{
-                mRef.child(petID).child("picture_url2").setValue(INVALID_URL);
+                newPetReference.child("picture_url2").setValue(INVALID_URL);
             }
 
             if(petPictureUrl3 != null){
-                mRef.child(petID).child("picture_url3").setValue(petPictureUrl3);
+                newPetReference.child("picture_url3").setValue(petPictureUrl3);
             }
             else{
-                mRef.child(petID).child("picture_url3").setValue(INVALID_URL);
+                newPetReference.child("picture_url3").setValue(INVALID_URL);
             }
 
 
