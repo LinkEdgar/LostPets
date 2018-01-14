@@ -36,6 +36,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -64,6 +65,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private DatabaseReference mRef;
     private DatabaseReference mRef2;
     private ChildEventListener mListener;
+    //
+    private String mCurrentUserId;
     //Recyclerview related elements
     private boolean onScrollQuery = false;
     private RecyclerView mRecyclerView;
@@ -107,6 +110,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         View root_view = inflater.inflate(R.layout.activity_recycler_view,container,false);
         FirebaseApp.initializeApp(root_view.getContext());
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        mCurrentUserId = user.getUid();
         setHasOptionsMenu(true);
         //location services
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
@@ -131,6 +136,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         mRecyclerView.setAdapter(mAdapter);
         recyclerViewSetScrollListener(mRecyclerView);
         mAdapter.setOnClick(this);
+        mCurrentUserId = mAuth.getUid();
 
         return root_view;
     }
@@ -212,7 +218,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             String petUrl2 = dataSnapshot.child("" + count).child("picture_url2").getValue().toString();
             String petUrl3 = dataSnapshot.child("" + count).child("picture_url3").getValue().toString();
 
-            petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
+            //petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
             count++;
         }
         mProgressBar.setVisibility(View.GONE);
@@ -236,6 +242,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         String pUrl = pet.getUrlOne();
         String pUrl2 = pet.getUrlTwo();
         String pUrl3 = pet.getUrlThree();
+        String ownerUdid = pet.getPetOwnerUid();
         //Pass all the info from the Pet via string in the intent extra
         intent.putExtra("PetName",pName);
         intent.putExtra("PetWeight",pWeight);
@@ -247,6 +254,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         intent.putExtra("PetUrlOne", pUrl);
         intent.putExtra("PetUrlTwo", pUrl2);
         intent.putExtra("PetUrlThree", pUrl3);
+        intent.putExtra("PetOwnerUid", ownerUdid);
         startActivity(intent);
     }
     /*
@@ -351,19 +359,20 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private void queryResults(DataSnapshot dataSnapshot){
         if(!petsAddedHashSet.contains(dataSnapshot.getKey())) {
             petsAddedHashSet.add(dataSnapshot.getKey());
-            String petBreed = dataSnapshot.child("breed").getValue(String.class);
-            String petName = dataSnapshot.child("name").getValue(String.class);
-            String petWeight = dataSnapshot.child(("weight")).getValue(String.class);
-            String petZip = dataSnapshot.child(("zip")).getValue(String.class);
-            String petGender = dataSnapshot.child("gender").getValue(String.class);
-            String petMicro = dataSnapshot.child("microchip").getValue(String.class);
-            String petDescription = dataSnapshot.child("description").getValue(String.class);
-            String petUrl = dataSnapshot.child("picture_url").getValue(String.class);
-            String petUrl2 = dataSnapshot.child("picture_url2").getValue(String.class);
-            String petUrl3 = dataSnapshot.child("picture_url3").getValue(String.class);
-            petArrayList.add(new Pet(petName, petWeight, petGender, petZip, petBreed, petMicro, petDescription, petUrl, petUrl2, petUrl3));
-            mNoPetsFoundTv.setVisibility(View.GONE);
-            mAdapter.notifyDataSetChanged();
+                String petOwnerUserId = dataSnapshot.child("addeduserid").getValue(String.class);
+                String petBreed = dataSnapshot.child("breed").getValue(String.class);
+                String petName = dataSnapshot.child("name").getValue(String.class);
+                String petWeight = dataSnapshot.child(("weight")).getValue(String.class);
+                String petZip = dataSnapshot.child(("zip")).getValue(String.class);
+                String petGender = dataSnapshot.child("gender").getValue(String.class);
+                String petMicro = dataSnapshot.child("microchip").getValue(String.class);
+                String petDescription = dataSnapshot.child("description").getValue(String.class);
+                String petUrl = dataSnapshot.child("picture_url").getValue(String.class);
+                String petUrl2 = dataSnapshot.child("picture_url2").getValue(String.class);
+                String petUrl3 = dataSnapshot.child("picture_url3").getValue(String.class);
+                petArrayList.add(new Pet(petName, petWeight, petGender, petZip, petBreed, petMicro, petDescription, petUrl, petUrl2, petUrl3, petOwnerUserId));
+                mNoPetsFoundTv.setVisibility(View.GONE);
+                mAdapter.notifyDataSetChanged();
         }
 
     }

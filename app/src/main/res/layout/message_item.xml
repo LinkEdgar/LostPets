@@ -5,16 +5,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.mikhaellopez.circularimageview.CircularImageView
+    <ImageView
         android:id="@+id/message_item_profile_picture"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:src="@drawable/no_image"
-        app:civ_border_color="#EEEEEE"
-        app:civ_border_width="4dp"
-        app:civ_shadow="true"
-        app:civ_shadow_radius="10"
-        app:civ_shadow_color="#8BC34A"/>
+        />
+
+
     <TextView
         android:id="@+id/message_item_user_name"
         android:layout_toRightOf="@+id/message_item_profile_picture"

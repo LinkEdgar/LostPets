@@ -6,10 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
 
@@ -22,14 +22,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView mMessageTextView;
-        private CircularImageView mProfilePicture;
+        private ImageView mProfilePicture;
         private TextView mUserName;
         private View layout;
         public ViewHolder(View v){
         super(v);
         layout = v;
         mMessageTextView = (TextView) layout.findViewById(R.id.message_item_user_message);
-        mProfilePicture = (CircularImageView) layout.findViewById(R.id.message_item_profile_picture);
+        mProfilePicture = (ImageView) layout.findViewById(R.id.message_item_profile_picture);
         mUserName = (TextView) layout.findViewById(R.id.message_item_user_name);
         }
     }
@@ -49,7 +49,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         String lastName = messageArrayList.get(position).getUserLastName().toString();
         holder.mUserName.setText(firstName +" " + lastName);
         Context context = holder.mProfilePicture.getContext();
-        Glide.with(context).load(messageArrayList.get(position).getProfilePictureUrl()).error(R.drawable.no_image)
+        Glide.with(context).load(messageArrayList.get(position).getProfilePictureUrl()).error(R.drawable.no_image).override(75,75)
                 .into(holder.mProfilePicture);
         holder.mMessageTextView.setText(messageArrayList.get(position).getMessage());
 

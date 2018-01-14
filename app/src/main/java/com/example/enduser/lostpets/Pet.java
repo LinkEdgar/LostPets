@@ -5,6 +5,7 @@ package com.example.enduser.lostpets;
  */
 
 public class Pet {
+    private String petOwnerUid;
     private String name;
     private String weight;
     private String gender;
@@ -50,7 +51,7 @@ public class Pet {
         this.microchip = microchip;
         urlOne = url;
     }
-    public Pet(String name, String weight, String gender, String zipCode, String breed, String microchip, String description, String urlOne, String url2, String url3){
+    public Pet(String name, String weight, String gender, String zipCode, String breed, String microchip, String description, String urlOne, String url2, String url3, String petOwnerUid){
         this.name = name;
         this.weight = weight;
         this.gender = gender;
@@ -61,6 +62,7 @@ public class Pet {
         this.urlOne = urlOne;
         urlTwo = url2;
         urlThree = url3;
+        this.petOwnerUid = petOwnerUid;
     }
 
     public void setName(String name){
@@ -94,6 +96,7 @@ public class Pet {
     public String getUrlOne(){return urlOne;}
     public String getUrlTwo(){return urlTwo;}
     public String getUrlThree(){return urlThree;}
+    public String getPetOwnerUid(){return petOwnerUid;}
 
 
 

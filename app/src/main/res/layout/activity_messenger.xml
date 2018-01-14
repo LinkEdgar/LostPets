@@ -45,8 +45,8 @@
             android:src="@mipmap/ic_action_send_button"
             android:layout_width="48dp"
             android:layout_height="48dp" />
-        
-        
+
+
     </LinearLayout>
 
 </RelativeLayout>

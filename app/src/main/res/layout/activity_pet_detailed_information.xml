@@ -109,6 +109,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
+            android:id="@+id/pet_detail_found_pet_button"
             android:textSize="20sp"
             android:elevation="8dp"
             android:textColor="@color/white"

@@ -6,10 +6,17 @@ import android.location.Geocoder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +49,11 @@ public class PetDetailedInformation extends AppCompatActivity{
     private final static String GOOGLE_STATIC_MAP_BASE_URL = "https://maps.googleapis.com/maps/api/staticmap?";
     private final static String GOOGLE_API_KEY ="AIzaSyD5fotiQ4E6IDK56KG5LGwtrkew8v_VIvI";
     private final static String GOOGLE_STATIC_MAP_ZOOM = "&zoom=12";
+    //firebase
+    private String currentUserUid;
+    private String otherUserUid;
+    private FirebaseAuth mAuth;
+    private Button mFoundButton;
 
     private ImageView mStaticMap;
 
@@ -61,6 +73,26 @@ public class PetDetailedInformation extends AppCompatActivity{
         getStaticMapParamaters();
         setupMapPicture();
 
+
+        //found button
+        mAuth =FirebaseAuth.getInstance();
+        currentUserUid = mAuth.getUid().toString();
+        mFoundButton = (Button) findViewById(R.id.pet_detail_found_pet_button);
+        mFoundButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!currentUserUid.equals(otherUserUid)) {
+                    Intent switchActivityIntent = new Intent(PetDetailedInformation.this, MessengerActivity.class);
+                    switchActivityIntent.putExtra("userOneId", currentUserUid);
+                    switchActivityIntent.putExtra("userTwoId", otherUserUid);
+                    startActivity(switchActivityIntent);
+                }
+                else{
+                    Toast.makeText(PetDetailedInformation.this, "You are the owner of this pet", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
     //gets all the information from the passed intent extra so that we can display the pet's information in detail
     private void getPetInformationFromIntent(Intent intent){
@@ -75,6 +107,7 @@ public class PetDetailedInformation extends AppCompatActivity{
         mPetUrlOneFromIntent = intent.getStringExtra("PetUrlOne");
         mPetUrlTwoFromIntent = intent.getStringExtra("PetUrlTwo");
         mPetUrlThreeFromIntent = intent.getStringExtra("PetUrlThree");
+        otherUserUid = intent.getStringExtra("PetOwnerUid");
 
     }
     private void setUrlArray(){

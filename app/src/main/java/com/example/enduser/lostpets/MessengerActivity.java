@@ -84,40 +84,12 @@ public class MessengerActivity extends AppCompatActivity {
 
 
         //retrieve messages
-        mDatabase = FirebaseDatabase.getInstance();
-        mRef = mDatabase.getReference(FIREBASE_MESSAGE_ROOT);
-        mRef.child("jointUserChat").orderByChild("message").addChildEventListener(mChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                addMessagesToArrayList(dataSnapshot);
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        /*
-        offical code to replace what's above once everything is finalized
         setmJointUserChatId();
         setUserProfileUrl();
 
-         */
+
 
     }
     //looks into the unique chat id and retrieves all the messages. This method calls addMessagesToArrayList to receive
@@ -125,7 +97,7 @@ public class MessengerActivity extends AppCompatActivity {
     private void retrieveMessages(){
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference(FIREBASE_MESSAGE_ROOT);
-        mRef.child("jointUserChat").orderByChild("message").addChildEventListener(mChildEventListener = new ChildEventListener() {
+        mRef.child(mJointUserChat).orderByChild("message").addChildEventListener(mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 addMessagesToArrayList(dataSnapshot);
@@ -153,10 +125,19 @@ public class MessengerActivity extends AppCompatActivity {
         });
     }
     private void addMessagesToArrayList(DataSnapshot snapshot){
-        String message = snapshot.child("message").getValue(String.class);
+        String message = snapshot.child(FIREBASE_MESSAGE_CHILD).getValue(String.class);
+        String firstName = snapshot.child(FIREBASE_USERS_FIRST_NAME_CHILD).getValue(String.class);
+        String lastName = snapshot.child(FIREBASE_USERS_LAST_NAME_CHILD).getValue(String.class);
         if(message != null) {
-            messageArrayList.add(new Message(" ", " " + message, "", "Edgar", "Reyes", "invlaid"));
-            mAdapter.notifyDataSetChanged();
+            if(firstName != null && lastName != null) {
+                messageArrayList.add(new Message(" ", " " + message, "", firstName, lastName, "invlaid"));
+                mAdapter.notifyDataSetChanged();
+            }
+            //TODO remove this else later
+            else{
+                messageArrayList.add(new Message(" ", " " + message, "", "Edgar", "Reyes", "invlaid"));
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
     //sets the joint user chats so users can push their messages to it
@@ -234,6 +215,8 @@ public class MessengerActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        mRef.addChildEventListener(mChildEventListener);
+        if(mChildEventListener != null) {
+            mRef.addChildEventListener(mChildEventListener);
+        }
     }
 }
