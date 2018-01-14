@@ -26,6 +26,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.mikhaellopez:circularimageview:3.0.2'
     compile 'me.relex:circleindicator:1.2.2@aar'
     compile 'com.android.support:cardview-v7:21.0.+'
     compile 'com.ss.bannerslider:bannerslider:1.8.0'

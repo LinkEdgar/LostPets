@@ -1,6 +1,7 @@
 package com.example.enduser.lostpets;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -18,6 +19,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -55,6 +57,17 @@ public class MainActivity extends AppCompatActivity {
 
         //Navigation stuff
         ListView optionsList = (ListView)findViewById(R.id.navigation_list_view);
+        /*
+        temp code
+         */
+        optionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startActivity(new Intent(MainActivity.this,MessengerActivity.class));
+            }
+        });
+
+
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         mAdapter.add("My Pets");
         mAdapter.add("Messages");
@@ -116,5 +129,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+    //TODO properly implement this
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(mDrawer.isDrawerOpen(GravityCompat.START)){
+            mDrawer.closeDrawer(GravityCompat.START);
+        }
     }
 }
