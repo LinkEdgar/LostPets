@@ -1,6 +1,7 @@
 package com.example.enduser.lostpets;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +46,16 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private final static int RC_SIGN_IN = 9001;
     //TODO add forgot password functionality
 
+    private String FIREBASE_USERS_ROOT = "Users";
+    private String FIREBASE_USERS_EMAIL = "email";
+    private String FIREBASE_USERS_FIRST_NAME = "firstname";
+    private String FIREBASE_USERS_LAST_NAME = "lastname";
+    //
+    private SharedPreferences.Editor mPreferenceEditor;
+    private static String SIGN_IN_PREFERNCES = "signinPreferences";
+    private static String GOOGLE_PREFERENCE_KEY = "isUserInDb";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +66,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         mPassword = (EditText) findViewById(R.id.et_password);
         signIn = (Button) findViewById(R.id.bt_login);
         register = (Button) findViewById(R.id.bt_register);
+        //preference
+        mPreferenceEditor = getSharedPreferences(SIGN_IN_PREFERNCES,MODE_PRIVATE).edit();
         //Bundle for keyfields
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(USERNAME)){
@@ -142,6 +155,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                         if( task.isSuccessful()){
                             Log.d("AuthWithGoogle", "Signin Success");
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            addGoogleUserToDb(firebaseUser);
                             //switches classes via an intent
                             signInSuccess();
                             finish();
@@ -207,6 +221,18 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         if(mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isEmailVerified()){
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);
+        }
+    }
+    private void addGoogleUserToDb(FirebaseUser firebaseUser){
+        boolean userAleardyInDB = getSharedPreferences(SIGN_IN_PREFERNCES,MODE_PRIVATE).getBoolean(GOOGLE_PREFERENCE_KEY,false);
+        Log.e("userAlready Exists", " "+ userAleardyInDB);
+        if(userAleardyInDB == false){
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(FIREBASE_USERS_ROOT);
+            reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_EMAIL).setValue(firebaseUser.getEmail());
+            reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_FIRST_NAME).setValue(firebaseUser.getDisplayName());
+            reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_LAST_NAME).setValue("");
+            mPreferenceEditor.putBoolean(GOOGLE_PREFERENCE_KEY, true);
+            mPreferenceEditor.apply();
         }
     }
 }

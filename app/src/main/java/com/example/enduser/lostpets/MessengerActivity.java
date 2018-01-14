@@ -1,10 +1,12 @@
 package com.example.enduser.lostpets;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -40,7 +42,7 @@ public class MessengerActivity extends AppCompatActivity {
     private String FIREBASE_USERS_LAST_NAME_CHILD = "lastname";
 
 
-    private String FIREBASE_USER_CHATS = "chats";
+    private String FIREBASE_USER_CHATS_CHILD = "chats";
     //this variable stores the chat number that corresponds to the two users conversations
     private String mJointUserChat = "jointUserChat";
     private String mUserOneProfileUrl;
@@ -53,6 +55,10 @@ public class MessengerActivity extends AppCompatActivity {
     //layout button
     private ImageButton mSendMessegeButton;
     private EditText mMessageEditText;
+    //shared preferences for efficiency
+    private SharedPreferences.Editor mPreferenceEditor;
+    private static String MY_PREFERENCES = "myPreferences";
+    private static String DOES_CHAT_EXIST = "doesChatExist";
 
 
 
@@ -70,6 +76,7 @@ public class MessengerActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         //firebase variables
         mAuth = FirebaseAuth.getInstance();
+        mPreferenceEditor = getSharedPreferences(MY_PREFERENCES,MODE_PRIVATE).edit();
 
 
         mSendMessegeButton = (ImageButton) findViewById(R.id.messenger_send_button);
@@ -86,7 +93,7 @@ public class MessengerActivity extends AppCompatActivity {
         //retrieve messages
 
 
-        setmJointUserChatId();
+        checkIfUserChatExists();
         setUserProfileUrl();
 
 
@@ -129,23 +136,28 @@ public class MessengerActivity extends AppCompatActivity {
         String firstName = snapshot.child(FIREBASE_USERS_FIRST_NAME_CHILD).getValue(String.class);
         String lastName = snapshot.child(FIREBASE_USERS_LAST_NAME_CHILD).getValue(String.class);
         if(message != null) {
-            if(firstName != null && lastName != null) {
+            if(firstName != null) {
                 messageArrayList.add(new Message(" ", " " + message, "", firstName, lastName, "invlaid"));
                 mAdapter.notifyDataSetChanged();
             }
             //TODO remove this else later
             else{
-                messageArrayList.add(new Message(" ", " " + message, "", "Edgar", "Reyes", "invlaid"));
+                messageArrayList.add(new Message(" ", " " + message, "", "Default", "Username", "invlaid"));
                 mAdapter.notifyDataSetChanged();
             }
         }
     }
     //sets the joint user chats so users can push their messages to it
-    private void setmJointUserChatId(){
-        Intent intent = getIntent();
-        userOneUid = intent.getStringExtra("userOneId");
-        userTwoUid = intent.getStringExtra("userTwoId");
-        mJointUserChat = userOneUid+userTwoUid;
+    private void setmJointUserChatId(boolean alreadyExists){
+        if (alreadyExists == false) {
+            DatabaseReference fireRef = FirebaseDatabase.getInstance().getReference(FIREBASE_USERS_ROOT);
+            DatabaseReference specificReference = fireRef.child(userOneUid).child(FIREBASE_USER_CHATS_CHILD).push();
+            specificReference.setValue(mJointUserChat);
+            specificReference = fireRef.child(userTwoUid).child(FIREBASE_USER_CHATS_CHILD).push();
+            specificReference.setValue(mJointUserChat);
+            mPreferenceEditor.putBoolean(DOES_CHAT_EXIST, true);
+            mPreferenceEditor.apply();
+        }
     }
     //this method must be called after setmJointUserChatId
     //since it depends on variables initialized in that method
@@ -193,8 +205,28 @@ public class MessengerActivity extends AppCompatActivity {
         userOneUid = intent.getStringExtra("userOneId");
         userTwoUid = intent.getStringExtra("userTwoId");
         mJointUserChat = userOneUid+userTwoUid;
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference(FIREBASE_USERS_ROOT);
+        boolean doesChatExist = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE).getBoolean(DOES_CHAT_EXIST,false);
+        Log.e("Does chat exist?", " "+ doesChatExist);
+        if(doesChatExist == false) {
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference databaseReference = firebaseDatabase.getReference(FIREBASE_USERS_ROOT);
+            databaseReference.child(mJointUserChat).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String value = dataSnapshot.getValue(String.class);
+                    if (value == null) {
+                        setmJointUserChatId(false);
+                    } else {
+                        setmJointUserChatId(true);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
     private void sendMessage(){
         String messageToSend = mMessageEditText.getText().toString().trim();

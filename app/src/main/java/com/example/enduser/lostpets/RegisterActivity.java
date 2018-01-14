@@ -115,6 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
     //sets display name and other user basic info into the database
     private void setUserNameAndBasicInfo(FirebaseUser user, String firstName, String lastName){
+        //TODO add a preference to tell that the user data is present in the database
             String userId = user.getUid().toString();
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference ref = database.getReference("Users");
