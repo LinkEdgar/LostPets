@@ -5,7 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- TODO Change the color of the background and add said color to resources -->
-    <TextView android:id="@+id/pet_query_no_pet_found"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <TextView
+        android:layout_centerInParent="true"
+        android:id="@+id/pet_query_no_pet_found"
         android:layout_margin="8dp"
         android:textAlignment="center"
         android:text="No Pets Found, if you'd like to search for pets in your area use the searchbar"
@@ -13,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <ProgressBar
+        android:layout_centerInParent="true"
         android:layout_gravity="center"
         android:visibility="invisible"
         android:id="@+id/pet_query_progressbar"
@@ -21,9 +27,21 @@
         android:layout_height="wrap_content" />
 
     <android.support.v7.widget.RecyclerView
+        android:layout_centerInParent="true"
         android:scrollbars="vertical"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+        <ProgressBar
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/pet_query_vertical_progressbar"
+            android:indeterminate="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
 
 </FrameLayout>

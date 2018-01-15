@@ -75,6 +75,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     private ArrayList<Pet> petArrayList;
     private HashSet<String> petsAddedHashSet = new HashSet<>();
     private ProgressBar mProgressBar;
+    private ProgressBar mVerticalScrollProgressbar;
     private TextView mNoPetsFoundTv;
     //query for the search bar in order to re-query once the user reaches the bottom of the recycler view
     private String searchQueryText;
@@ -125,7 +126,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         mRecyclerView.setLayoutManager(mLayouManager);
 
         mProgressBar = (ProgressBar) root_view.findViewById(R.id.pet_query_progressbar);
-
+        mVerticalScrollProgressbar = (ProgressBar) root_view.findViewById(R.id.pet_query_vertical_progressbar);
         petArrayList = new ArrayList<>();
         mAdapter = new PetAdapter(petArrayList);
         /*
@@ -322,15 +323,40 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     }
     //calls on queryResults to handle the results and sets the UI accordingly
     private void performSearchQuery(String stringToQuery, String typeOfQuery){
-        mNoPetsFoundTv.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
+        if(onScrollQuery == false) {
+            mNoPetsFoundTv.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+        else{
+            mVerticalScrollProgressbar.setVisibility(View.VISIBLE);
+        }
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         mRef2 = database.getReference("Pets");
+        mRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                    mProgressBar.setVisibility(View.GONE);
+                    if (petArrayList.size() < 1) {
+                        mNoPetsFoundTv.setText("No pets found");
+                        mNoPetsFoundTv.setVisibility(View.VISIBLE);
+                    }
+
+                    if(onScrollQuery == true) {
+                        mVerticalScrollProgressbar.setVisibility(View.GONE);
+                        onScrollQuery = false;
+                    }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         mRef2.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(querySearchLimit).addChildEventListener(mListener =new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 queryResults(dataSnapshot);
-                mProgressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -483,6 +509,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
                     searchQueryText = mSearchView.getQuery().toString();
                     if (searchQueryText != null) {
                         if (searchQueryText.length() > 0) {
+                            onScrollQuery = true;
                             typeOfQueryToPerform(searchQueryText);
                         }
                     }
