@@ -57,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
 
         //Navigation stuff
         ListView optionsList = (ListView)findViewById(R.id.navigation_list_view);
+        optionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startActivity(new Intent(MainActivity.this,MessageListActivity.class));
+            }
+        });
 
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         mAdapter.add("My Pets");

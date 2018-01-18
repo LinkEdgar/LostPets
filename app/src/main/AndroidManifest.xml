@@ -43,7 +43,8 @@
             android:windowSoftInputMode="stateHidden" />
         >
         <activity android:name=".PetDetailedInformation" />
-        <activity android:name=".MessengerActivity"></activity>
+        <activity android:name=".MessengerActivity" />
+        <activity android:name=".MessageListActivity"></activity>
     </application>
 
 </manifest>

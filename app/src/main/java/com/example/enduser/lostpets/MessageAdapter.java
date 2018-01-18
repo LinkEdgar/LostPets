@@ -45,12 +45,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String firstName = messageArrayList.get(position).getUserFirstName().toString();
-        String lastName = messageArrayList.get(position).getUserLastName().toString();
-        holder.mUserName.setText(firstName +" " + lastName);
+        String firstName = messageArrayList.get(position).getName();
+        //String lastName = messageArrayList.get(position).getUserLastName();
+        holder.mUserName.setText(firstName);
         Context context = holder.mProfilePicture.getContext();
-        Glide.with(context).load(messageArrayList.get(position).getProfilePictureUrl()).error(R.drawable.no_image).override(75,75)
-                .into(holder.mProfilePicture);
+        //Glide.with(context).load(messageArrayList.get(position).getProfilePictureUrl()).error(R.drawable.no_image).override(75,75)
+                //.into(holder.mProfilePicture);
         holder.mMessageTextView.setText(messageArrayList.get(position).getMessage());
 
     }

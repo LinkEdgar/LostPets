@@ -48,7 +48,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     private String FIREBASE_USERS_ROOT = "Users";
     private String FIREBASE_USERS_EMAIL = "email";
-    private String FIREBASE_USERS_FIRST_NAME = "firstname";
+    private String FIREBASE_USERS_NAME = "name";
     private String FIREBASE_USERS_LAST_NAME = "lastname";
     //
     private SharedPreferences.Editor mPreferenceEditor;
@@ -229,8 +229,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         if(userAleardyInDB == false){
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(FIREBASE_USERS_ROOT);
             reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_EMAIL).setValue(firebaseUser.getEmail());
-            reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_FIRST_NAME).setValue(firebaseUser.getDisplayName());
-            reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_LAST_NAME).setValue("");
+            reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_NAME).setValue(firebaseUser.getDisplayName());
             mPreferenceEditor.putBoolean(GOOGLE_PREFERENCE_KEY, true);
             mPreferenceEditor.apply();
         }

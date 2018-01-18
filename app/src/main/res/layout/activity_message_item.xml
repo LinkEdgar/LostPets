@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    xmlns:tools="http://schemas.android.com/tools">
+    <ImageView
+        android:layout_alignParentLeft="true"
+        android:id="@+id/activity_message_item_user_profile_picture"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_width="75dp"
+        android:layout_height="75dp" />
+    <LinearLayout
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@+id/activity_message_item_user_profile_picture"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/activity_message_item_name"
+        android:textStyle="bold"
+        tools:text="Jon Smith"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/activity_message_item_last_message"
+        tools:text="Where are you?"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</RelativeLayout>

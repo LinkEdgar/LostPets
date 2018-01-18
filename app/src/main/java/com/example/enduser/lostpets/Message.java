@@ -5,6 +5,8 @@ package com.example.enduser.lostpets;
  */
 
 public class Message {
+
+    /*
     //type determines whether the message was received or sent
     private String userFirstName;
     private String userLastName;
@@ -21,6 +23,9 @@ public class Message {
         this.userLastName = userLastName;
         this.profilePictureUrl = profilePictureUrl;
     }
+    public Message(){
+
+    }
     public void setUserFirstName(String userFirstName){this.userFirstName = userFirstName;}
     public void setUserLastName(String userLastName){this.userLastName = userLastName;}
     public void setProfilePictureUrl(String profilePictureUrl){this.profilePictureUrl = profilePictureUrl;}
@@ -31,4 +36,37 @@ public class Message {
     public String getUserFirstName(){return userFirstName;}
     public  String getUserLastName(){return userLastName;}
     public String getProfilePictureUrl(){return profilePictureUrl;}
+
+    */
+    private String mMessage;
+    private String mName;
+    private String mUid;
+
+    public Message(){
+
+    }
+    public Message(String mMessage, String mName, String mUid){
+        this.mMessage = mMessage;
+        this.mName = mName;
+        this.mUid = mUid;
+    }
+
+    public void setMessage(String mMessage){
+        this.mMessage = mMessage;
+    }
+    public void setName(String mName){
+        this.mName = mName;
+    }
+    public void setUid(String mUid){
+        this.mUid = mUid;
+    }
+    public String getMessage(){
+        return mMessage;
+    }
+    public String getName(){
+        return mName;
+    }
+    public String getUid(){
+        return mUid;
+    }
 }
