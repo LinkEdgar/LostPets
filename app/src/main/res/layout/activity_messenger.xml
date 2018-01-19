@@ -14,27 +14,30 @@
 
 
     <android.support.v7.widget.RecyclerView
+        android:layout_above="@+id/linear_layout_for_messages"
         android:layout_marginTop="4dp"
         android:layout_below="@+id/message_toolbar"
         android:layout_centerInParent="true"
         android:scrollbars="vertical"
         android:id="@+id/message_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
 
     <LinearLayout
+        android:id="@+id/linear_layout_for_messages"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageButton
-            android:src="@mipmap/ic_launcher_round"
+            android:src="@mipmap/ic_gallery_select_color"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <EditText
+            android:maxHeight="120dp"
             android:id="@+id/messenger_edit_text"
-            android:inputType="text|textCapSentences"
+            android:inputType="textMultiLine|textCapSentences"
             android:layout_marginLeft="4dp"
             tools:text="Hello"
             android:layout_weight="1"
