@@ -14,9 +14,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +82,7 @@ public class PetDetailedInformation extends AppCompatActivity{
                     Intent switchActivityIntent = new Intent(PetDetailedInformation.this, MessengerActivity.class);
                     switchActivityIntent.putExtra("userOneId", currentUserUid);
                     switchActivityIntent.putExtra("userTwoId", otherUserUid);
+                    switchActivityIntent.putExtra("jointChatId", currentUserUid+otherUserUid);
                     startActivity(switchActivityIntent);
                 }
                 else{

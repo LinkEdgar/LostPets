@@ -24,7 +24,7 @@ public class MessengerActivity extends AppCompatActivity {
     private ArrayList<Message> messageArrayList;
     private RecyclerView.LayoutManager mLayoutManager;
     private MessageAdapter mAdapter;
-    //firebase variables
+    //Firebase variables
     private FirebaseDatabase mDatabase;
     private DatabaseReference mRef;
     private DatabaseReference mUserRef;
@@ -37,15 +37,14 @@ public class MessengerActivity extends AppCompatActivity {
     private String FIREBASE_USERS_PROFILE_CHILD = "profileUrl";
     //TODO change firstname to name one the db is updated
     private String FIREBASE_USERS_FIRST_NAME_CHILD = "firstname";
-
+    //TODO add image selection
 
     private String FIREBASE_USER_CHATS_CHILD = "chats";
     //this variable stores the chat number that corresponds to the two users conversations
     private String mJointUserChat = "jointUserChat";
-    //userone information
+    //user-one information
     private String mUserOneProfileUrl;
     private String mUserFirstName;
-    private String mUserLastName;
     //user two information
     private String mUserTwoProfileUrl;
     private String mUserTwoName;
@@ -56,6 +55,8 @@ public class MessengerActivity extends AppCompatActivity {
     //layout button
     private ImageButton mSendMessegeButton;
     private EditText mMessageEditText;
+
+    private boolean doesChatOneExist = false;
 
 
     private HashSet<String> messageKeys;
@@ -86,6 +87,7 @@ public class MessengerActivity extends AppCompatActivity {
         mMessageEditText = (EditText) findViewById(R.id.messenger_edit_text);
 
         mDatabase = FirebaseDatabase.getInstance();
+        //gets information passed from previous activity
         Intent intent = getIntent();
         userOneUid = intent.getStringExtra("userOneId");
         mJointUserChat = intent.getStringExtra("jointChatId");
@@ -120,13 +122,16 @@ public class MessengerActivity extends AppCompatActivity {
             }
         });
     }
+    /*
+    This method sends a messages by removing the childevent listener until the data is synchronized.
+    It gets the message from 'mMessageEditText' and clears the text field by setting it to ''
+     */
     private void sendMessage(){
         String messageToSend = mMessageEditText.getText().toString().trim();
         if(messageToSend != null) {
             if (mChildEventListener != null) {
                 mRef.removeEventListener(mChildEventListener);
             }
-            //TODO add chat to user profile if the chat is empty
             DatabaseReference specificReference = mRef.push();
             specificReference.child(FIREBASE_MESSAGE_CHILD).setValue(messageToSend);
             specificReference.child(MESSAGE_USERNAME).setValue(mUserFirstName);
@@ -147,7 +152,13 @@ public class MessengerActivity extends AppCompatActivity {
         }
 
     }
-
+    /*
+    Called from the message listener. This method uses a hashset to ensure we do not get repetitive data.
+    Since some of the listeners run asynchronously we must set the value of the messages manually so that the user gets
+    a proper instant messaging experience.
+    This method creates a Message object and builds on it via its setter methods.
+    We also implement a smooth scroll to new messages added
+     */
     private void addMessageToArrayList(DataSnapshot snapshot){
         String key = snapshot.getKey();
         if(!messageKeys.contains(key)) {
@@ -169,6 +180,11 @@ public class MessengerActivity extends AppCompatActivity {
             }
         }
     }
+    /*
+    we are guaranteed a 'userOneUid' by the intent that started this activity, however; that is not the case for
+    'userTwoUid' and so in the case that the value is null we have extra work. That work being, splitting the joint chat and
+    determining which userTwo's id. After finding it we can get its basic info as we did for the current user
+     */
     private void getUsersBasicInfo(){
         mUserRef = mDatabase.getReference(FIREBASE_USERS_ROOT);
         mUserRef.child(userOneUid).addValueEventListener(new ValueEventListener() {
@@ -209,9 +225,14 @@ public class MessengerActivity extends AppCompatActivity {
 
             }
         });
-
+        if(doesChatOneExist == false) {
+            addChatToUserData();
+        }
     }
-
+    /*
+    Because of the asynchronous nature of firebase the basic information of each user must be obtained. Otherwise when a new
+    message is sent it will have null values. The calling method must specify the user via a boolean value
+     */
     private void setUserInfo(boolean isUserOne, DataSnapshot snapshot){
         if(isUserOne){
             mUserFirstName = snapshot.child(FIREBASE_USERS_FIRST_NAME_CHILD).getValue(String.class);
@@ -222,10 +243,101 @@ public class MessengerActivity extends AppCompatActivity {
             mUserTwoProfileUrl = snapshot.child(FIREBASE_USERS_PROFILE_CHILD).getValue(String.class);
         }
     }
+    /*
+    if the users do not have the joint chat id in their chat then it is added
+    by calling 'verifyChatExistence' which accepts a datasnapshot and a boolean stating if the user is the current user
+     */
     private void addChatToUserData(){
-        //TODO
-    }
+        mUserRef.child(userOneUid).child(FIREBASE_USER_CHATS_CHILD)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        verifyChatExistence(dataSnapshot,true);
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+        mUserRef.child(userTwoUid).child(FIREBASE_USER_CHATS_CHILD)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        verifyChatExistence(dataSnapshot,false);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+    /*
+    this method checks the user's profile to check if the joint chat id is present. It iterates through the 'chats' root
+    and checks if any of them are equal to 'mJointUserChat' variable and then check the counter to see if adding the chat is
+    necessary or not.
+    This method also checks if the calling method is verifying the current user or the other user
+     */
+    private void verifyChatExistence(DataSnapshot snapshot, boolean isChatOne){
+        if(isChatOne){
+            int chatCounter = (int) snapshot.getChildrenCount();
+            int counter = 0;
+            for(DataSnapshot snap: snapshot.getChildren()){
+                String value = snap.getValue(String.class);
+                if(!value.equals(mJointUserChat)){
+                    counter++;
+                }
+                else{
+                    doesChatOneExist =true;
+                    break;
+                }
+            }
+            if(doesChatOneExist == false) {
+                if (chatCounter == counter) {
+                    setChatToUserDb(true);
+                }
+            }
+        }
+        else{
+            int chatCounter = (int) snapshot.getChildrenCount();
+            int counter = 0;
+            for(DataSnapshot snap: snapshot.getChildren()){
+                String value = snap.getValue(String.class);
+                if(!value.equals(mJointUserChat)){
+                    counter++;
+                }
+                else{
+                    doesChatOneExist =true;
+                    break;
+                }
+            }
+            if(doesChatOneExist == false) {
+                if (chatCounter == counter) {
+                    setChatToUserDb(false);
+                }
+            }
+        }
+    }
+    /*
+    checks whether or not the datasnapshot is from the current user's chat or the other user
+    base on that information it will add the chat into the user' profile
+     */
+    private void setChatToUserDb(boolean isChatOne){
+        Log.e("Yeet squad", "setting new chat");
+        if(isChatOne){
+            DatabaseReference specificRef =mUserRef.child(userOneUid)
+                    .child(FIREBASE_USER_CHATS_CHILD).push();
+            specificRef.setValue(mJointUserChat);
+        }
+        else{
+            DatabaseReference specificRef = mUserRef.child(userTwoUid)
+                    .child(FIREBASE_USER_CHATS_CHILD).push();
+            specificRef.setValue(mJointUserChat);
+        }
+    }
+    //remove the child listener as to align with firebase best practices
     @Override
     protected void onPause() {
         if(mChildEventListener != null) {
@@ -233,7 +345,7 @@ public class MessengerActivity extends AppCompatActivity {
         }
         super.onPause();
     }
-
+    //must add listener once the app restarts and have a null check for the first time instance of the class
     @Override
     protected void onPostResume() {
         super.onPostResume();
