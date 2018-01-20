@@ -128,7 +128,7 @@ public class MessengerActivity extends AppCompatActivity {
      */
     private void sendMessage(){
         String messageToSend = mMessageEditText.getText().toString().trim();
-        if(messageToSend != null) {
+        if(messageToSend != null && messageToSend.isEmpty() ==false) {
             if (mChildEventListener != null) {
                 mRef.removeEventListener(mChildEventListener);
             }
