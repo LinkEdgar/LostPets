@@ -80,7 +80,6 @@ public class ImageSwitcherAdapter extends PagerAdapter implements RequestListene
         mProgressBar = (ProgressBar) item_view.findViewById(R.id.pet_detail_progressbar);
         //imageView.setImageResource(R.mipmap.ic_launcher);
         mProgressBar.setVisibility(View.VISIBLE);
-
         Glide.with(context).load(imageUrls.get(position)).
         listener(this).error(R.drawable.no_image).into(mImageView);
         //TODO fix the loading toolbar
@@ -109,6 +108,7 @@ public class ImageSwitcherAdapter extends PagerAdapter implements RequestListene
 
     @Override
     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+        mProgressBar.setVisibility(View.GONE);
         return false;
     }
 

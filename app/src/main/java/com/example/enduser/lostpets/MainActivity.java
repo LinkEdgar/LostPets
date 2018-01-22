@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        //TODO finish the drawer view settings
         int id = item.getItemId();
         switch (id){
             case R.id.drawer_messages_item:
