@@ -18,17 +18,14 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         if(position == 0){
             return new EnterLostPetFragment();
         }
-        else if(position == 1){
-            return new PetQueryFragment();
-        }
         else{
-            return new ShelterInteractionFragment();
+            return new PetQueryFragment();
         }
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -38,8 +35,6 @@ public class FragmentAdapter extends FragmentPagerAdapter {
                return "Add Pets";
            case 1:
                return "Find a Pet";
-           case 2:
-               return "Community";
            default:
                return null;
 

@@ -3,6 +3,7 @@ package com.example.enduser.lostpets;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -15,7 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,13 +27,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 
 /**
  * Created by EndUser on 10/23/2017.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private Toolbar mToolbar;
     private SearchView searchView;
     private ImageButton mSearchFilter;
@@ -41,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
     private ImageButton mHomeButtonToggle;
+    //Firebase for sign out
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,22 +62,18 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.fragment_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setCurrentItem(1);
+        mAuth = FirebaseAuth.getInstance();
 
         //Navigation stuff
-        ListView optionsList = (ListView)findViewById(R.id.navigation_list_view);
-        optionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(MainActivity.this,MessageListActivity.class));
-            }
-        });
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         mAdapter.add("My Pets");
         mAdapter.add("Messages");
         mAdapter.add("Notifications");
         mAdapter.add("Settings");
-        optionsList.setAdapter(mAdapter);
+        //optionsList.setAdapter(mAdapter);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mHomeButtonToggle = (ImageButton) findViewById(R.id.navigation);
         mHomeButtonToggle.setOnClickListener(new View.OnClickListener() {
@@ -129,9 +133,30 @@ public class MainActivity extends AppCompatActivity {
     //TODO properly implement this
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         if(mDrawer.isDrawerOpen(GravityCompat.START)){
             mDrawer.closeDrawer(GravityCompat.START);
         }
+        else{
+            super.onBackPressed();
+        }
+    }
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.drawer_messages_item:
+                startActivity(new Intent(MainActivity.this,MessageListActivity.class));
+                return true;
+            case R.id.drawer_sign_out:
+                mAuth.signOut();
+                Intent intent = new Intent(MainActivity.this ,SignInActivity.class);
+                startActivity(intent);
+                Toast.makeText(this, "Successfully signed out", Toast.LENGTH_SHORT).show();
+                finish();
+                return true;
+        }
+        return false;
     }
 }

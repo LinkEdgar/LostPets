@@ -92,29 +92,12 @@
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        app:headerLayout="@layout/drawer_profile_header"
+        app:menu="@menu/drawer_menu_list"
         android:layout_gravity="start"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ImageView
-                android:layout_gravity="center"
-                android:src="@mipmap/ic_launcher_round"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <ListView
-                android:id="@+id/navigation_list_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </ListView>
-
-        </LinearLayout>
-
-
-    </android.support.design.widget.NavigationView>
+        android:layout_height="match_parent"/>
 
 
 </android.support.v4.widget.DrawerLayout>
