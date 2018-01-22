@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by EndUser on 1/12/2018.
  */
@@ -22,14 +24,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView mMessageTextView;
-        private ImageView mProfilePicture;
+        private CircleImageView mProfilePicture;
         private TextView mUserName;
         private View layout;
         public ViewHolder(View v){
         super(v);
         layout = v;
         mMessageTextView = (TextView) layout.findViewById(R.id.message_item_user_message);
-        mProfilePicture = (ImageView) layout.findViewById(R.id.message_item_profile_picture);
+        mProfilePicture = (CircleImageView) layout.findViewById(R.id.message_item_profile_picture);
         mUserName = (TextView) layout.findViewById(R.id.message_item_user_name);
         }
     }
@@ -49,8 +51,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         //String lastName = messageArrayList.get(position).getUserLastName();
         holder.mUserName.setText(firstName);
         Context context = holder.mProfilePicture.getContext();
-        //Glide.with(context).load(messageArrayList.get(position).getProfilePictureUrl()).error(R.drawable.no_image).override(75,75)
-                //.into(holder.mProfilePicture);
+        Glide.with(context).load(messageArrayList.get(position).getmUserProfileUrl()).dontAnimate().error(R.drawable.no_image).override(75,75).into(holder.mProfilePicture);
         holder.mMessageTextView.setText(messageArrayList.get(position).getMessage());
 
     }
