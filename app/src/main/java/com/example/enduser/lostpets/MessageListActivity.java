@@ -23,6 +23,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     private UserMessagesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManeger;
     //firebase
+    private String FIREBASE_USERS_ROOT = "Users";
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mRef;
@@ -49,11 +50,12 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
         mAuth = FirebaseAuth.getInstance();
         uID = mAuth.getCurrentUser().getUid();
         mDatabase = FirebaseDatabase.getInstance();
-        mRef = mDatabase.getReference("Users");
+        mRef = mDatabase.getReference(FIREBASE_USERS_ROOT);
         mRef.child(uID).child("chats").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 loadCurrentMessages(dataSnapshot);
+                //TODO add a textview to indicate no messages exist
             }
 
             @Override
@@ -65,14 +67,68 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     private void loadCurrentMessages(DataSnapshot dataSnapshot){
         for(DataSnapshot snapshot: dataSnapshot.getChildren()){
             String chatId = snapshot.getValue(String.class);
-            mMessageArrayList.add(new MessageList("How was the game?","Edgar", "Reyes",chatId, "invalid"));
-            mAdapter.notifyDataSetChanged();
+           // mMessageArrayList.add(new MessageList("How was the game?","Edgar", "Reyes",chatId, "invalid"));
+           // mAdapter.notifyDataSetChanged();
+            //TODO finish implementing getChats
+            getChats(chatId);
         }
+    }
+    private void getChats(final String chatId){
+        StringBuilder builder = new StringBuilder();
+        String otherUserUid;
+        int chatIdSize = chatId.length();
+        for(int x = 0; x < chatIdSize/2; x++){
+            builder.append(chatId.charAt(x));
+        }
+        otherUserUid = builder.toString();
+        if(uID.equals(otherUserUid)){
+            otherUserUid = chatId.substring(chatIdSize/2,chatIdSize);
+        }
+        mRef.child(otherUserUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                setUserInfo(dataSnapshot, chatId);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void setUserInfo(DataSnapshot snapshot, String chatId){
+        String name = snapshot.child("name").getValue(String.class);
+        String url = snapshot.child("profileurl").getValue(String.class);
+        final MessageList messageList = new MessageList();
+        messageList.setUserFirstName(name);
+        messageList.setUserChatId(chatId);
+        messageList.setUserProfileUrl(url);
+        DatabaseReference messageRef = FirebaseDatabase.getInstance()
+                .getReference("messages").child(messageList.getUserChatId());
+        messageRef.limitToLast(1).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                getLastMessage(dataSnapshot, messageList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void getLastMessage(DataSnapshot snapshot, MessageList messageList){
+       String lastMessage = null; // = snapshot.child("message").getValue(String.class);
+       for(DataSnapshot snapshot1 : snapshot.getChildren()){
+           lastMessage = snapshot1.child("message").getValue(String.class);
+       }
+        messageList.setLastMessage(lastMessage);
+        mMessageArrayList.add(messageList);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onItemClick(int position) {
-        Log.e("onClick", "What's going on here");
         Intent intent = new Intent(MessageListActivity.this, MessengerActivity.class);
         intent.putExtra("userOneId",uID);
         Log.e("userId", uID);

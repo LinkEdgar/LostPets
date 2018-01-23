@@ -10,6 +10,9 @@ public class MessageList {
     private String userLastName;
     private String userChatId;
     private String userProfileUrl;
+    public MessageList(){
+
+    }
     public MessageList(String lastMessage, String userFirstName, String userLastName, String userChatId, String userProfileUrl){
         this.lastMessage = lastMessage;
         this.userFirstName = userFirstName;
@@ -22,4 +25,16 @@ public class MessageList {
     public String getUserLastName(){return userLastName;}
     public String getUserChatId(){return userChatId;}
     public String getUserProfileUrl(){return userProfileUrl;}
+    public void setUserFirstName(String name){
+        userFirstName = name;
+    }
+    public void setUserChatId(String chatId){
+        userChatId = chatId;
+    }
+    public void setUserProfileUrl(String profileUrl){
+        userProfileUrl = profileUrl;
+    }
+    public void setLastMessage(String lastMessage){
+        this.lastMessage = lastMessage;
+    }
 }

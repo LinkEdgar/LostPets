@@ -35,8 +35,7 @@ public class MessengerActivity extends AppCompatActivity {
     private String FIREBASE_MESSAGE_ROOT = "messages";
     private String FIREBASE_USERS_ROOT = "Users";
     private String FIREBASE_USERS_PROFILE_CHILD = "profileUrl";
-    //TODO change firstname to name one the db is updated
-    private String FIREBASE_USERS_FIRST_NAME_CHILD = "firstname";
+    private String FIREBASE_USERS_FIRST_NAME_CHILD = "name";
     //TODO add image selection
 
     private String FIREBASE_USER_CHATS_CHILD = "chats";
@@ -90,11 +89,13 @@ public class MessengerActivity extends AppCompatActivity {
         //gets information passed from previous activity
         Intent intent = getIntent();
         userOneUid = intent.getStringExtra("userOneId");
+        Log.e("userOneuid from intent", " "+ userOneUid);
         mJointUserChat = intent.getStringExtra("jointChatId");
         userTwoUid = intent.getStringExtra("userTwoId");
 
         getUsersBasicInfo();
         mRef = mDatabase.getReference(FIREBASE_MESSAGE_ROOT).child(mJointUserChat);
+        //TODO add textview to indicate no messages 
         mChildEventListener = mRef.limitToLast(10).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -190,7 +191,7 @@ public class MessengerActivity extends AppCompatActivity {
         mUserRef.child(userOneUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                     setUserInfo(true, dataSnapshot);
+                setUserInfo(true, dataSnapshot);
             }
 
             @Override
@@ -236,6 +237,7 @@ public class MessengerActivity extends AppCompatActivity {
     private void setUserInfo(boolean isUserOne, DataSnapshot snapshot){
         if(isUserOne){
             mUserFirstName = snapshot.child(FIREBASE_USERS_FIRST_NAME_CHILD).getValue(String.class);
+            Log.e("UserOnenamesetUserInfo", " "+ mUserFirstName);
             mUserOneProfileUrl = snapshot.child(FIREBASE_USERS_PROFILE_CHILD).getValue(String.class);
         }
         else{

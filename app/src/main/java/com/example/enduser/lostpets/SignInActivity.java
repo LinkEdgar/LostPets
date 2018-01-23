@@ -51,7 +51,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private String FIREBASE_USERS_NAME = "name";
     private String FIREBASE_USERS_LAST_NAME = "lastname";
     //
-    private SharedPreferences.Editor mPreferenceEditor;
     private static String SIGN_IN_PREFERNCES = "signinPreferences";
     private static String GOOGLE_PREFERENCE_KEY = "isUserInDb";
 
@@ -66,8 +65,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         mPassword = (EditText) findViewById(R.id.et_password);
         signIn = (Button) findViewById(R.id.bt_login);
         register = (Button) findViewById(R.id.bt_register);
-        //preference
-        mPreferenceEditor = getSharedPreferences(SIGN_IN_PREFERNCES,MODE_PRIVATE).edit();
         //Bundle for keyfields
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(USERNAME)){
@@ -155,9 +152,9 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                         if( task.isSuccessful()){
                             Log.d("AuthWithGoogle", "Signin Success");
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            signInSuccess();
                             addGoogleUserToDb(firebaseUser);
                             //switches classes via an intent
-                            signInSuccess();
                             finish();
                         }
                         else{
@@ -223,16 +220,12 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             startActivity(intent);
         }
     }
-    //TODO remove the preference and just add the user eveytime
     private void addGoogleUserToDb(FirebaseUser firebaseUser){
         boolean userAleardyInDB = getSharedPreferences(SIGN_IN_PREFERNCES,MODE_PRIVATE).getBoolean(GOOGLE_PREFERENCE_KEY,false);
         Log.e("userAlready Exists", " "+ userAleardyInDB);
-        if(userAleardyInDB == false){
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(FIREBASE_USERS_ROOT);
             reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_EMAIL).setValue(firebaseUser.getEmail());
             reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_NAME).setValue(firebaseUser.getDisplayName());
-            mPreferenceEditor.putBoolean(GOOGLE_PREFERENCE_KEY, true);
-            mPreferenceEditor.apply();
-        }
+
     }
 }

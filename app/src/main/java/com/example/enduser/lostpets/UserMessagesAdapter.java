@@ -72,7 +72,7 @@ public class UserMessagesAdapter extends RecyclerView.Adapter<UserMessagesAdapte
         Context context = holder.mImageView.getContext();
         Glide.with(context).load(messageArrayList.get(position).getUserProfileUrl()).error(R.drawable.no_image).override(75,75)
                 .into(holder.mImageView);
-        holder.mLastMessage.setText("This is default text fix this ");
+        holder.mLastMessage.setText(messageArrayList.get(position).getLastMessage());
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

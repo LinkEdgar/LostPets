@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -74,6 +75,7 @@ public class PetDetailedInformation extends AppCompatActivity{
         //found button
         mAuth =FirebaseAuth.getInstance();
         currentUserUid = mAuth.getUid().toString();
+        Log.e("detail currentuser", " "+ currentUserUid);
         mFoundButton = (Button) findViewById(R.id.pet_detail_found_pet_button);
         mFoundButton.setOnClickListener(new View.OnClickListener() {
             @Override
