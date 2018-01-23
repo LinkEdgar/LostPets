@@ -223,6 +223,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             startActivity(intent);
         }
     }
+    //TODO remove the preference and just add the user eveytime
     private void addGoogleUserToDb(FirebaseUser firebaseUser){
         boolean userAleardyInDB = getSharedPreferences(SIGN_IN_PREFERNCES,MODE_PRIVATE).getBoolean(GOOGLE_PREFERENCE_KEY,false);
         Log.e("userAlready Exists", " "+ userAleardyInDB);
