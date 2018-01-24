@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class MessageListActivity extends AppCompatActivity implements UserMessagesAdapter.OnItemClicked{
     //recyclerview variables
@@ -37,6 +38,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     private String userPickedChat;
     //
     private TextView mNoMessagesTextView;
+    private HashSet<String> hashSet;
 
 
     @Override
@@ -53,6 +55,8 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
         mAdapter.setOnClick(this);
         mNoMessagesTextView = (TextView) findViewById(R.id.message_list_no_pet_textview);
 
+
+        hashSet = new HashSet<>();
 
         mAuth = FirebaseAuth.getInstance();
         uID = mAuth.getCurrentUser().getUid();
@@ -128,12 +132,20 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     }
     private void getLastMessage(DataSnapshot snapshot, MessageList messageList){
        String lastMessage = null; // = snapshot.child("message").getValue(String.class);
+        int count = 0;
        for(DataSnapshot snapshot1 : snapshot.getChildren()){
            lastMessage = snapshot1.child("message").getValue(String.class);
+
+           count++;
+           Log.e("counter", " "+ count);
        }
-        messageList.setLastMessage(lastMessage);
-        mMessageArrayList.add(messageList);
-        mAdapter.notifyDataSetChanged();
+       String key = snapshot.getKey();
+        if(!hashSet.contains(key)) {
+            hashSet.add(key);
+            messageList.setLastMessage(lastMessage);
+            mMessageArrayList.add(messageList);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

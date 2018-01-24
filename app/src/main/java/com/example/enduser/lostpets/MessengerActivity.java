@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -16,6 +18,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -56,6 +61,8 @@ public class MessengerActivity extends AppCompatActivity {
     private EditText mMessageEditText;
 
     private boolean doesChatOneExist = false;
+    //no message textview
+    private TextView mNoMessagesTextView;
 
 
     private HashSet<String> messageKeys;
@@ -93,9 +100,27 @@ public class MessengerActivity extends AppCompatActivity {
         mJointUserChat = intent.getStringExtra("jointChatId");
         userTwoUid = intent.getStringExtra("userTwoId");
 
+        mNoMessagesTextView = (TextView) findViewById(R.id.messenger_no_message_textview);
+
         getUsersBasicInfo();
         mRef = mDatabase.getReference(FIREBASE_MESSAGE_ROOT).child(mJointUserChat);
-        //TODO add textview to indicate no messages
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //TODO this null check doesn't work
+                if(messageArrayList.size() < 1){
+                    mNoMessagesTextView.setVisibility(View.VISIBLE);
+                }
+                else{
+                    mNoMessagesTextView.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         mChildEventListener = mRef.limitToLast(10).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

@@ -15,6 +15,8 @@
 
 
     <TextView
+        android:textStyle="bold"
+        android:textSize="18sp"
         android:id="@+id/message_item_user_name"
         android:layout_toRightOf="@+id/message_item_profile_picture"
         tools:text="Generic Name"
@@ -28,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TextView
+            android:textSize="18sp"
             tools:text="Hello this is a message from XXX I have found your pet"
             android:id="@+id/message_item_user_message"
             android:layout_width="match_parent"

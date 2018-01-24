@@ -12,6 +12,15 @@
         android:layout_width="match_parent"
         android:layout_alignParentTop="true" />
 
+    <TextView
+        android:textSize="18dp"
+        android:text="No messages yet, start a conversation"
+        android:visibility="gone"
+        android:id="@+id/messenger_no_message_textview"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 
     <android.support.v7.widget.RecyclerView
         android:layout_above="@+id/linear_layout_for_messages"
@@ -35,6 +44,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <EditText
+            android:textSize="18sp"
             android:maxHeight="120dp"
             android:id="@+id/messenger_edit_text"
             android:inputType="textMultiLine|textCapSentences"
