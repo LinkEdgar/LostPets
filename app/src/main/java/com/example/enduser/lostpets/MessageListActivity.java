@@ -1,11 +1,15 @@
 package com.example.enduser.lostpets;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +35,8 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     //
     //chatid for the chat the user picked
     private String userPickedChat;
+    //
+    private TextView mNoMessagesTextView;
 
 
     @Override
@@ -45,6 +51,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
 
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnClick(this);
+        mNoMessagesTextView = (TextView) findViewById(R.id.message_list_no_pet_textview);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -55,7 +62,6 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 loadCurrentMessages(dataSnapshot);
-                //TODO add a textview to indicate no messages exist
             }
 
             @Override
@@ -67,9 +73,6 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     private void loadCurrentMessages(DataSnapshot dataSnapshot){
         for(DataSnapshot snapshot: dataSnapshot.getChildren()){
             String chatId = snapshot.getValue(String.class);
-           // mMessageArrayList.add(new MessageList("How was the game?","Edgar", "Reyes",chatId, "invalid"));
-           // mAdapter.notifyDataSetChanged();
-            //TODO finish implementing getChats
             getChats(chatId);
         }
     }
@@ -109,6 +112,12 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 getLastMessage(dataSnapshot, messageList);
+                if(mMessageArrayList.size() <1 || mMessageArrayList.isEmpty()){
+                    mNoMessagesTextView.setVisibility(View.VISIBLE);
+                }
+                else{
+                    mNoMessagesTextView.setVisibility(View.GONE);
+                }
             }
 
             @Override

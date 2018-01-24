@@ -12,6 +12,15 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_alignParentTop="true" />
+    <!-- TODO set texrview size -->
+    <TextView
+        android:text="No Messages"
+        android:visibility="gone"
+        android:id="@+id/message_list_no_pet_textview"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 
     <android.support.v7.widget.RecyclerView
         android:layout_below="@+id/activity_message_toolbar"

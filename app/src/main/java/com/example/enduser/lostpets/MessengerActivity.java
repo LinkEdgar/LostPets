@@ -95,7 +95,7 @@ public class MessengerActivity extends AppCompatActivity {
 
         getUsersBasicInfo();
         mRef = mDatabase.getReference(FIREBASE_MESSAGE_ROOT).child(mJointUserChat);
-        //TODO add textview to indicate no messages 
+        //TODO add textview to indicate no messages
         mChildEventListener = mRef.limitToLast(10).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
