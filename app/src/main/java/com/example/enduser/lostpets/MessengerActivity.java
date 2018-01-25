@@ -104,23 +104,6 @@ public class MessengerActivity extends AppCompatActivity {
 
         getUsersBasicInfo();
         mRef = mDatabase.getReference(FIREBASE_MESSAGE_ROOT).child(mJointUserChat);
-        mRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //TODO this null check doesn't work
-                if(messageArrayList.size() < 1){
-                    mNoMessagesTextView.setVisibility(View.VISIBLE);
-                }
-                else{
-                    mNoMessagesTextView.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         mChildEventListener = mRef.limitToLast(10).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -140,6 +123,22 @@ public class MessengerActivity extends AppCompatActivity {
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(messageKeys.isEmpty()){
+                    mNoMessagesTextView.setVisibility(View.VISIBLE);
+                }
+                else{
+                    mNoMessagesTextView.setVisibility(View.GONE);
+                }
             }
 
             @Override

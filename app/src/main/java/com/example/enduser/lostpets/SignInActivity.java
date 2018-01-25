@@ -53,6 +53,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     //
     private static String SIGN_IN_PREFERNCES = "signinPreferences";
     private static String GOOGLE_PREFERENCE_KEY = "isUserInDb";
+    //TODO add progressbar for sign in
 
 
 

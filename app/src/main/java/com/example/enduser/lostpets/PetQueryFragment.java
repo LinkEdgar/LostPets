@@ -222,8 +222,6 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             //petArrayList.add(new Pet(petName, petWeight,petGender,petZip, petBreed, petMicro, petDescription, petUrl, petUrl2,petUrl3));
             count++;
         }
-        mProgressBar.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     //used for recycler view onclick handling
