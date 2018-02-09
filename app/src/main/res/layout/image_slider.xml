@@ -11,6 +11,7 @@
         android:src="@mipmap/ic_launcher_round"
         android:scaleType="centerCrop"/>
     <ProgressBar
+        android:visibility="gone"
         android:id="@+id/pet_detail_progressbar"
         android:layout_gravity="center"
         android:layout_width="wrap_content"

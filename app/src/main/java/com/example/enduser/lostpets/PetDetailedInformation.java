@@ -38,8 +38,8 @@ public class PetDetailedInformation extends AppCompatActivity{
     //image scroll
     private int totalImages =0;
     private ArrayList<String> urlArrayList = new ArrayList<>();
-    ImageSwitcherAdapter adapter;
-    ViewPager viewPager;
+    private ImageSwitcherAdapter adapter;
+    private ViewPager viewPager;
     //static map
     private double Latitude;
     private double Longitude;

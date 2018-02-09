@@ -27,12 +27,6 @@ public class LogInActivity extends AppCompatActivity {
         introImage = (ImageView) findViewById(R.id.intro_image);
         getStartedButton = (Button) findViewById(R.id.bt_getting_started);
         signUpButton = (Button) findViewById(R.id.bt_sign_up);
-        getStartedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO--> write explicit intent to switch to getting started activity
-            }
-        });
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,6 +40,7 @@ public class LogInActivity extends AppCompatActivity {
         getStartedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(LogInActivity.this, AboutActivity.class));
                 Toast toast = Toast.makeText(LogInActivity.this, "Get started", Toast.LENGTH_SHORT);
                 toast.show();
             }

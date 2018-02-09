@@ -79,7 +79,7 @@ public class ImageSwitcherAdapter extends PagerAdapter implements RequestListene
         mImageView = (ImageView) item_view.findViewById(R.id.image_slider_iv);
         mProgressBar = (ProgressBar) item_view.findViewById(R.id.pet_detail_progressbar);
         //imageView.setImageResource(R.mipmap.ic_launcher);
-        mProgressBar.setVisibility(View.VISIBLE);
+        //mProgressBar.setVisibility(View.VISIBLE);
         Glide.with(context).load(imageUrls.get(position)).
         listener(this).error(R.drawable.no_image).into(mImageView);
         //TODO fix the loading toolbar
@@ -92,8 +92,9 @@ public class ImageSwitcherAdapter extends PagerAdapter implements RequestListene
                         editor.putString("UrlOne", imageUrls.get(0));
 
                         editor.putString("UrlTwo", imageUrls.get(1));
-
+                    if(imageCounter >2) {
                         editor.putString("UrlThree", imageUrls.get(2));
+                    }
 
                     editor.putInt("currentPicture", position);
                     editor.apply();

@@ -44,7 +44,8 @@
         >
         <activity android:name=".PetDetailedInformation" />
         <activity android:name=".MessengerActivity" />
-        <activity android:name=".MessageListActivity"></activity>
+        <activity android:name=".MessageListActivity" />
+        <activity android:name=".AboutActivity"></activity>
     </application>
 
 </manifest>
