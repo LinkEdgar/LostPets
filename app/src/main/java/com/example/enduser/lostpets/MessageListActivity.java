@@ -37,6 +37,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     //chatid for the chat the user picked
     private String userPickedChat;
     //
+    private TextView getmNoMessagesTextView;
     private TextView mNoMessagesTextView;
     private HashSet<String> hashSet;
 
@@ -45,6 +46,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_list);
+        mNoMessagesTextView = (TextView) findViewById(R.id.messenger_no_message_textview);
         mRecyclerView = (RecyclerView) findViewById(R.id.message_list_recyclerview);
         mMessageArrayList = new ArrayList<>();
         mLayoutManeger = new LinearLayoutManager(this);
@@ -66,6 +68,14 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 loadCurrentMessages(dataSnapshot);
+                //checks if any of the chats were added into the arraylist
+                if(mMessageArrayList.isEmpty()){
+                    mNoMessagesTextView.setVisibility(View.VISIBLE);
+                }
+                else{
+                    mNoMessagesTextView.setVisibility(View.GONE);
+                }
+
             }
 
             @Override

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -378,5 +379,9 @@ public class MessengerActivity extends AppCompatActivity {
         if(mChildEventListener != null) {
             mRef.limitToLast(10).addChildEventListener(mChildEventListener);
         }
+    }
+
+    private void setmRecyclerViewScrollListener(){
+        //TODO implement a way to detect the top of the recyclerview has been reached to check over old messages
     }
 }

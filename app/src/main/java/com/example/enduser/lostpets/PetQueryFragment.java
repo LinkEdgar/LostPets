@@ -135,7 +135,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         */
 
         mRecyclerView.setAdapter(mAdapter);
-        recyclerViewSetScrollListener(mRecyclerView);
+        recyclerViewSetScrollListener();
         mAdapter.setOnClick(this);
         mCurrentUserId = mAuth.getUid();
 
@@ -431,7 +431,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     Then the limit is increased by 25 and more pets will be loaded if the amount of pets is greater than or equal
     to the limit
     */
-    private void recyclerViewSetScrollListener(RecyclerView mRecyclerView){
+    private void recyclerViewSetScrollListener(){
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
