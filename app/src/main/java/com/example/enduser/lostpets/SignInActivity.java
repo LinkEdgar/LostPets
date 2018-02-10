@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -53,6 +54,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     //
     private static String SIGN_IN_PREFERNCES = "signinPreferences";
     private static String GOOGLE_PREFERENCE_KEY = "isUserInDb";
+    //progressbar
+    private static ProgressBar mProgressbar;
     //TODO add progressbar for sign in
 
 
@@ -66,6 +69,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         mPassword = (EditText) findViewById(R.id.et_password);
         signIn = (Button) findViewById(R.id.bt_login);
         register = (Button) findViewById(R.id.bt_register);
+        mProgressbar = (ProgressBar) findViewById(R.id.sign_in_progressbar);
         //Bundle for keyfields
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(USERNAME)){
@@ -106,6 +110,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     @Override
     public void onClick(View v) {
+        mProgressbar.setVisibility(View.VISIBLE);
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -159,6 +164,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                             finish();
                         }
                         else{
+                            mProgressbar.setVisibility(View.GONE);
                             Log.d("AuthWithGoogle", "Signin failure");
                             Toast.makeText(SignInActivity.this, "Google Sign-in failed", Toast.LENGTH_SHORT).show();
                         }
@@ -172,6 +178,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 String email = mUsername.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
                 if(verifyEmail(email) && verifyPassword(password)) {
+                    mProgressbar.setVisibility(View.VISIBLE);
                     mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -185,8 +192,11 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                                 } else {
                                     Toast.makeText(SignInActivity.this, "Please verify your email", Toast.LENGTH_SHORT).show();
                                 }
-                            } else {
+                            }
+                            else {
                                 Toast.makeText(SignInActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
+                                mProgressbar.setVisibility(View.GONE);
+
                             }
                         }
                     });
@@ -228,5 +238,13 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_EMAIL).setValue(firebaseUser.getEmail());
             reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_NAME).setValue(firebaseUser.getDisplayName());
 
+    }
+    private void startProgressbar(boolean setProgressbarVisible){
+        if(true){
+            mProgressbar.setVisibility(View.VISIBLE);
+        }
+        else{
+            mProgressbar.setVisibility(View.GONE);
+        }
     }
 }

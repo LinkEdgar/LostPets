@@ -41,8 +41,6 @@ public class LogInActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LogInActivity.this, AboutActivity.class));
-                Toast toast = Toast.makeText(LogInActivity.this, "Get started", Toast.LENGTH_SHORT);
-                toast.show();
             }
         });
 

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.enduser.lostpets.AboutActivity">
+    <!-- TODO add string to string values -->
 
     <LinearLayout
         android:orientation="vertical"
@@ -18,7 +19,7 @@
             />
         <TextView
             android:layout_margin="4dp"
-            android:textSize="25sp"
+            android:textSize="27sp"
             android:textStyle="bold"
             android:text="A message to all pet lovers"
             android:layout_gravity="center"
