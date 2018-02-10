@@ -12,6 +12,8 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by EndUser on 1/16/2018.
  */
@@ -33,7 +35,7 @@ public class UserMessagesAdapter extends RecyclerView.Adapter<UserMessagesAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
-        private ImageView mImageView;
+        private CircleImageView mImageView;
         private TextView mNameTextView;
         private TextView mLastMessage;
         private View layout;
@@ -41,7 +43,7 @@ public class UserMessagesAdapter extends RecyclerView.Adapter<UserMessagesAdapte
         public ViewHolder(View v){
             super(v);
             layout = v;
-            mImageView = (ImageView) v.findViewById(R.id.activity_message_item_user_profile_picture);
+            mImageView = (CircleImageView) v.findViewById(R.id.activity_message_item_user_profile_picture);
             mNameTextView = (TextView) v.findViewById(R.id.activity_message_item_name);
             mLastMessage = (TextView) v.findViewById(R.id.activity_message_item_last_message);
         }
