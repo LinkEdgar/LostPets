@@ -41,6 +41,8 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     private TextView mNoMessagesTextView;
     private HashSet<String> hashSet;
 
+    //TODO add 'new message' if the last message is a picture message
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

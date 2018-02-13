@@ -36,6 +36,13 @@
             android:visibility="gone"
             android:layout_width="150dp"
             android:layout_height="150dp" />
+        <ProgressBar
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:id="@+id/message_item_progressbar"
+            android:indeterminate="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <TextView
             android:textSize="18sp"
             tools:text="Hello this is a message from XXX I have found your pet"

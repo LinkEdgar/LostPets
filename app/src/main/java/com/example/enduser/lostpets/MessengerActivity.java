@@ -95,6 +95,9 @@ public class MessengerActivity extends AppCompatActivity {
 
     private HashSet<String> messageKeys;
 
+
+    //TODO add elevation to this to keyboard area
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,6 +199,9 @@ public class MessengerActivity extends AppCompatActivity {
     /*
     This method sends a messages by removing the childevent listener until the data is synchronized.
     It gets the message from 'mMessageEditText' and clears the text field by setting it to ''
+    if the message is a picture message then the message will be set with a key appended to
+    the beginning. This key is not likely to be shown otherwise so the message adapter will detect
+    that the message is a picture and will load it accordingly
      */
     private void sendMessage(){
         if(isPictureMessage == false) {
@@ -268,11 +274,13 @@ public class MessengerActivity extends AppCompatActivity {
                         pictureUri = null;
                         mCardView.setVisibility(View.GONE);
                         mMessageEditText.setVisibility(View.VISIBLE);
+                        mProgressbar.setVisibility(View.GONE);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         pictureUri = null;
+                        mProgressbar.setVisibility(View.GONE);
                         mCardView.setVisibility(View.GONE);
                         mMessageEditText.setVisibility(View.VISIBLE);
                         Toast.makeText(MessengerActivity.this, "Failed to upload and send image", Toast.LENGTH_SHORT).show();
