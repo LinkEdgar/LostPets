@@ -9,6 +9,7 @@ public class Message {
     private String mMessage;
     private String mName;
     private String mUid;
+    private boolean isPictureMessage = false;
 
     public Message(){
 
@@ -19,7 +20,7 @@ public class Message {
         this.mUid = mUid;
         this.mUserProfileUrl = mUserProfileUrl;
     }
-
+    public void isPictureMessage(boolean isPictureMessage){ this.isPictureMessage = isPictureMessage;}
     public void setMessage(String mMessage){
         this.mMessage = mMessage;
     }
@@ -32,6 +33,7 @@ public class Message {
     public void setmUserProfileUrl(String mUserProfileUrl){
         this.mUserProfileUrl =mUserProfileUrl;
     }
+    public boolean getPictureType(){return isPictureMessage;}
     public String getMessage(){
         return mMessage;
     }

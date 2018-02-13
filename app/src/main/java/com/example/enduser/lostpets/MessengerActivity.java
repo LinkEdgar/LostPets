@@ -1,17 +1,28 @@
 package com.example.enduser.lostpets;
 
 import android.content.Intent;
+import android.media.Image;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +30,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.w3c.dom.Text;
 
@@ -42,7 +56,6 @@ public class MessengerActivity extends AppCompatActivity {
     private String FIREBASE_USERS_ROOT = "Users";
     private String FIREBASE_USERS_PROFILE_CHILD = "profileUrl";
     private String FIREBASE_USERS_FIRST_NAME_CHILD = "name";
-    //TODO add image selection
 
     private String FIREBASE_USER_CHATS_CHILD = "chats";
     //this variable stores the chat number that corresponds to the two users conversations
@@ -59,11 +72,25 @@ public class MessengerActivity extends AppCompatActivity {
     private String userTwoUid;
     //layout button
     private ImageButton mSendMessegeButton;
+    private ImageButton mGalaerySelectButton;
     private EditText mMessageEditText;
 
     private boolean doesChatOneExist = false;
     //no message textview
     private TextView mNoMessagesTextView;
+    //picture message related variables
+    private final int RC_SELECT_IMAGE = 1007;
+    private ImageView mSelectedImage;
+    private ProgressBar mProgressbar;
+    private ImageButton mCancelSelectedImage;
+    private boolean isPictureMessage = false;
+    private CardView mCardView;
+    //the key will be three spaces plus the first four digits of pie
+    // since the messages are .trimmed it will be unlikely that the user will send this message
+    private final String PICTURE_MESSAGE_KEY = "   3141";
+    private final int PICTURE_MESSAGE_KEY_COUNTER = 7;
+    private Uri pictureUri;
+    private StorageReference mStorageRef;
 
 
     private HashSet<String> messageKeys;
@@ -83,8 +110,26 @@ public class MessengerActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         messageKeys = new HashSet<>();
+        mProgressbar = (ProgressBar) findViewById(R.id.messenger_activity_progress_bar);
+        mSelectedImage = (ImageView) findViewById(R.id.messenger_activity_selected_image);
+        mCancelSelectedImage = (ImageButton) findViewById(R.id.messenger_cancel_image_button);
+        mCancelSelectedImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelSelectedImage();
+            }
+        });
+        mCardView = (CardView) findViewById(R.id.messenger_cardview);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         mSendMessegeButton = (ImageButton) findViewById(R.id.messenger_send_button);
+        mGalaerySelectButton = (ImageButton) findViewById(R.id.messenger_gallery_select_);
+        mGalaerySelectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectImageFromGallery();
+            }
+        });
         mSendMessegeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,31 +198,91 @@ public class MessengerActivity extends AppCompatActivity {
     It gets the message from 'mMessageEditText' and clears the text field by setting it to ''
      */
     private void sendMessage(){
-        String messageToSend = mMessageEditText.getText().toString().trim();
-        if(messageToSend != null && messageToSend.isEmpty() ==false) {
-            if (mChildEventListener != null) {
-                mRef.removeEventListener(mChildEventListener);
-            }
-            DatabaseReference specificReference = mRef.push();
-            specificReference.child(FIREBASE_MESSAGE_CHILD).setValue(messageToSend);
-            specificReference.child(MESSAGE_USERNAME).setValue(mUserFirstName);
-            mMessageEditText.setText("");
-            specificReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (mChildEventListener != null) {
-                        mRef.limitToLast(10).addChildEventListener(mChildEventListener);
+        if(isPictureMessage == false) {
+            String messageToSend = mMessageEditText.getText().toString().trim();
+            if (messageToSend != null && messageToSend.isEmpty() == false) {
+                if (mChildEventListener != null) {
+                    mRef.removeEventListener(mChildEventListener);
+                }
+                DatabaseReference specificReference = mRef.push();
+                specificReference.child(FIREBASE_MESSAGE_CHILD).setValue(messageToSend);
+                specificReference.child(MESSAGE_USERNAME).setValue(mUserFirstName);
+                mMessageEditText.setText("");
+                specificReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (mChildEventListener != null) {
+                            mRef.limitToLast(10).addChildEventListener(mChildEventListener);
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
+            }
         }
+        else{
+            //we have to add a means to display the picture message via our message adapter
+            //have to edit the method 'addMessagesToArraylist' so that it can detect picture messages
+            //sync data
+            /*
+            strat --> set a special character at the beginning if we get that character then we read the rest of the string
+            the rest being the url and then we load it
+             */
+            mProgressbar.setVisibility(View.VISIBLE);
+            mCancelSelectedImage.setVisibility(View.GONE);
+            mSelectedImage.setVisibility(View.GONE);
+            if(pictureUri != null){
+                StorageReference ref = mStorageRef.child(pictureUri.getLastPathSegment());
+                ref.putFile(pictureUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        String downloadUrl = PICTURE_MESSAGE_KEY+taskSnapshot.getDownloadUrl().toString();
+                        if (mChildEventListener != null) {
+                            mRef.removeEventListener(mChildEventListener);
+                        }
+                        DatabaseReference specificReference = mRef.push();
+                        specificReference.child(FIREBASE_MESSAGE_CHILD).setValue(downloadUrl);
+                        specificReference.child(MESSAGE_USERNAME).setValue(mUserFirstName);
+                        specificReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (mChildEventListener != null) {
+                                    mRef.limitToLast(10).addChildEventListener(mChildEventListener);
+                                }
+                            }
 
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        pictureUri = null;
+                        mCardView.setVisibility(View.GONE);
+                        mMessageEditText.setVisibility(View.VISIBLE);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        pictureUri = null;
+                        mCardView.setVisibility(View.GONE);
+                        mMessageEditText.setVisibility(View.VISIBLE);
+                        Toast.makeText(MessengerActivity.this, "Failed to upload and send image", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+            }
     }
+
     /*
     Called from the message listener. This method uses a hashset to ensure we do not get repetitive data.
     Since some of the listeners run asynchronously we must set the value of the messages manually so that the user gets
@@ -186,6 +291,7 @@ public class MessengerActivity extends AppCompatActivity {
     We also implement a smooth scroll to new messages added
      */
     private void addMessageToArrayList(DataSnapshot snapshot){
+
         String key = snapshot.getKey();
         if(!messageKeys.contains(key)) {
             messageKeys.add(key);
@@ -196,6 +302,12 @@ public class MessengerActivity extends AppCompatActivity {
             //we must add the value of user one which will be the current sender
             if(name == null){
                 name = mUserTwoName;
+            }
+            if(message.length() >= PICTURE_MESSAGE_KEY_COUNTER) {
+                String messageSubString = message.substring(0, 7);
+                if (messageSubString.equals(PICTURE_MESSAGE_KEY)) {
+                    messageToAdd.isPictureMessage(true);
+                }
             }
             messageToAdd.setName(name);
             messageToAdd.setMessage(message);
@@ -383,5 +495,31 @@ public class MessengerActivity extends AppCompatActivity {
 
     private void setmRecyclerViewScrollListener(){
         //TODO implement a way to detect the top of the recyclerview has been reached to check over old messages
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RC_SELECT_IMAGE && resultCode == RESULT_OK){
+            isPictureMessage = true;
+            mCardView.setVisibility(View.VISIBLE);
+            mMessageEditText.setVisibility(View.GONE);
+            pictureUri = data.getData();
+            Glide.with(this).load(pictureUri).into(mSelectedImage);
+            mSelectedImage.setVisibility(View.VISIBLE);
+            mCancelSelectedImage.setVisibility(View.VISIBLE);
+
+        }
+    }
+
+    private void selectImageFromGallery(){
+        Intent imageSelectItent = new Intent();
+        imageSelectItent.setType("image/*");
+        imageSelectItent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(imageSelectItent,RC_SELECT_IMAGE);
+    }
+    private void cancelSelectedImage(){
+        mCardView.setVisibility(View.GONE);
+        mMessageEditText.setVisibility(View.VISIBLE);
     }
 }

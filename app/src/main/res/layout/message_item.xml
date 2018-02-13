@@ -31,6 +31,11 @@
         android:layout_toRightOf="@+id/message_item_profile_picture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/message_item_picture_message"
+            android:visibility="gone"
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
         <TextView
             android:textSize="18sp"
             tools:text="Hello this is a message from XXX I have found your pet"
