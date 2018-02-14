@@ -76,6 +76,7 @@ public class MessengerActivity extends AppCompatActivity {
     private EditText mMessageEditText;
 
     private boolean doesChatOneExist = false;
+    private boolean wasMessageJustSent = false;
     //no message textview
     private TextView mNoMessagesTextView;
     //picture message related variables
@@ -92,10 +93,13 @@ public class MessengerActivity extends AppCompatActivity {
     private Uri pictureUri;
     private StorageReference mStorageRef;
 
+    int counter = 0;
+
 
     private HashSet<String> messageKeys;
 
-
+    //TODO fix scrolling
+    //TODO add fullscreen on click
     //TODO add elevation to this to keyboard area
 
     @Override
@@ -145,7 +149,6 @@ public class MessengerActivity extends AppCompatActivity {
         //gets information passed from previous activity
         Intent intent = getIntent();
         userOneUid = intent.getStringExtra("userOneId");
-        Log.e("userOneuid from intent", " "+ userOneUid);
         mJointUserChat = intent.getStringExtra("jointChatId");
         userTwoUid = intent.getStringExtra("userTwoId");
 
@@ -252,6 +255,7 @@ public class MessengerActivity extends AppCompatActivity {
                         DatabaseReference specificReference = mRef.push();
                         specificReference.child(FIREBASE_MESSAGE_CHILD).setValue(downloadUrl);
                         specificReference.child(MESSAGE_USERNAME).setValue(mUserFirstName);
+                        isPictureMessage = false;
                         specificReference.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -289,6 +293,7 @@ public class MessengerActivity extends AppCompatActivity {
 
             }
             }
+        wasMessageJustSent = true;
     }
 
     /*
@@ -300,23 +305,46 @@ public class MessengerActivity extends AppCompatActivity {
      */
     private void addMessageToArrayList(DataSnapshot snapshot){
 
+        counter++;
+        Toast.makeText(MessengerActivity.this, ""+ counter, Toast.LENGTH_SHORT).show();
+
         String key = snapshot.getKey();
         if(!messageKeys.contains(key)) {
             messageKeys.add(key);
             String name = snapshot.child(MESSAGE_USERNAME).getValue(String.class);
+            String profileUrl = null;
             String message = snapshot.child(FIREBASE_MESSAGE_CHILD).getValue(String.class);
             Message messageToAdd = new Message();
             //since this name will only be null when the message was just sent and the code run asynchronously
             //we must add the value of user one which will be the current sender
             if(name == null){
-                name = mUserTwoName;
-            }
-            if(message.length() >= PICTURE_MESSAGE_KEY_COUNTER) {
-                String messageSubString = message.substring(0, 7);
-                if (messageSubString.equals(PICTURE_MESSAGE_KEY)) {
-                    messageToAdd.isPictureMessage(true);
+                if(wasMessageJustSent) {
+                    name = mUserFirstName;
+                    profileUrl = mUserOneProfileUrl;
+                    wasMessageJustSent = false;
+                }
+                else{
+                    name = mUserTwoName;
+                    profileUrl = mUserTwoProfileUrl;
                 }
             }
+            else{
+                if(name.equals(mUserTwoName)){
+                    profileUrl = mUserTwoProfileUrl;
+                }
+                else{
+                    profileUrl = mUserOneProfileUrl;
+                }
+            }
+            if(message != null) {
+                if (message.length() >= PICTURE_MESSAGE_KEY_COUNTER) {
+                    String messageSubString = message.substring(0, 7);
+                    if (messageSubString.equals(PICTURE_MESSAGE_KEY)) {
+                        messageToAdd.isPictureMessage(true);
+                    }
+                }
+            }
+            messageToAdd.setmUserProfileUrl(profileUrl);
             messageToAdd.setName(name);
             messageToAdd.setMessage(message);
             messageArrayList.add(messageToAdd);
@@ -382,7 +410,6 @@ public class MessengerActivity extends AppCompatActivity {
     private void setUserInfo(boolean isUserOne, DataSnapshot snapshot){
         if(isUserOne){
             mUserFirstName = snapshot.child(FIREBASE_USERS_FIRST_NAME_CHILD).getValue(String.class);
-            Log.e("UserOnenamesetUserInfo", " "+ mUserFirstName);
             mUserOneProfileUrl = snapshot.child(FIREBASE_USERS_PROFILE_CHILD).getValue(String.class);
         }
         else{
@@ -472,7 +499,6 @@ public class MessengerActivity extends AppCompatActivity {
     base on that information it will add the chat into the user' profile
      */
     private void setChatToUserDb(boolean isChatOne){
-        Log.e("Yeet squad", "setting new chat");
         if(isChatOne){
             DatabaseReference specificRef =mUserRef.child(userOneUid)
                     .child(FIREBASE_USER_CHATS_CHILD).push();
@@ -521,10 +547,10 @@ public class MessengerActivity extends AppCompatActivity {
     }
 
     private void selectImageFromGallery(){
-        Intent imageSelectItent = new Intent();
-        imageSelectItent.setType("image/*");
-        imageSelectItent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(imageSelectItent,RC_SELECT_IMAGE);
+        Intent imageSelectIntent = new Intent();
+        imageSelectIntent.setType("image/*");
+        imageSelectIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(imageSelectIntent,RC_SELECT_IMAGE);
     }
     private void cancelSelectedImage(){
         mCardView.setVisibility(View.GONE);

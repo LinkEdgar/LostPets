@@ -167,9 +167,11 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
             /*
             checks to see if the last message is a picture message
              */
-            String pictureMessageCheck = lastMessage.substring(0,7);
-            if(pictureMessageCheck.equals("   3141")){
-                lastMessage = "New picture message";
+            if(lastMessage.length() >= 7) {
+                String pictureMessageCheck = lastMessage.substring(0, 7);
+                if (pictureMessageCheck.equals("   3141")) {
+                    lastMessage = "New picture message";
+                }
             }
             messageList.setLastMessage(lastMessage);
             mMessageArrayList.add(messageList);
@@ -177,7 +179,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
         }
     }
 
-    //handles the user clicking on the chat 
+    //handles the user clicking on the chat
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(MessageListActivity.this, MessengerActivity.class);
