@@ -29,6 +29,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     private RecyclerView.LayoutManager mLayoutManeger;
     //firebase
     private String FIREBASE_USERS_ROOT = "Users";
+    private String FIREBASE_CHILD_CHATS = "chats";
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mRef;
@@ -66,7 +67,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
         uID = mAuth.getCurrentUser().getUid();
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference(FIREBASE_USERS_ROOT);
-        mRef.child(uID).child("chats").addListenerForSingleValueEvent(new ValueEventListener() {
+        mRef.child(uID).child(FIREBASE_CHILD_CHATS).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 loadCurrentMessages(dataSnapshot);
@@ -92,6 +93,12 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
             getChats(chatId);
         }
     }
+    /*
+    Because of the way the data is structured we must determine the other user by checking comparing uIDs
+    and then going into the database and searching for their information to extract the peron's name
+    and info to populate the message. After the other user's data is retrieved the last message
+    in their chat is gotten to display in the recycler view
+     */
     private void getChats(final String chatId){
         StringBuilder builder = new StringBuilder();
         String otherUserUid;
@@ -103,6 +110,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
         if(uID.equals(otherUserUid)){
             otherUserUid = chatId.substring(chatIdSize/2,chatIdSize);
         }
+        //this code looks into the database for the user's information
         mRef.child(otherUserUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -115,6 +123,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
             }
         });
     }
+
     private void setUserInfo(DataSnapshot snapshot, String chatId){
         String name = snapshot.child("name").getValue(String.class);
         String url = snapshot.child("profileurl").getValue(String.class);
@@ -142,6 +151,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
             }
         });
     }
+    //retrieves the last message to populate the recyclerview
     private void getLastMessage(DataSnapshot snapshot, MessageList messageList){
        String lastMessage = null; // = snapshot.child("message").getValue(String.class);
         int count = 0;
@@ -154,12 +164,20 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
        String key = snapshot.getKey();
         if(!hashSet.contains(key)) {
             hashSet.add(key);
+            /*
+            checks to see if the last message is a picture message
+             */
+            String pictureMessageCheck = lastMessage.substring(0,7);
+            if(pictureMessageCheck.equals("   3141")){
+                lastMessage = "New picture message";
+            }
             messageList.setLastMessage(lastMessage);
             mMessageArrayList.add(messageList);
             mAdapter.notifyDataSetChanged();
         }
     }
 
+    //handles the user clicking on the chat 
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(MessageListActivity.this, MessengerActivity.class);
