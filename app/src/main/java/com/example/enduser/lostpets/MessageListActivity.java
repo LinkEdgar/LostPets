@@ -30,6 +30,8 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     //firebase
     private String FIREBASE_USERS_ROOT = "Users";
     private String FIREBASE_CHILD_CHATS = "chats";
+    private String FIREBASE_CHILD_USERNAME_URL = "profileUrl";
+    private String FIREBASE_CHILD_NAME = "names";
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mRef;
@@ -42,7 +44,6 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     private TextView mNoMessagesTextView;
     private HashSet<String> hashSet;
 
-    //TODO add 'new message' if the last message is a picture message
 
 
     @Override
@@ -125,8 +126,8 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     }
 
     private void setUserInfo(DataSnapshot snapshot, String chatId){
-        String name = snapshot.child("name").getValue(String.class);
-        String url = snapshot.child("profileurl").getValue(String.class);
+        String name = snapshot.child(FIREBASE_CHILD_NAME).getValue(String.class);
+        String url = snapshot.child(FIREBASE_CHILD_USERNAME_URL).getValue(String.class);
         final MessageList messageList = new MessageList();
         messageList.setUserFirstName(name);
         messageList.setUserChatId(chatId);

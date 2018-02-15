@@ -101,6 +101,8 @@ public class MessengerActivity extends AppCompatActivity {
     //TODO fix scrolling
     //TODO add fullscreen on click
     //TODO add elevation to this to keyboard area
+    //TODO test on two device since images cause a double send
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +158,7 @@ public class MessengerActivity extends AppCompatActivity {
 
         getUsersBasicInfo();
         mRef = mDatabase.getReference(FIREBASE_MESSAGE_ROOT).child(mJointUserChat);
-        mChildEventListener = mRef.limitToLast(10).addChildEventListener(new ChildEventListener() {
+        mRef.limitToLast(10).addChildEventListener(mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 addMessageToArrayList(dataSnapshot);
@@ -221,7 +223,7 @@ public class MessengerActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (mChildEventListener != null) {
-                            mRef.limitToLast(10).addChildEventListener(mChildEventListener);
+                            mRef.limitToLast(1).addChildEventListener(mChildEventListener);
                         }
                     }
 
@@ -260,7 +262,7 @@ public class MessengerActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (mChildEventListener != null) {
-                                    mRef.limitToLast(10).addChildEventListener(mChildEventListener);
+                                    mRef.limitToLast(1).addChildEventListener(mChildEventListener);
                                 }
                             }
 
@@ -304,10 +306,7 @@ public class MessengerActivity extends AppCompatActivity {
     We also implement a smooth scroll to new messages added
      */
     private void addMessageToArrayList(DataSnapshot snapshot){
-
-        counter++;
-        Toast.makeText(MessengerActivity.this, ""+ counter, Toast.LENGTH_SHORT).show();
-
+        
         String key = snapshot.getKey();
         if(!messageKeys.contains(key)) {
             messageKeys.add(key);
@@ -523,7 +522,7 @@ public class MessengerActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
         if(mChildEventListener != null) {
-            mRef.limitToLast(10).addChildEventListener(mChildEventListener);
+            mRef.limitToLast(1).addChildEventListener(mChildEventListener);
         }
     }
 
