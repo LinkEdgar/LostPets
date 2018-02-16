@@ -1,16 +1,20 @@
 package com.example.enduser.lostpets;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -22,6 +26,8 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -45,6 +51,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private SignInButton googleSignIn;
     private GoogleSignInClient mGoogleSignInClient;
     private final static int RC_SIGN_IN = 9001;
+    private TextView mForgotPasswrodTv;
     //TODO add forgot password functionality
 
     private String FIREBASE_USERS_ROOT = "Users";
@@ -56,7 +63,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private static String GOOGLE_PREFERENCE_KEY = "isUserInDb";
     //progressbar
     private static ProgressBar mProgressbar;
-    //TODO add progressbar for sign in
 
 
 
@@ -68,8 +74,35 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         mUsername = (EditText) findViewById(R.id.et_username);
         mPassword = (EditText) findViewById(R.id.et_password);
         signIn = (Button) findViewById(R.id.bt_login);
+        mForgotPasswrodTv = (TextView) findViewById(R.id.tv_forgot_password);
         register = (Button) findViewById(R.id.bt_register);
         mProgressbar = (ProgressBar) findViewById(R.id.sign_in_progressbar);
+        mForgotPasswrodTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO implement password retrieval
+                //make a dialog window to prompt users
+                final AlertDialog.Builder builder = new AlertDialog.Builder(SignInActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                builder.setView(inflater.inflate(R.layout.reset_password_dialog,null));
+                builder.setTitle("Password Reset");
+                builder.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText edit = (EditText) ((AlertDialog) dialog).findViewById(R.id.password_reset_edit_text);
+                        String email = edit.getText().toString();
+                        sendEmailReset(email);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.show();
+            }
+        });
         //Bundle for keyfields
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(USERNAME)){
@@ -232,19 +265,31 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         }
     }
     private void addGoogleUserToDb(FirebaseUser firebaseUser){
-        boolean userAleardyInDB = getSharedPreferences(SIGN_IN_PREFERNCES,MODE_PRIVATE).getBoolean(GOOGLE_PREFERENCE_KEY,false);
-        Log.e("userAlready Exists", " "+ userAleardyInDB);
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(FIREBASE_USERS_ROOT);
             reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_EMAIL).setValue(firebaseUser.getEmail());
             reference.child(firebaseUser.getUid()).child(FIREBASE_USERS_NAME).setValue(firebaseUser.getDisplayName());
 
     }
-    private void startProgressbar(boolean setProgressbarVisible){
-        if(true){
-            mProgressbar.setVisibility(View.VISIBLE);
+    private void sendEmailReset(String email) {
+        if (email != null && email.length()>0) {
+            try {
+                mAuth.sendPasswordResetEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(SignInActivity.this, "Reset email sent", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(SignInActivity.this, "There was a problem, reset email could not be sent", Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (IllegalArgumentException e) {
+                Log.e("Reset Attempt", "error sending email");
+            }
         }
         else{
-            mProgressbar.setVisibility(View.GONE);
+            Toast.makeText(this, "Invalid email, please try again", Toast.LENGTH_SHORT).show();
         }
     }
 }

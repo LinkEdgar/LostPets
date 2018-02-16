@@ -254,11 +254,11 @@ public class MessengerActivity extends AppCompatActivity {
                         if (mChildEventListener != null) {
                             mRef.removeEventListener(mChildEventListener);
                         }
-                        DatabaseReference specificReference = mRef.push();
-                        specificReference.child(FIREBASE_MESSAGE_CHILD).setValue(downloadUrl);
-                        specificReference.child(MESSAGE_USERNAME).setValue(mUserFirstName);
+                        DatabaseReference specReference = mRef.push();
+                        specReference.child(FIREBASE_MESSAGE_CHILD).setValue(downloadUrl);
+                        specReference.child(MESSAGE_USERNAME).setValue(mUserFirstName);
                         isPictureMessage = false;
-                        specificReference.addValueEventListener(new ValueEventListener() {
+                        specReference.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (mChildEventListener != null) {
@@ -306,7 +306,7 @@ public class MessengerActivity extends AppCompatActivity {
     We also implement a smooth scroll to new messages added
      */
     private void addMessageToArrayList(DataSnapshot snapshot){
-        
+
         String key = snapshot.getKey();
         if(!messageKeys.contains(key)) {
             messageKeys.add(key);
