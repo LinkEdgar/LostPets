@@ -8,12 +8,16 @@ import java.util.ArrayList;
 
 import me.relex.circleindicator.CircleIndicator;
 
+/*
+    This class provides is meant to give information about the application
+ */
 public class AboutActivity extends AppCompatActivity {
     private ImageSwitcherAdapter adapter;
     private ViewPager viewPager;
     private ArrayList<String> urlArrayList;
     private int totalImages;
     //TODO fix UI
+    //TODO add two pictures, one of linda and one of duky
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

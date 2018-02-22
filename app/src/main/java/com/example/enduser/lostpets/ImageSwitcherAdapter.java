@@ -71,6 +71,8 @@ public class ImageSwitcherAdapter extends PagerAdapter implements RequestListene
         return view == object;
     }
 
+
+    //This method sets the images and sets on click listeners to get a full screen version of the image
     @Override
     public Object instantiateItem(final ViewGroup container, final int position) {
         final Context context = activity.getApplicationContext();
@@ -107,6 +109,9 @@ public class ImageSwitcherAdapter extends PagerAdapter implements RequestListene
         return item_view;
     }
 
+    /*
+    onException and onResourceReady are overriden methods that are onClick listeners
+     */
     @Override
     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
         mProgressBar.setVisibility(View.GONE);

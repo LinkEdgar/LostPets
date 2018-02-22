@@ -16,6 +16,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by EndUser on 1/16/2018.
+ * Adapter for the list of messages a user may have 
  */
 
 public class UserMessagesAdapter extends RecyclerView.Adapter<UserMessagesAdapter.ViewHolder>{

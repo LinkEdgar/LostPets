@@ -142,6 +142,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         return root_view;
     }
 
+    //requests the location
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == REQUEST_LOCATION){
@@ -203,6 +204,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         }
     }
 
+    //Unused method to be delted later
+    //TODO delete this method
     private void addPetsToArrayList(DataSnapshot dataSnapshot, int maxQueryCount){
         //Test code
         petArrayList.clear();
@@ -225,7 +228,7 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     }
 
     //used for recycler view onclick handling
-    //investigate if it's worth it to pass the entire object or just the data
+    //This method passes the pet information via an intent
     @Override
     public void onItemClick(int position) {
         //use this method to pass the pet to a new activity or a popup menu with detailed information
@@ -304,7 +307,8 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
     public boolean onOptionsItemSelected(MenuItem item) {
         return true;
     }
-    //determines
+    //determines the type of query to be performed
+    //currently there is a zip code, name, and breed search
     private void typeOfQueryToPerform(String queryParams){
         switch(typeOfQuery){
             case QUERY_TYPE_BREED:
@@ -333,6 +337,10 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         mRef2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                /*
+                this method is called after the query is finished to check if the result yielded results
+
+                 */
                     mProgressBar.setVisibility(View.GONE);
                     if (petArrayList.size() < 1) {
                         mNoPetsFoundTv.setText("No pets found");
@@ -351,6 +359,9 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
 
             }
         });
+        /*
+        queries with a limit that is expanded on scroll
+         */
         mRef2.orderByChild(typeOfQuery).endAt(stringToQuery).startAt(stringToQuery).limitToFirst(querySearchLimit).addChildEventListener(mListener =new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -496,6 +507,10 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
             }
         });
 
+        /*
+        Checks whether or not the user double submits in order to preserve data
+        the double check will be set to false if the search type is changed or the text is changed
+         */
         mSearchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -523,6 +538,9 @@ public class PetQueryFragment extends Fragment implements PetAdapter.OnItemClick
         });
     }
 
+    /*
+    best practice to remove listener
+     */
     @Override
     public void onPause() {
         super.onPause();

@@ -2,6 +2,7 @@ package com.example.enduser.lostpets;
 
 /**
  * Created by EndUser on 1/12/2018.
+ * This class makes a message object that supports a message, name of sender, profile url, and a type which is boolean
  */
 
 public class Message {

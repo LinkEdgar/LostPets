@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 /**
  * Created by ZenithPC on 11/12/2017.
+ * This class fills the recyclerview in petqueryfragment to display a list of pets given a search query
  */
 
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.ViewHolder> {

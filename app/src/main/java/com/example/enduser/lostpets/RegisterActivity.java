@@ -99,13 +99,14 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
      }
-
+    //makes sure the password and confirm password are the same
     public boolean validatePasswordMatch(String p1, String p2){
         if(p1.equals(p2)){
             return true;
         }
         return false;
     }
+    // the minimum password length for firebase enforced via this method
     public boolean validatePassword(String password){
         //firebase's only requirement is that the password be more than 6 characters
         if(password.length() >  FIREBASE_MIN_PASSWORD){

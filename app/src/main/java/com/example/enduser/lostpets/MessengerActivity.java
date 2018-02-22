@@ -529,7 +529,7 @@ public class MessengerActivity extends AppCompatActivity {
     private void setmRecyclerViewScrollListener(){
         //TODO implement a way to detect the top of the recyclerview has been reached to check over old messages
     }
-
+    //called to handle the intents, in this case we want to retrieve a uri and set the image in the UI
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -545,12 +545,14 @@ public class MessengerActivity extends AppCompatActivity {
         }
     }
 
+    //opens the gallery for image selection
     private void selectImageFromGallery(){
         Intent imageSelectIntent = new Intent();
         imageSelectIntent.setType("image/*");
         imageSelectIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(imageSelectIntent,RC_SELECT_IMAGE);
     }
+    //sets the image UI elements to invisible
     private void cancelSelectedImage(){
         mCardView.setVisibility(View.GONE);
         mMessageEditText.setVisibility(View.VISIBLE);

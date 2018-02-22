@@ -64,16 +64,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager.setCurrentItem(1);
         mAuth = FirebaseAuth.getInstance();
 
-        //Navigation stuff
+        //Navigation drawer reference
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        /*
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         mAdapter.add("My Pets");
         mAdapter.add("Messages");
         mAdapter.add("Notifications");
         mAdapter.add("Settings");
         //optionsList.setAdapter(mAdapter);
+        */
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mHomeButtonToggle = (ImageButton) findViewById(R.id.navigation);
         mHomeButtonToggle.setOnClickListener(new View.OnClickListener() {
@@ -89,8 +90,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mSearchFilter = (ImageButton) findViewById(R.id.main_activity_filter_button);
         mAppName = (TextView) findViewById(R.id.main_activity_app_name);
         mSubmitPet = (ImageButton) findViewById(R.id.main_activity_submit_pet);
-
+        //sets the custom toolbar for the fragments
         setSupportActionBar(mToolbar);
+        /*
+         changes the toolbar bases on which fragment is currently being displayed
+          this provides a search for the petqueryfragment and a button to add pets to the DB for the
+          addpetsfragment
+
+         */
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -130,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     }
-    //TODO properly implement this
+    //since we are using a navigation we need to change the back button behavior
     @Override
     public void onBackPressed() {
         if(mDrawer.isDrawerOpen(GravityCompat.START)){
@@ -142,6 +149,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    /*
+    This determines what happens when an item from the navigation drawer is clicked
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         //TODO finish the drawer view settings

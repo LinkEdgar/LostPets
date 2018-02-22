@@ -2,6 +2,8 @@ package com.example.enduser.lostpets;
 
 /**
  * Created by EndUser on 1/16/2018.
+ * This is a messageList which shows all the current messages that the user has and it populates the last message
+ * sent so the user has a preview of what is being sent
  */
 
 public class MessageList {

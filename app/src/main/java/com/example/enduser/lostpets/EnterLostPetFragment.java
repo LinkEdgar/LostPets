@@ -158,6 +158,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         return root_view;
     }
 
+    //These are the gender items from which the user chooses and it defaults to unknown in the
+    //case they don't pick
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         switch(position){
@@ -192,63 +194,11 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         return true;
     }
 
-    public boolean storeData(String petNum, String[] petInfo){
-        //stores data for each pet by first retrieving it from a passed in array //order matters
-        petID = petNum;
-        String name = petInfo[0];
-        String weight = petInfo[1];;
-        String breed = petInfo[2];;
-        String zip = petInfo[3];;
-        String desc = petInfo[4];;
-        String microChip = petInfo[5];
-        FirebaseUser user = mAuth.getCurrentUser();
-        if(validateData(name, zip)) {
-            mDatabase = FirebaseDatabase.getInstance();
-            mRef = mDatabase.getReference("Pets");
-            DatabaseReference newPetReference = mRef.push();
-            mCurrentUser = mAuth.getCurrentUser();
-            newPetReference.child("microchip").setValue(microChip);
-            newPetReference.child("name").setValue(name);
-            newPetReference.child("breed").setValue(breed);
-            newPetReference.child("weight").setValue(weight + " lbs");
-            newPetReference.child("zip").setValue(zip);
-            newPetReference.child("gender").setValue(petGender);
-            newPetReference.child("description").setValue(desc);
-            newPetReference.child("addeduserid").setValue(user.getUid());
-            if(petPictureUrl != null){
-                newPetReference.child("picture_url").setValue(petPictureUrl);
-            }
-            else{
-                newPetReference.child("picture_url").setValue(INVALID_URL);
-            }
-
-            if(petPictureUrl2 != null){
-                newPetReference.child("picture_url2").setValue(petPictureUrl2);
-            }
-            else{
-                newPetReference.child("picture_url2").setValue(INVALID_URL);
-            }
-
-            if(petPictureUrl3 != null){
-                newPetReference.child("picture_url3").setValue(petPictureUrl3);
-            }
-            else{
-                newPetReference.child("picture_url3").setValue(INVALID_URL);
-            }
-
-
-            Toast.makeText(getContext(), "Pet has been added to database", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        else{
-            //failure toast
-            Toast.makeText(getContext(), "Invalid or empty text fields", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-    }
-    //This method takes the text fields and takes pushes them to the database. If the user does not select pictures
-    //the urls stored in the database are set to 'invalid.'
+    /*
+    Retrieves data from the fields and adds them to the DB via a push which gives a unique parent key
+    This includes urls to any pictures uploaded by the user. This method calls another method to validate
+    the key fields such as name and zip code
+     */
     private void storePetInDb(){
         String name = petName.getText().toString().trim();
         String weight = petWeight.getText().toString().trim();
@@ -299,7 +249,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             Toast.makeText(getContext(), "Invalid or empty text fields", Toast.LENGTH_SHORT).show();
         }
     }
-    //called after succesfully adding a pet to the db. The textfields and imageviews are all cleared
+    //called after successfully adding a pet to the db. The textfields and imageviews are all cleared.
+    //this includes Uris in the uriarray
     public void clearTextFields(){
         petBreed.getText().clear();
         petBreed.clearFocus();
@@ -343,7 +294,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         }
         return true;
     }
-
+    //Called from an intent that retrieves data, in this case the intent requesting to get an image from gallery
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -372,14 +323,16 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             petPictureUrl3 = taskSnapshot.getDownloadUrl().toString();
         }
     }
-    //TODO find out how to save image states in fragments
     //this method resets the urls for new pets being added into the database
     private void resetPetUrls(){
         petPictureUrl = null;
         petPictureUrl2 = null;
         petPictureUrl3 = null;
     }
-
+    /*
+    This method sets up and instantiates variables used to get user selected pictures to upload.
+    this includes swapping pictures, removing pictures, and picking pictures
+     */
     private void setUpImageSelect(View root){
         //TODO delete or reimplement user hint
 
@@ -451,35 +404,37 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         imageSelectButton.setOnClickListener(this);
 
     }
+    /*
+    this method is called from onActivityresult to handle setting the uri
+     */
     private void handleImageSelection(Intent data){
 
         if(imageCounter == 0) {
             imageSelectButton.setVisibility(View.GONE);
-            Bitmap bmp = null;
             Uri imageUri = data.getData();
-            setUriAndBitMap(imageUri,mCoverImage);
+            setUri(imageUri,mCoverImage);
             mCoverImage.setVisibility(View.VISIBLE);
             //userHint.setVisibility(View.VISIBLE);
             cancelFirstImage.setVisibility(View.VISIBLE);
             mRightImageSelector.setVisibility(View.VISIBLE);
         }
         else if(imageCounter == 1){
-            Bitmap bmp = null;
             Uri imageUri = data.getData();
-            setUriAndBitMap(imageUri, mRightImage);
+            setUri(imageUri, mRightImage);
             mRightImageSelector.setVisibility(View.GONE);
             mLeftImageSelector.setVisibility(View.VISIBLE);
             mRightImage.setVisibility(View.VISIBLE);
         }
         else if(imageCounter == 2){
             Uri imageUri = data.getData();
-            setUriAndBitMap(imageUri, mLeftImage);
+            setUri(imageUri, mLeftImage);
             mLeftImageSelector.setVisibility(View.GONE);
             mLeftImage.setVisibility(View.VISIBLE);
             //maybe set some textview indicating at capacity
         }
     }
-    private void setUriAndBitMap(Uri uri, ImageView imageButton){
+    //sets the image into the correct imageButton
+    private void setUri(Uri uri, ImageView imageButton){
         Glide.with(getContext()).load(uri).into(imageButton);
         uriArray[imageCounter] = uri;
         imageCounter++;
@@ -498,15 +453,12 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         intent.setType("image/*");
         startActivityForResult(intent, SECOND_IMAGE_SELECTOR);
     }
+    /*
+    uploads pictures from the urlarray global variable. With on success listener that clear the text fields
+     */
     private void  uploadSelectedPictures(){
-        //TODO figure out how to determine if a photo is rotated to better display in the search
-        Log.e("Uri Array ", " "+uriArray[0]+" "+uriArray[1]+" "+ uriArray[2]);
-        Log.e("Uri Array String ", " "+uriArray[0].toString());
-
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setTitle("Uploading...");
-        StorageReference ref = mStorageReference.child("Photos");
-
         for(int x = 0; x < uriArray.length; x++) {
             if (uriArray[x] != null) {
                 if (x + 1 == imageCounter) {
@@ -563,18 +515,8 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
             clearTextFields();
         }
     }
-    //TODO fix the bundle
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        for(int x = 0; x< imageCounter; x++){
-            if(uriArray[x] != null){
-                String stringUri = uriArray[x].toString();
-                outState.putString(stringUrlArray[x],stringUri);
-            }
-        }
-    }
 
+    //Pop up menus to allow the user to modify selected pictures
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -583,7 +525,7 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
         menu.add(0,v.getId(),0,"make cover image");
 
     }
-
+    //creates context item
     @Override
     public boolean onContextItemSelected(MenuItem item) {
        if(item.getTitle() == "delete image"){
@@ -626,6 +568,9 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 break;
         }
     }
+    /*
+    This method allows the user to swap the cover photo with another selected picture.
+     */
     private void swapCurrentImageToCoverImage(){
         switch (contextMenuImageToTakeAction){
             case 1:
@@ -644,6 +589,9 @@ public class EnterLostPetFragment extends Fragment implements AdapterView.OnItem
                 break;
         }
     }
+    /*
+    Sets the toolbar variable to submit pets into the database
+     */
     private void setupToolBarVariables(){
         mSubmitButton = (ImageButton) getActivity().findViewById(R.id.main_activity_submit_pet);
         //If the done icon is clicked the picture will and pet information will be uploaded

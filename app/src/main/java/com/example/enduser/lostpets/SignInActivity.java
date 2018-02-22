@@ -241,6 +241,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             }
         });
     }
+    //sets a listener for an intent call to switch to the register activity
     public void SetupRegistration(){
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,11 +251,15 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             }
         });
     }
+    //clears user fields
     public void ClearTextFields(){
         mUsername.setText("");
         mPassword.setText("");
     }
 
+    /*
+    Performs user authentication check
+     */
     @Override
     protected void onStart() {
         super.onStart();

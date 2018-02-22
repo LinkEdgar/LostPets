@@ -68,6 +68,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
         uID = mAuth.getCurrentUser().getUid();
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference(FIREBASE_USERS_ROOT);
+        //messages a retrieved once and shown as a list of all chats the user currently
         mRef.child(uID).child(FIREBASE_CHILD_CHATS).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -88,6 +89,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
             }
         });
     }
+    //this method is called by the database reference
     private void loadCurrentMessages(DataSnapshot dataSnapshot){
         for(DataSnapshot snapshot: dataSnapshot.getChildren()){
             String chatId = snapshot.getValue(String.class);
@@ -124,7 +126,7 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
             }
         });
     }
-
+    //this method retrieves the others user's information and then loads gets the last message in the DB
     private void setUserInfo(DataSnapshot snapshot, String chatId){
         String name = snapshot.child(FIREBASE_CHILD_NAME).getValue(String.class);
         String url = snapshot.child(FIREBASE_CHILD_USERNAME_URL).getValue(String.class);

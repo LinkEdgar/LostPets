@@ -20,6 +20,7 @@ import com.bumptech.glide.request.target.Target;
 
 /**
  * Created by EndUser on 12/11/2017.
+ * creates a 'full screen' image in a fragment
  */
 
 public class FullScreenDialog extends DialogFragment implements RequestListener{
@@ -81,7 +82,7 @@ public class FullScreenDialog extends DialogFragment implements RequestListener{
         Glide.with(getActivity()).load(urlArray[userPickedPicturePosition]).listener(FullScreenDialog.this).into(mImageOne);
         mImagePosition = userPickedPicturePosition;
     }
-
+    //allows the images, if there are more than 1, to be swapped through.
     private void setRightAndLeftScrolling(View view){
         mRightScroll = (ImageButton) view.findViewById(R.id.full_screen_right_scroll);
         mLeftScroll = (ImageButton) view.findViewById(R.id.full_screen_left_scroll);
@@ -125,6 +126,8 @@ public class FullScreenDialog extends DialogFragment implements RequestListener{
             mLeftScroll.setVisibility(View.GONE);
         }
     }
+
+    // these two methods are used by Glide as onComplete listeners
     @Override
     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
         mProgressBar.setVisibility(View.GONE);

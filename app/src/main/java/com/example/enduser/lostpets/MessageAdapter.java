@@ -22,6 +22,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by EndUser on 1/12/2018.
+ * This adapter binds and creates messages to be displayed in the messengeractivity
  */
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{
@@ -61,6 +62,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.mUserName.setText(firstName);
         Context context = holder.mProfilePicture.getContext();
         Glide.with(context).load(messageArrayList.get(position).getmUserProfileUrl()).dontAnimate().error(R.drawable.no_image).override(75,75).into(holder.mProfilePicture);
+        //if the message is a picture then we change the UI and load the image with glide
+        //otherwise we display the message normally
         if(messageArrayList.get(position).getPictureType()){
             holder.mMessageTextView.setVisibility(View.GONE);
             holder.mPictureMessage.setVisibility(View.VISIBLE);

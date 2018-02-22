@@ -2,6 +2,7 @@ package com.example.enduser.lostpets;
 
 /**
  * Created by ZenithPC on 11/12/2017.
+ * Pet class a pet object
  */
 
 public class Pet {
