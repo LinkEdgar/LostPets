@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 /**
  * Created by EndUser on 10/23/2017.
@@ -42,6 +44,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageButton mSearchFilter;
     private TextView mAppName;
     private ImageButton mSubmitPet;
+
+    //user information for navigation drawer
+    private String userName;
+    private String userProfileUrl;
+    private CircleImageView mProfilePicture;
+    private TextView mUserName;
 
     //Navigation
     private DrawerLayout mDrawer;
@@ -65,16 +73,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mAuth = FirebaseAuth.getInstance();
 
         //Navigation drawer reference
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        /*
-        ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
-        mAdapter.add("My Pets");
-        mAdapter.add("Messages");
-        mAdapter.add("Notifications");
-        mAdapter.add("Settings");
-        //optionsList.setAdapter(mAdapter);
-        */
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+
+        setupProfileInNavigationView();
+
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mHomeButtonToggle = (ImageButton) findViewById(R.id.navigation);
         mHomeButtonToggle.setOnClickListener(new View.OnClickListener() {
@@ -169,5 +172,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
         }
         return false;
+    }
+    private void setupProfileInNavigationView(){
+        //TODO load profile url from preference fragment
+        View header = mNavigationView.getHeaderView(0);
+        mProfilePicture = (CircleImageView) header.findViewById(R.id.drawer_profile_header_imageview);
+        mUserName = (TextView) header.findViewById(R.id.drawer_user_name_tv);
+        if(mUserName != null){
+            Toast.makeText(this, "Not null", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "null", Toast.LENGTH_SHORT).show();
+
+        }
     }
 }
