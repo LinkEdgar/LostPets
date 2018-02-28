@@ -170,6 +170,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(this, "Successfully signed out", Toast.LENGTH_SHORT).show();
                 finish();
                 return true;
+            case R.id.drawer_settings:
+                Intent intent1 = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent1);
+                return true;
         }
         return false;
     }

@@ -9,6 +9,7 @@
             android:title="Messages"
             />
         <item
+            android:id="@+id/drawer_settings"
             android:icon="@drawable/ic_setting"
             android:title="Settings"
             />

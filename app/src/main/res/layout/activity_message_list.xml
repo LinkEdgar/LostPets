@@ -6,12 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.enduser.lostpets.MessageListActivity">
-    <include
-        android:id="@+id/activity_message_toolbar"
-        layout="@layout/universal_toolbar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_alignParentTop="true" />
+
     <!-- TODO set texrview size -->
     <TextView
         android:textSize="18sp"

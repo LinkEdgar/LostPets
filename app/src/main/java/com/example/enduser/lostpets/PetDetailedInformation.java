@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,6 +64,10 @@ public class PetDetailedInformation extends AppCompatActivity{
         setContentView(R.layout.activity_pet_detailed_information);
         Intent intent = getIntent();
         getPetInformationFromIntent(intent);
+        ActionBar actionBar = this.getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         setupPetInformation();
         setUrlArray();
         countImages();

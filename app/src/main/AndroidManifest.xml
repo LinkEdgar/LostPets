@@ -38,14 +38,29 @@
                 android:value="com.example.enduser.lostpets.SignInActivity" />
         </activity>
         <activity
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:launchMode="singleTop"
             android:name=".MainActivity"
             android:configChanges="screenSize|orientation|screenLayout"
             android:windowSoftInputMode="stateHidden" />
         >
-        <activity android:name=".PetDetailedInformation" />
-        <activity android:name=".MessengerActivity" />
-        <activity android:name=".MessageListActivity" />
-        <activity android:name=".AboutActivity"></activity>
+        <activity
+            android:parentActivityName=".MainActivity"
+            android:name=".PetDetailedInformation" />
+        <activity
+            android:parentActivityName=".MessageListActivity"
+            android:name=".MessengerActivity" />
+        <activity
+            android:label="Messages"
+            android:parentActivityName=".MainActivity"
+            android:name=".MessageListActivity" />
+        <activity
+            android:parentActivityName=".LogInActivity"
+            android:name=".AboutActivity" />
+        <activity
+            android:label="Settings"
+            android:parentActivityName=".MainActivity"
+            android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>

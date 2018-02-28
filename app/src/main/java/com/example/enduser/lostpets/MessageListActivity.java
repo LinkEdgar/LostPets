@@ -50,6 +50,10 @@ public class MessageListActivity extends AppCompatActivity implements UserMessag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_list);
+        ActionBar actionBar = this.getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         mNoMessagesTextView = (TextView) findViewById(R.id.messenger_no_message_textview);
         mRecyclerView = (RecyclerView) findViewById(R.id.message_list_recyclerview);
         mMessageArrayList = new ArrayList<>();
