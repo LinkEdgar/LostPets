@@ -26,10 +26,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -45,13 +55,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView mAppName;
     private ImageButton mSubmitPet;
 
+    //Navigation
     //user information for navigation drawer
     private String userName;
     private String userProfileUrl;
     private CircleImageView mProfilePicture;
     private TextView mUserName;
+    private ProgressBar mUserProfileProgressBar;
 
-    //Navigation
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
     private ImageButton mHomeButtonToggle;
@@ -182,12 +193,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View header = mNavigationView.getHeaderView(0);
         mProfilePicture = (CircleImageView) header.findViewById(R.id.drawer_profile_header_imageview);
         mUserName = (TextView) header.findViewById(R.id.drawer_user_name_tv);
-        if(mUserName != null){
-            Toast.makeText(this, "Not null", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(this, "null", Toast.LENGTH_SHORT).show();
+        mUserProfileProgressBar = (ProgressBar) header.findViewById(R.id.drawer_profile_progressbar);
+        //user's Uid is used to access their information
+        String user = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(user);
+        database.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                getProfileInformationForNavigation(dataSnapshot);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        mUserName.setText("Yeet head");
+    }
+    //TODO didn't work try again buddy
+    private void getProfileInformationForNavigation(DataSnapshot snapshot){
+        userName = snapshot.child("name").getValue(String.class);
+        userProfileUrl = snapshot.child("profileUrl").getValue(String.class);
+        if(userName != null){
+            mUserName.setText(userName);
         }
+        if(userProfileUrl != null){
+            mProfilePicture.setVisibility(View.GONE);
+            mUserProfileProgressBar.setVisibility(View.VISIBLE);
+            Glide.with(this).load(userProfileUrl).error(R.drawable.no_image).listener(new RequestListener<String, GlideDrawable>() {
+                @Override
+                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    mUserProfileProgressBar.setVisibility(View.GONE);
+                    mProfilePicture.setVisibility(View.VISIBLE);
+                    return false;
+                }
+            }).into(mProfilePicture);
+        }
+
     }
 }

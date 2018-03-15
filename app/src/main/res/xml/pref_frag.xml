@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:title="Yeet title"
+        android:defaultValue="true"
+        android:key="yeet key"
+        android:summaryOff="Hidden"
+        android:summaryOn="Shown"
+        android:summary="this is that good yeet"
+        />
+    <EditTextPreference
+        android:key="Name"
+        android:persistent="true"
+        android:dialogTitle="Change name"
+        android:dialogMessage="Please type your first name followed by your last name"
+        android:title="Change display name"/>
+    <Preference
+        android:key="image_select"
+        android:title="Set Profile Picture"
+        />
+
+</PreferenceScreen>
